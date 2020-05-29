@@ -1,12 +1,6 @@
 FROM alpine:3.8
-# FROM ubuntu:eoan
 
-# ARG ANSIBLE_VERSION=2.8.0
 ENV ANSIBLE_VERSION=2.9.0
-
-# RUN apt-get update && apt-get install --yes --no-install-recommends \
-#   ansible=${ANSIBLE_VERSION} \
-# && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN set -x && apk update && apk upgrade && \
     apk --update add --virtual build-dependencies \
