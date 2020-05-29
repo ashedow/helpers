@@ -1,0 +1,76 @@
+
+Анализ ошибок:
+* ltrace - вызовы библиотек \ системных
+* staсe - системные вы
+Информация:
+* ldd - выдаёт список зависимостей от динамических библиотек
+зовы
+* systemtab
+* obgdump - 
+* gdb - анализ смерти процесса <programm> <coredump> bt(бэктрайс) fr(фрейм) print(принт вывод)
+* lsov - логи. потому что все врут
+* coredump - дамп логов факт записи в dmesg ulimit -c
+
+Профилирование:
+* oprofile 
+* perf 
+* SystemTap (можно моделировать люб. функцию ядра) скрипт на ST запуск как модуль ядра
+
+Состояние:
+* uptime
+* top (нажав 1 видим ядра (гипертрединг - показывает больше ядер чем есть на самом деле)) (и его производные)
+* vmstat - использование памяти, процессов в виде счетчика
+* pidstat - vimstat для определенного процесса
+* sar -q 1 4 -n - для проверки всего (юзай ключи)
+* free
+* valgrind - смотрим утечки памяти. Можно вместе с gdb
+* ps xauf (с минусом и без минуса - разные опции)
+* watch (например watch -n (02) |free -m) анализ онлайн
+
+Память:
+* Виртуальная 
+* Физическая
+* Page Cache
+Счетчики: /proc/meminfo и zoneinfo(статистика по нумам иннодам)
+
+Дисковые I/O
+IO wait метрика статуc idle
+* iostat это как vmstat
+* iotop - top про диски
+* smartctl -l 
+* blkid
+* blokdev
+* pidstat / sar -d
+* blktrase - трассировка блочного устройства
+* MegaCli - 
+
+Сети:
+* netstat -s /-i
+* ifconfig
+* iftop
+* ip link
+* sar
+* ping6 / ping
+* trasert
+* mrt
+* nc
+* telnet
+* curl
+* iptables -L
+
+Анализаторы пакетов
+* tspdump
+* dumpcup
+* irodump-ng
+* tshark \wireshark
+
+Сборка пакетов virtualenv
+pep8
+
+DNS
+* bind9
+* powerdns
+* NSD
+безопасность
+* DNSSEC - как ssl
+* DNSCrypt

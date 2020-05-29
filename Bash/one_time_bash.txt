@@ -1,0 +1,237 @@
+We did nothing
+```bash
+unset HISTFILE && kill -9 $$
+```
+
+***
+
+Mysql table fix
+```bash
+for i in `mysql -NBe "show databases;"`; do for j in `mysql -NBe "show tables;" $i`;do mysql -NBe "repair table $j;" $i; done ; done
+```
+
+***
+
+Find some of phph malware
+
+```bash
+find $PWD -name '*.*' -exec grep -li "iframe" {} \;
+find $PWD -name '*.*' -exec grep -li "unescape" {} \;
+find $PWD -name '*.*' -exec grep -li "fromCharCode" {} \;
+find . -type f -name '\.htaccess' | xargs grep -i auto_prepend_file
+find . -type f -name '\.htaccess' | xargs grep -i auto_append_file
+find . -type f -name '*.php' | xargs egrep -i "(mail|fsockopen|pfsockopen|stream_socket_client|exec|system|passthru|eval|base64_decode) *\("
+find . -type f | xargs grep -l 'eval(base64' 2>/dev/null
+find . -type f | xargs grep -l 'if(isset($_REQUEST' 2>/dev/null
+find . -mtime -3 Поиск файлов, измененных в последние несколько дней
+find . -cmin -8 -type d -maxdepth 1 -mindepth 1 | xargs rm -r
+find . \( -regex '.*\.php$' -o -regex '.*\.cgi$' \) -print0 | xargs -0 egrep -il "r0nin|m0rtix|r57shell|edoced_46esab|c99shell|FilesMan|provided by FOPO|Pontianak|bogel|Web Shell by oRb|phpshell|md5_pass|auth_pass|void\.ru|phpremoteview|directmail|bash_history|brute|FaTaListicz *force" > shell.txt
+
+grep -ri 'gzinflate\|stripslashes\|base64_decode\|FilesMan\|eval\|str_rot13\|$_POST\|fwrite\|fopen\|mail\|strrev\|file_put_contents' .
+grep -r PCT4BA6ODSE */www/ -l
+```
+
+***
+
+Check SYN
+```bash
+netstat -npl | grep '80'
+ps aux | grep httpd |wc -l
+netstat -na | grep :80 | wc -l
+netstat -na | grep :80 | grep -i syn
+netstat -na | grep :80 | grep SYN | wc -l
+netstat -na | grep :80 | grep SYN | sort -u | more # check how many IP
+netstat -na | grep :80 | sort | uniq -c | sort -nr | more # sum request from each IP
+tcpdump -npi eth0 port domain
+
+cat /proc/net/ip_conntrack | wc -l # count connections
+
+# IP which are connected to the server and how many connections for each IP
+netstat -anp |grep 'tcp\|udp' | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+```
+
+***
+
+Another check SYN
+```bash
+
+netstat -anlpt
+
+# tcp 0 0 193.107.239.168:25 54.149.13.13:52072 SYN_RECV
+# tcp 0 0 193.107.239.168:25 54.149.13.13:54489 SYN_RECV
+# ...
+
+netstat-n-p TCP | grep SYN_RECV | grep:23 | wc-l
+netstat-s-P tcp | grep tcpHalfOpenDrop
+
+# Block IP
+iptables -A INPUT -s IP-ADDRESS -j DROPs
+
+# tcpdump
+# http://rusua.org.ua/2013/01/07/411/ 
+
+# Turn off syn cache
+# Turn on
+syn cookie echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+# increase /proc/sys/net/ipv4/tcp_max_syn_backlog
+# decrease connection timeout tcp_synack_retries
+# Close sockets
+echo "30" > /proc/sys/net/ipv4/tcp_fin_timeout
+# Increase the maximum number of packets in the queue for processing /proc/sys/net/core/netdev_max_backlog
+# Increase somaxconn
+# May add ^ in rc.local
+
+# Add a limit of the number of SYN packets per unit of time in iptables:
+iptables -N syn_flood
+iptables -A INPUT -p tcp --syn -j syn_flood
+iptables -A syn_flood -m limit --limit 500/s --limit-burst 1500 -j RETURN
+iptables -A syn_flood -j DROP
+# or
+iptables -N syn_flood iptables -A INPUT -p tcp --syn -j syn_flood iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN iptables -A syn_flood -j DROP
+```
+
+***
+
+Check UDP-flood
+```bash
+udp flood
+hping3 -q -n -a srcIP --udp -s 53 --keep -p 68 --flood dstIP
+
+hping3 -q -n --udp -s 53 --keep -p 68 --flood dstIP --rand-source
+# In this traffic, the victim port 68 will be generated from port 53.
+ ```
+
+***
+
+
+Top requests from access.log
+```bash
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -n 20
+```
+
+the same with user agent
+```bash
+tail -n 100000 ${LOG} | \
+awk '{print $1,"\t",$(NF-2),$(NF-1)}'| sort | uniq -c | sort -rn | head -n20 
+cat ~/*/log/access.log.1 | awk '{print $1}' | sort -n | uniq -c | sort -n | tail | wc -l
+```
+
+***
+
+kill-close-wait-connections
+```bash
+netstat -anp | grep CLOSE_WAIT | awk '{print $7}' | cut -d \/ -f1 | grep -oE "[[:digit:]]{1,}" | xargs kill
+```
+
+***
+
+for cat echo example
+```bash
+for i in $(cat /tmp/file.txt); do echo "mail ${i} == $(grep $i /tmp/file.txt | wc -l)" >> /tmp/newfile ; done
+```
+
+***
+
+undump mysql dbs
+```bash
+for db in $(cat db.txt); do echo $db; mysql -uroot -pprcadkdfb3 $db < $db.sql; done
+for i in $(mysqlshow -u LOGIN -pPASSWORD | grep -vE "Databases|performance_schema|mysql|information_schema|\+" | tr -d '|'); do mysqldump -u LOGIN -pPASSWORD $i > $i.sql; done
+```
+
+***
+MysqlTuner
+https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl
+
+***
+
+InnoDB check
+```bash
+for i in $(mysqlshow | grep -vE "Databases|performance_schema|mysql|information_schema|roundcubemail|\+" | tr -d '|'); do mysql -e 'show tables' $i | egrep -v ^Tables_in | xargs -n1 -I@@ echo mysql -e 'ALTER TABLE @@ ENGINE=InnoDB' $i ; done
+```
+
+***
+
+
+mysql in tmptfs
+```bash
+mkdir /tmp/mysql
+chmod 777 /tmp/mysql
+free -m
+chown mysql:mysql /tmp/mysql
+mount -t tmpfs -o size=512M tmpfs /tmp/tmpfs/
+nano /etc/mysql/my.cnf добавить tmpdir=/tmp/
+/etc/init.d/mysql restart
+```
+
+***
+
+DROP example
+```bash
+iptables -A OUTPUT -p tcp -m tcp --dport 80 -m state --state NEW -j DROP
+iptables -A OUTPUT -p tcp -m tcp -m state --state NEW -j DROP
+```
+
+***
+
+Add SWAP
+```bash
+# Add swap file, for example 512Mb
+dd if=/dev/zero of=/swapfile bs=1M count=512
+
+# Format
+mkswap /swapfile
+
+# Add to fstab ( /etc/fstab ) next string
+/swapfile none swap sw 0 0
+
+# Activate swap:
+swapon -a
+```
+
+***
+
+nmap example
+```
+nmap -O target.host.com # scan pors, os
+nmap –O 10.0.0.1-42 # from 10.0.0.1 to 10.0.0.42
+nmap -O host1.target.com host2.target.com # scan several host
+```
+
+***
+
+Unpack something to somewhere
+```
+for i in backup-201010{28...31}-incremental.tar.lzo; do echo $i; cat $i ; | ssh name@host "cd /home/user && lzop -d | tar xvf - /home/user"
+```
+
+***
+
+Count inodes for each directory
+```
+#!/bin/bash
+# count inodes for each directory
+LIST=`ls`
+for i in $LIST; do
+echo $i
+find $i -printf "%i\n" | sort -u | wc -l
+done
+```
+
+***
+
+```bash
+find . -xdev -type f | cut -d "/" -f 2 | sort | uniq -c | sort -nr | head -n 1f
+```
+
+***
+
+Turn on mail() for Bitrix
+Man msmtp https://dev.1c-bitrix.ru/learning/course/?COURSE_ID=41&LESSON_ID=2946
+
+In php.ini change `msmtp` to `sendmail_path = "usr/sbin/sendmail -t -i"`
+Change /etc/php.d/bitrixenv.ini:
+`sendmail_path = sendmail -t -i -f www@some.ru          ;bitrix-env `
+
+***
+
+Keep calm and read http://www.bashoneliners.com/
