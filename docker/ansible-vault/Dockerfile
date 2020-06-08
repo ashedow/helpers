@@ -11,6 +11,7 @@ RUN set -x && apk update && apk upgrade && \
         libffi-dev \
         openssl-dev \
         python3-dev \
+        bash \
         make && \
     python3 -m ensurepip && \
     rm -r /usr/lib/python*/ensurepip && \
@@ -24,5 +25,4 @@ RUN set -x && apk update && apk upgrade && \
     mkdir -p /etc/ansible /ansible
 
 ENTRYPOINT ["ansible-vault"]
-CMD ["--help"]
 HEALTHCHECK NONE
