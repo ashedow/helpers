@@ -235,3 +235,12 @@ Change /etc/php.d/bitrixenv.ini:
 ***
 
 Keep calm and read http://www.bashoneliners.com/
+
+***
+
+Check ssh connection 
+
+```bash
+for host in $(cat hostlist.txt); do ssh -q -o "BatchMode=yes" -o "StrictHostKeyChecking=no" username@$host "echo 2>&1" && echo " $i OK" || echo "$i NOK"; done
+```
+
