@@ -1,31 +1,59 @@
-# Databases
+# Databases types
 
-## Types
+## Centralised vs Distributed database
+- As their names imply, a centralized database has only one database file, kept at a single location on a given network; a distributed database is composed of multiple database files stored in multiple physical locations, all controlled by a central DBMS.
+- Distributed databases are more complex, and require additional work to keep the data stored up-to-date and to avoid redundancy. However, they provide parallelization (which balances the load between several servers), preventing bottlenecking when a large number of requests come through.
+- Centralized databases make data integrity easier to maintain; once data is stored, outdated or inaccurate data (stale data) is no longer available in other places. However, it may be more difficult to retrieve lost or overwritten data in a centralized database, since it lacks easily accessible copies by nature.
 
-### Centralised database.
+## Personal database.
 
-### Distributed database.
+## End-user database.
 
-### Personal database.
+## Cloud database.
 
-### End-user database.
+## Commercial database.
 
-### Commercial database.
+## Operational database.
 
-### NoSQL database.
+## Relational database
+- In a relational database, each relation is a set of tuples. Each tuple is a list of attributes, which represents a single item in the database. Each tuple (“row”) in a relation (“table”) shares the same attributes (“columns”). Each attribute has a well-defined data type (int, string, etc), defined ahead of time — schema in a relational database is static.
+- Examples include: Oracle, MySQL, SQLite, PostgreSQL
+
+## Non relational DBs
+
+At it’s simplest, a non-relational database is one that doesn’t use the relational model; no relations (tables) with tuples (rows) and attributes (columns). This title covers a pretty wide range of models, typically grouped into four categories: key-value stores, graph stores, column stores, and document stores.
+
+## NoSQL database.
+
+“NoSQL” originally referred to “non-SQL” or “non-relational” when describing a database. Sometimes “NoSQL” is also meant to mean “Not only SQL”, to emphasize that they don’t prohibit SQL or SQL-like query languages; they just avoid functionality like relation/table schemas and JOIN operations.
 key walue
 document
 column db
 
-### Operational database.
+## Key-value
+- Key-value stores don’t use the pre-defined structure of relational databases, but instead treat all of their data as a single collection of items. For example, a screwdriver in our toolbox might have attributes like “drive_type”, “length”, and “size”, but a hammer may only have one attribute: “size”. Instead of storing (often empty) “drive_type” and “length” fields for every item in your toolbox, a “hammer_01” key will return only the information relevant to it.
+- Success with this model lies in its simplicity. Like a map or a dictionary, each key-value pair defines a link between some unique “key” (like a name, ID, or URL) and its “value” (an image, a file, a string, int, list, etc). There are no fields, so the entire value must be updated if changes are made. Key-value stores are generally fast, scalable, and flexible.
+- Examples include: Dynamo, MemcacheDB, Redis
 
-### Relational database.
+## Column store
+- Row-oriented databases describe single items as rows, and store all the data in a particular table’s rows together: ‘hammer_01’, ‘medium’, ‘blue’; ‘hammer_02’, ‘large’, ‘yellow’. A column store, on the other hand, generally stores all the values of a particular column together: ‘hammer_01’, ‘hammer_02’; ‘medium’, ‘large’; ‘blue’, ‘yellow’.
+- This can definitely get confusing, but the two map data very differently. In a row-oriented system, the primary key is the row ID, mapped to its data. In the column-oriented system, the primary key is the data, mapping back to row IDs. This allows for some very quick aggregations like totals and averages.
+- Examples include: Accumulo, Cassandra, HBase
 
-### Cloud database.
+## Object-oriented database
+Not as common as other non-relational databases, an object or object-oriented database is ones in which data is represented in the form of “objects” (with attributes and methods) as used in object-oriented programming. This type might be used in place of a relational database and ORM, and may make sense when the data is complex or there are complex many-to-many relationships involved. Beware its language dependence and difficulty with ad-hoc queries though.
 
-### Object-oriented database.
+## Graph database
+- Graph stores are a little more complicated.Using graph structures, this type of database is made for dealing with interconnected data — think social media connections, a family tree, or a food chain. Items in the database are represented by “nodes”, and “edges” directly represent the relationships between them. Both nodes and edges can store additional “properties”: id, name, type, etc.
+- The strength of a graph database is in traversing the connections between items, but their scalability is limited.
+- Examples include: Allegro, OrientDB, Virtuoso
 
-# Graph database.
+## Document store
+- Document stores treat all information for a given item in the database as a single instance in the database (each of which can have its own structure and attributes, like other non-relational databases). These “documents” can generally be thought of as sets of key-value pairs: {ToolName: “hammer_01”, Size: “medium”, Color: “blue”}
+- Documents can be independent units, which makes performance and horizontal scalability better, and unstructured data can be stored easily.
+- Examples include: Apache CouchDB, MongoDB, Azure DocumentDB.
+
+# Databases 
 
 ## Normalization vs Denormalization
 
@@ -167,6 +195,30 @@ Properties of B-Tree:
 
 # Concurrency Control
 
+## Transaction
+
+A set of logically related operations is known as transaction. The main operations of a transaction are:
+* Read(A): Read operations Read(A) or R(A) reads the value of A from the database and stores it in a buffer in main memory.
+* Write (A): Write operation Write(A) or W(A) writes the value back to the database from buffer.
+* Commit: After all instructions of a transaction are successfully executed, the changes made by transaction are made permanent in the database.
+* Rollback: If a transaction is not able to execute all operations successfully, all the changes made by transaction are undone.
+
+### Properties of a transaction
+
+* Atomicity: As a transaction is set of logically related operations, either all of them should be executed or none. A debit transaction discussed above should either execute all three operations or none.If debit transaction fails after executing operation 1 and 2 then its new value 4000 will not be updated in the database which leads to inconsistency.
+
+* Consistency: If operations of debit and credit transactions on same account are executed concurrently, it may leave database in an inconsistent state.
+
+* Isolation: Result of a transaction should not be visible to others before transaction is committed. For example, Let us assume that A’s balance is Rs. 5000 and T1 debits Rs. 1000 from A. A’s new balance will be 4000. If T2 credits Rs. 500 to A’s new balance, A will become 4500 and after this T1 fails. Then we have to rollback T2 as well because it is using value produced by T1. So a transaction results are not made visible to other transactions before it commits.
+
+* Durable: Once database has committed a transaction, the changes made by the transaction should be permanent. e.g.; If a person has credited $500000 to his account, bank can’t say that the update has been lost. To avoid this problem, multiple copies of database are stored at different locations.
+
+## Schedule
+
+A schedule is a series of operations from one or more transactions. A schedule can be of two types:
+* Serial Schedule: When one transaction completely executes before starting another transaction, the schedule is called serial schedule. A serial schedule is always consistent. e.g.; If a schedule S has debit transaction T1 and credit transaction T2, possible serial schedules are T1 followed by T2 (T1->T2) or T2 followed by T1 ((T2->T1). A serial schedule has low throughput and less resource utilization.
+* Concurrent Schedule: When operations of a transaction are interleaved with operations of other transactions of a schedule, the schedule is called Concurrent schedule. e.g.; Schedule of debit and credit transaction shown in Table 1 is concurrent in nature. But concurrency can lead to inconsistency in the database.  The above example of a concurrent schedule is also inconsistent.
+
 # Race condition
 
 # ACID
@@ -212,8 +264,30 @@ NoSQL databases are a bit different. NoSQL databases are often designed to ensur
 * update or edit existing entries;
 * delete, deactivate, or remove existing entries.
 
-# master-slave
+# DBMS: database management system
 
-# zookiper
+Wikipedia has a great summary: “A database management system is a software application that interacts with the user, other applications, and the database itself to capture and analyze data. A general-purpose DBMS is designed to allow the definition, creation, querying, update, and administration of databases.” MySQL, PostgreSQL, Oracle — these are database management systems.
 
-# Shard
+# Middleware
+
+Database-oriented middleware is “all the software that connects some application to some database.” Some definitions include the DBMS under this category. Middleware might also facilitate access to a DBMS via a web server for example, without having to worry about database-specific characteristics.
+
+# Scalability
+
+Scalability is the capability of a database to handle a growing amount of data. There are two types of scalability:
+- Vertical scalability is simply adding more capacity to a single machine. Virtually every database is vertically scalable.
+- Horizontal scalability refers to adding capacity by adding more machines. The DBMS needs to be able to partition, manage, and maintain data across all machines.
+
+## master-slave
+
+## zookiper
+
+## Shard
+
+
+
+# Links
+
+https://medium.com/@rwilliams_bv/intro-to-databases-for-people-who-dont-know-a-whole-lot-about-them-a64ae9af712
+https://www.geeksforgeeks.org/
+Yandex
