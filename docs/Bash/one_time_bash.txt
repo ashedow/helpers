@@ -244,3 +244,11 @@ Check ssh connection
 for host in $(cat hostlist.txt); do ssh -q -o "BatchMode=yes" -o "StrictHostKeyChecking=no" username@$host "echo 2>&1" && echo " $i OK" || echo "$i NOK"; done
 ```
 
+***
+
+Var sizes
+getconf -a |grep MAX
+
+https://man7.org/linux/man-pages/man2/execve.2.html -  `On architectures with a 4-kB page size, this yields a maximum size of 128 kB. (edited`
+
+***

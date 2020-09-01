@@ -1,9 +1,5 @@
 # OTP
 
-> https://github.com/erlang/otp
-> http://erlang.org/doc/system_architecture_intro/sys_arch_intro.html
-> https://learnyousomeerlang.com/content
-
 OTP is a set of Erlang libraries, which consists of the Erlang runtime system, a number of ready-to-use components mainly written in Erlang, and a set of design principles for Erlang programs.
 It contains:
  * an Erlang interpreter (which is called BEAM);
@@ -62,8 +58,24 @@ The BEAM (Bogdan/Björn's Erlang Abstract Machine) is the Erlang virtual machine
 BEAM executes bytecode which is converted to threaded code at load time. It also includes a native code compiler on most platforms, developed by the High Performance Erlang Project (HiPE) at Uppsala University.
 As part of the ERTS, the BEAM is responsible for scheduling Erlang processes. This is where the concurrency magic happens.
 
+
 The BEAM creates a thread per core, a scheduler per thread and a run queue per scheduler. It is also responsible for populating all of the run queues with processes for the schedulers to execute in parallel. This is managed by the BEAM's Load Balancer. The load balancer implements migration logic to allocate processes between the run queues on the separate cores. This logic helps the load balancer take jobs away from overloaded queues ("task stealing") and give them to empty or underloaded ones ("task migration"). The load balancer aims to keep the maximum number of run-able processes equal across schedulers.
 
+* BEAM uses exactly one Operating System Thread from each processor’s core.
+* On each thread, BEAM runs its own scheduler.
+* Each scheduler has its own run queue.
+* Data is not shared between queues.
+* Processes (queues) do not share memory, allowing you to replicate your data for resilience and distribute it for scale.
+* run queue contains awaiting processes which are pulled by the scheduler so they can be run.
+* Schedulers don’t have delays due to slowly running processes.
+* Load Balancer is responsible for distributing processes between run queues on the separate cores:
+    * task stealing
+    * Task migration
+
+### Scheduler
+
+
+![](beam_1.png)
 
 
 ### Registers
@@ -103,3 +115,43 @@ A: Allocate/ Check for required stack space, call garbage collection if necessar
 I: Initialize a local variable y(n).
 D: Copy the continuation program pointer from the current stack frame into CP, discard the frame. Update the stack-top pointer E.
 ...
+
+## Concurrency and parallelism BEM vs JVM
+
+The BEAM provides light-weight processes to give context to the running code. These processes, also called actors, don’t share memory, but communicate through message passing, copying data from one process to another. Message passing is a feature that the virtual machine implements through mailboxes owned by individual processes. The message passing is a non-blocking operation, which means that sending a message to another process is almost instantaneous and the execution of the sender is not blocked. The messages sent are in the form of immutable data, copied from the stack of the sending process to the mailbox of the receiving one. This is achieved without the need for locks and mutexes among the processes, only a lock on the mailbox in case multiple processes send a message to the same recipient in parallel.
+
+BEAM:
+* BEAM is built for concurrency
+* BEAM has the ability to break a program into small, light-weight processes. Managing these processes is the task of the scheduler. 
+* BEAM comes with its own scheduler.
+* GC: Data is copied, not mutated and the fact that processes do not share memory removes any process interdependencies, which, as a result, do not need to be managed.
+* Garbage collection is run only when needed, on a per process basis, without affecting other processes waiting in the run queue. VM is never stopped as a whole - only specific processes are, and never all of them at the same time. In practice, it is just part of what a process does and treated as another reduction. 
+*  Under the hood the VM allocates big chunks of memory and uses custom allocators to store the data efficiently and minimise the overhead of system calls. This has two visible effects:
+    1) The used memory decreases gradually after the space is not needed
+    2) Reallocating huge amounts of data might mean doubling the current working memory.
+* Hot Code Loading
+
+Do not use BEAM ifyou need to:
+* handling a few events in parallel, and having to handle them fast
+* number crunching
+
+JVM:
+* The JVM is built for parallelism
+* JVM - maps its threads to OS threads and lets the operating system schedule them, the 
+* GC: JVM is the ability to swap garbage collectors, so by using a commercial GC, it is also possible to achieve non-stopping GC in the JVM.
+
+
+
+## Links
+
+https://github.com/erlang/otp
+
+http://erlang.org/doc/system_architecture_intro/sys_arch_intro.html
+
+https://learnyousomeerlang.com/content
+
+https://medium.com/@patrykbak/concurrency-and-parallelism-with-elixir-and-beam-c683b2215c38
+
+https://www.theerlangelist.com/article/spawn_or_not
+
+https://www.erlang-solutions.com/blog/optimising-for-concurrency-comparing-and-contrasting-the-beam-and-jvm-virtual-machines.html

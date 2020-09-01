@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<title>Green threads - Wikipedia</title>
+<script>document.documentElement.className="client-js";RLCONF={"wgBreakFrames":!1,"wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgRequestId":"566344dc-d75e-4564-809c-d33e4e1d9e66","wgCSPNonce":!1,"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"Green_threads","wgTitle":"Green threads","wgCurRevisionId":974204760,"wgRevisionId":974204760,"wgArticleId":7639649,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["CS1 errors: missing periodical","Articles with short description","Short description matches Wikidata","Articles needing additional references from March 2016","All articles needing additional references","Wikipedia articles in need of updating from February 2014",
+"All Wikipedia articles in need of updating","All articles with unsourced statements","Articles with unsourced statements from November 2019","Wikipedia articles needing clarification from June 2015","Articles with unsourced statements from June 2015","Articles with unsourced statements from July 2010","Threads (computing)","Java platform"],"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgRelevantPageName":"Green_threads","wgRelevantArticleId":7639649,"wgIsProbablyEditable":!0,"wgRelevantPageIsProbablyEditable":!0,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgMediaViewerOnClick":!0,"wgMediaViewerEnabledByDefault":!0,"wgPopupsReferencePreviews":!1,"wgPopupsConflictsWithNavPopupGadget":!1,"wgVisualEditor":{"pageLanguageCode":"en","pageLanguageDir":"ltr","pageVariantFallbacks":"en"},"wgMFDisplayWikibaseDescriptions":{"search":!0,"nearby":!0,"watchlist":!0,"tagline":!1},"wgWMESchemaEditAttemptStepOversample":!1,"wgULSCurrentAutonym":"English",
+"wgNoticeProject":"wikipedia","wgCentralAuthMobileDomain":!1,"wgEditSubmitButtonLabelPublish":!0,"wgULSPosition":"interlanguage","wgWikibaseItemId":"Q3555595"};RLSTATE={"ext.globalCssJs.user.styles":"ready","site.styles":"ready","noscript":"ready","user.styles":"ready","ext.globalCssJs.user":"ready","user":"ready","user.options":"loading","ext.cite.styles":"ready","ext.pygments":"ready","skins.vector.styles.legacy":"ready","mediawiki.toc.styles":"ready","ext.visualEditor.desktopArticleTarget.noscript":"ready","ext.uls.interlanguage":"ready","ext.wikimediaBadges":"ready","wikibase.client.init":"ready"};RLPAGEMODULES=["ext.cite.ux-enhancements","site","mediawiki.page.ready","mediawiki.toc","skins.vector.legacy.js","ext.gadget.ReferenceTooltips","ext.gadget.charinsert","ext.gadget.extra-toolbar-buttons","ext.gadget.refToolbar","ext.gadget.switcher","ext.centralauth.centralautologin","mmv.head","mmv.bootstrap.autostart","ext.popups","ext.visualEditor.desktopArticleTarget.init",
+"ext.visualEditor.targetLoader","ext.eventLogging","ext.wikimediaEvents","ext.navigationTiming","ext.uls.compactlinks","ext.uls.interface","ext.cx.eventlogging.campaigns","ext.quicksurveys.init","ext.centralNotice.geoIP","ext.centralNotice.startUp"];</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("user.options@1hzgi",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});});</script>
+<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=ext.cite.styles%7Cext.pygments%2CwikimediaBadges%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cmediawiki.toc.styles%7Cskins.vector.styles.legacy%7Cwikibase.client.init&amp;only=styles&amp;skin=vector"/>
+<script async="" src="/w/load.php?lang=en&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=vector"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<link rel="stylesheet" href="/w/load.php?lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=vector"/>
+<meta name="generator" content="MediaWiki 1.36.0-wmf.5"/>
+<meta name="referrer" content="origin"/>
+<meta name="referrer" content="origin-when-crossorigin"/>
+<meta name="referrer" content="origin-when-cross-origin"/>
+<link rel="alternate" media="only screen and (max-width: 720px)" href="//en.m.wikipedia.org/wiki/Green_threads"/>
+<link rel="alternate" type="application/x-wiki" title="Edit this page" href="/w/index.php?title=Green_threads&amp;action=edit"/>
+<link rel="edit" title="Edit this page" href="/w/index.php?title=Green_threads&amp;action=edit"/>
+<link rel="apple-touch-icon" href="/static/apple-touch/wikipedia.png"/>
+<link rel="shortcut icon" href="/static/favicon/wikipedia.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Wikipedia (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="//en.wikipedia.org/w/api.php?action=rsd"/>
+<link rel="license" href="//creativecommons.org/licenses/by-sa/3.0/"/>
+<link rel="canonical" href="https://en.wikipedia.org/wiki/Green_threads"/>
+<link rel="dns-prefetch" href="//login.wikimedia.org"/>
+<link rel="dns-prefetch" href="//meta.wikimedia.org" />
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject mw-editable page-Green_threads rootpage-Green_threads skin-vector action-view skin-vector-legacy"><div id="mw-page-base" class="noprint"></div>
+<div id="mw-head-base" class="noprint"></div>
+<div id="content" class="mw-body" role="main">
+	<a id="top"></a>
+	<div id="siteNotice" class="mw-body-content"><!-- CentralNotice --></div>
+	<div class="mw-indicators mw-body-content">
+	</div>
+	<h1 id="firstHeading" class="firstHeading" lang="en">Green threads</h1>
+	<div id="bodyContent" class="mw-body-content">
+		<div id="siteSub" class="noprint">From Wikipedia, the free encyclopedia</div>
+		<div id="contentSub"></div>
+		<div id="contentSub2"></div>
+		
+		<div id="jump-to-nav"></div>
+		<a class="mw-jump-link" href="#mw-head">Jump to navigation</a>
+		<a class="mw-jump-link" href="#searchInput">Jump to search</a>
+		<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div class="shortdescription nomobile noexcerpt noprint searchaux" style="display:none">Lightweight threading implemented in userspace</div>
+<table class="box-More_citations_needed plainlinks metadata ambox ambox-content ambox-Refimprove" role="presentation"><tbody><tr><td class="mbox-image"><div style="width:52px"><a href="/wiki/File:Question_book-new.svg" class="image"><img alt="" src="//upload.wikimedia.org/wikipedia/en/thumb/9/99/Question_book-new.svg/50px-Question_book-new.svg.png" decoding="async" width="50" height="39" srcset="//upload.wikimedia.org/wikipedia/en/thumb/9/99/Question_book-new.svg/75px-Question_book-new.svg.png 1.5x, //upload.wikimedia.org/wikipedia/en/thumb/9/99/Question_book-new.svg/100px-Question_book-new.svg.png 2x" data-file-width="512" data-file-height="399" /></a></div></td><td class="mbox-text"><div class="mbox-text-span">This article <b>needs additional citations for <a href="/wiki/Wikipedia:Verifiability" title="Wikipedia:Verifiability">verification</a></b>.<span class="hide-when-compact"> Please help <a class="external text" href="https://en.wikipedia.org/w/index.php?title=Green_threads&amp;action=edit">improve this article</a> by <a href="/wiki/Help:Referencing_for_beginners" title="Help:Referencing for beginners">adding citations to reliable sources</a>. Unsourced material may be challenged and removed.<br /><small><span class="plainlinks"><i>Find sources:</i>&#160;<a rel="nofollow" class="external text" href="//www.google.com/search?as_eq=wikipedia&amp;q=%22Green+threads%22">"Green threads"</a>&#160;–&#160;<a rel="nofollow" class="external text" href="//www.google.com/search?tbm=nws&amp;q=%22Green+threads%22+-wikipedia">news</a>&#160;<b>·</b> <a rel="nofollow" class="external text" href="//www.google.com/search?&amp;q=%22Green+threads%22+site:news.google.com/newspapers&amp;source=newspapers">newspapers</a>&#160;<b>·</b> <a rel="nofollow" class="external text" href="//www.google.com/search?tbs=bks:1&amp;q=%22Green+threads%22+-wikipedia">books</a>&#160;<b>·</b> <a rel="nofollow" class="external text" href="//scholar.google.com/scholar?q=%22Green+threads%22">scholar</a>&#160;<b>·</b> <a rel="nofollow" class="external text" href="https://www.jstor.org/action/doBasicSearch?Query=%22Green+threads%22&amp;acc=on&amp;wc=on">JSTOR</a></span></small></span>  <small class="date-container"><i>(<span class="date">March 2016</span>)</i></small><small class="hide-when-compact"><i> (<a href="/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove this template message</a>)</i></small></div></td></tr></tbody></table>
+<p>In <a href="/wiki/Computer_programming" title="Computer programming">computer programming</a>, <b>green threads</b> are <a href="/wiki/Thread_(computing)" title="Thread (computing)">threads</a> that are scheduled by a <a href="/wiki/Runtime_library" title="Runtime library">runtime library</a> or <a href="/wiki/Virtual_machine" title="Virtual machine">virtual machine</a> (VM) instead of natively by the underlying <a href="/wiki/Operating_system" title="Operating system">operating system</a> (OS). Green threads emulate multithreaded environments without relying on any native OS abilities, and they are managed in <a href="/wiki/User_space" title="User space">user space</a> instead of <a href="/wiki/Kernel_(operating_system)" title="Kernel (operating system)">kernel</a> space, enabling them to work in environments that do not have native thread support.<sup id="cite_ref-javaworld_1-0" class="reference"><a href="#cite_note-javaworld-1">&#91;1&#93;</a></sup>
+</p>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Etymology"><span class="tocnumber">1</span> <span class="toctext">Etymology</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Performance"><span class="tocnumber">2</span> <span class="toctext">Performance</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Green_threads_in_the_Java_virtual_machine"><span class="tocnumber">3</span> <span class="toctext">Green threads in the Java virtual machine</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Green_threads_in_other_languages"><span class="tocnumber">4</span> <span class="toctext">Green threads in other languages</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#See_also"><span class="tocnumber">5</span> <span class="toctext">See also</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#References"><span class="tocnumber">6</span> <span class="toctext">References</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#External_links"><span class="tocnumber">7</span> <span class="toctext">External links</span></a></li>
+</ul>
+</div>
+
+<h2><span class="mw-headline" id="Etymology">Etymology</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=1" title="Edit section: Etymology">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>Green threads refers to the name of the original thread <a href="/wiki/Library_(computing)" title="Library (computing)">library</a> for the programming language <a href="/wiki/Java_(programming_language)" title="Java (programming language)">Java</a>. It was designed by <i>The Green Team</i> at <a href="/wiki/Sun_Microsystems" title="Sun Microsystems">Sun Microsystems</a>.<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">&#91;2&#93;</a></sup>
+</p>
+<h2><span class="mw-headline" id="Performance">Performance</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=2" title="Edit section: Performance">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<table class="box-Update plainlinks metadata ambox ambox-content ambox-Update" role="presentation"><tbody><tr><td class="mbox-image"><div style="width:52px"><img alt="Ambox current red Americas.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/5/53/Ambox_current_red_Americas.svg/42px-Ambox_current_red_Americas.svg.png" decoding="async" width="42" height="34" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/5/53/Ambox_current_red_Americas.svg/63px-Ambox_current_red_Americas.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/5/53/Ambox_current_red_Americas.svg/84px-Ambox_current_red_Americas.svg.png 2x" data-file-width="360" data-file-height="290" /></div></td><td class="mbox-text"><div class="mbox-text-span">This section needs to be <b>updated</b>.<span class="hide-when-compact"> Please update this article to reflect recent events or newly available information.</span>  <small class="date-container"><i>(<span class="date">February 2014</span>)</i></small></div></td></tr></tbody></table>
+<p>On a <a href="/wiki/Multi-core_processor" title="Multi-core processor">multi-core processor</a>, native thread implementations can automatically assign work to multiple processors, whereas green thread implementations normally cannot.<sup id="cite_ref-javaworld_1-1" class="reference"><a href="#cite_note-javaworld-1">&#91;1&#93;</a></sup><sup id="cite_ref-3" class="reference"><a href="#cite_note-3">&#91;3&#93;</a></sup> Green threads can be started much faster on some VMs. On uniprocessor computers, however, the most efficient model has not yet been clearly determined.
+</p><p>Benchmarks on computers running the (long outdated) <a href="/wiki/Linux_kernel" title="Linux kernel">Linux kernel</a> version 2.2 have shown that:<sup id="cite_ref-4" class="reference"><a href="#cite_note-4">&#91;4&#93;</a></sup>
+</p>
+<ul><li>Green threads significantly outperform Linux native threads on thread activation and <a href="/wiki/Thread_synchronization" class="mw-redirect" title="Thread synchronization">synchronization</a>.</li>
+<li>Linux native threads have slightly better performance on <a href="/wiki/Input/output" title="Input/output">input/output</a> (I/O) and <a href="/wiki/Context_switch" title="Context switch">context switching</a> operations.</li></ul>
+<p>When a green thread executes a blocking system call, not only is that thread blocked, but all of the threads within the process are blocked.<sup id="cite_ref-5" class="reference"><a href="#cite_note-5">&#91;5&#93;</a></sup> To avoid that problem, green threads must use <a href="/wiki/Asynchronous_I/O" title="Asynchronous I/O">asynchronous I/O</a> operations, although the increased complexity on the user side can be reduced if the <a href="/wiki/Virtual_machine" title="Virtual machine">virtual machine</a> implementing the green threads spawns specific I/O processes (hidden to the user) for each I/O operation.<sup class="noprint Inline-Template Template-Fact" style="white-space:nowrap;">&#91;<i><a href="/wiki/Wikipedia:Citation_needed" title="Wikipedia:Citation needed"><span title="This claim needs references to reliable sources. (November 2019)">citation needed</span></a></i>&#93;</sup>
+</p><p>There are also mechanisms which allow use of native threads and reduce the overhead of thread activation and synchronization:
+</p>
+<ul><li><a href="/wiki/Thread_pool" title="Thread pool">Thread pools</a> reduce the cost of spawning a new thread by reusing a limited number of threads.<sup id="cite_ref-6" class="reference"><a href="#cite_note-6">&#91;6&#93;</a></sup></li>
+<li>Languages which use virtual machines and native threads can use <a href="/wiki/Escape_analysis" title="Escape analysis">escape analysis</a> to avoid synchronizing blocks of code when unneeded.<sup id="cite_ref-7" class="reference"><a href="#cite_note-7">&#91;7&#93;</a></sup></li></ul>
+<h2><span class="mw-headline" id="Green_threads_in_the_Java_virtual_machine">Green threads in the Java virtual machine</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=3" title="Edit section: Green threads in the Java virtual machine">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>In <a href="/wiki/Java_1.1" class="mw-redirect" title="Java 1.1">Java 1.1</a>, green threads were the only threading model used by the <a href="/wiki/Java_virtual_machine" title="Java virtual machine">Java virtual machine</a> (JVM),<sup id="cite_ref-8" class="reference"><a href="#cite_note-8">&#91;8&#93;</a></sup> at least on <a href="/wiki/Solaris_(operating_system)" title="Solaris (operating system)">Solaris</a>. As green threads have some limitations compared to native threads, subsequent Java versions dropped them in favor of native threads.<sup id="cite_ref-sco_9-0" class="reference"><a href="#cite_note-sco-9">&#91;9&#93;</a></sup><sup id="cite_ref-10" class="reference"><a href="#cite_note-10">&#91;10&#93;</a></sup>
+</p><p>An exception to this is the <a href="/wiki/Squawk_virtual_machine" title="Squawk virtual machine">Squawk virtual machine</a>, which is a mixture between an <a href="/wiki/Operating_system" title="Operating system">operating system</a> for low-power devices and a Java virtual machine. It uses green threads to minimize the use of <a href="/wiki/Native_code" class="mw-redirect" title="Native code">native code</a>, and to support migrating its isolates.
+</p><p>Kilim<sup id="cite_ref-11" class="reference"><a href="#cite_note-11">&#91;11&#93;</a></sup><sup id="cite_ref-12" class="reference"><a href="#cite_note-12">&#91;12&#93;</a></sup> and Quasar<sup id="cite_ref-13" class="reference"><a href="#cite_note-13">&#91;13&#93;</a></sup><sup id="cite_ref-14" class="reference"><a href="#cite_note-14">&#91;14&#93;</a></sup>
+are open-source projects which implement green threads on later versions of the JVM by modifying the <a href="/wiki/Java_bytecode" title="Java bytecode">Java bytecode</a> produced by the Java compiler (Quasar also supports <a href="/wiki/Kotlin_(programming_language)" title="Kotlin (programming language)">Kotlin</a> and <a href="/wiki/Clojure" title="Clojure">Clojure</a>).
+</p>
+<h2><span class="mw-headline" id="Green_threads_in_other_languages">Green threads in other languages</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=4" title="Edit section: Green threads in other languages">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<p>There are some other <a href="/wiki/Programming_language" title="Programming language">programming languages</a> that implement equivalents of green threads instead of native threads. Examples:
+</p>
+<ul><li><a href="/wiki/Chicken_(Scheme_implementation)" title="Chicken (Scheme implementation)">Chicken</a> Scheme uses lightweight user-level threads based on first-class continuations<sup id="cite_ref-15" class="reference"><a href="#cite_note-15">&#91;15&#93;</a></sup></li>
+<li><a href="/wiki/Common_Lisp" title="Common Lisp">Common Lisp</a><sup id="cite_ref-16" class="reference"><a href="#cite_note-16">&#91;16&#93;</a></sup></li>
+<li><a href="/wiki/CPython" title="CPython">CPython</a> with <a rel="nofollow" class="external text" href="http://greenlet.readthedocs.org">greenlet</a>, <a rel="nofollow" class="external text" href="http://eventlet.net/">eventlet</a> and <a rel="nofollow" class="external text" href="http://gevent.org">gevent</a>, <a href="/wiki/PyPy" title="PyPy">PyPy</a><sup id="cite_ref-17" class="reference"><a href="#cite_note-17">&#91;17&#93;</a></sup></li>
+<li><a href="/wiki/Crystal_(programming_language)" title="Crystal (programming language)">Crystal</a> offers <a href="/wiki/Fiber_(computer_science)" title="Fiber (computer science)">fibers</a><sup id="cite_ref-18" class="reference"><a href="#cite_note-18">&#91;18&#93;</a></sup></li>
+<li><a href="/wiki/D_(programming_language)" title="D (programming language)">D</a> offers <a href="/wiki/Fiber_(computer_science)" title="Fiber (computer science)">fibers</a>, used for asynchronous I/O as the basis for tasks in the web framework <a href="/wiki/Vibe.d" title="Vibe.d">Vibe.d</a></li>
+<li><a href="/wiki/Dyalog_APL" class="mw-redirect" title="Dyalog APL">Dyalog APL</a> terms them <i>threads</i><sup id="cite_ref-19" class="reference"><a href="#cite_note-19">&#91;19&#93;</a></sup></li>
+<li><a href="/wiki/Erlang_(programming_language)" title="Erlang (programming language)">Erlang</a> <sup id="cite_ref-20" class="reference"><a href="#cite_note-20">&#91;20&#93;</a></sup></li>
+<li><a href="/wiki/Go_(programming_language)" title="Go (programming language)">Go</a><sup id="cite_ref-GoDogma_21-0" class="reference"><a href="#cite_note-GoDogma-21">&#91;21&#93;</a></sup></li>
+<li><a href="/wiki/Haskell_(programming_language)" title="Haskell (programming language)">Haskell</a><sup id="cite_ref-GoDogma_21-1" class="reference"><a href="#cite_note-GoDogma-21">&#91;21&#93;</a></sup></li>
+<li><a href="/wiki/Julia_(programming_language)" title="Julia (programming language)">Julia</a> uses green threads for its <a rel="nofollow" class="external text" href="http://docs.julialang.org/en/latest/manual/control-flow/#man-tasks-1">Tasks</a>.</li>
+<li><a href="/wiki/Limbo_(programming_language)" title="Limbo (programming language)">Limbo</a><sup id="cite_ref-22" class="reference"><a href="#cite_note-22">&#91;22&#93;</a></sup></li>
+<li><a href="/wiki/Lua_(programming_language)" title="Lua (programming language)">Lua</a> uses <a rel="nofollow" class="external text" href="http://lua-users.org/wiki/CoroutinesTutorial">coroutines</a> for concurrency. Lua 5.2 also offers true C coroutine semantics through the functions <a rel="nofollow" class="external text" href="http://www.lua.org/manual/5.2/manual.html#lua_yieldk">lua_yieldk</a>, <a rel="nofollow" class="external text" href="http://www.lua.org/manual/5.2/manual.html#lua_callk">lua_callk</a>, and <a rel="nofollow" class="external text" href="http://www.lua.org/manual/5.2/manual.html#lua_pcallk">lua_pcallk</a>. The <a rel="nofollow" class="external text" href="http://coco.luajit.org/">CoCo</a> extension allows true C coroutine semantics for Lua 5.1.</li>
+<li><a href="/wiki/Nim_(programming_language)" title="Nim (programming language)">Nim</a> provides asynchronous I/O and coroutines</li>
+<li><a href="/wiki/Occam_(programming_language)" title="Occam (programming language)">occam</a>, which prefers the term <i>process</i> instead of <i>thread</i> due to its origins in <a href="/wiki/Communicating_sequential_processes" title="Communicating sequential processes">communicating sequential processes</a></li>
+<li><a href="/wiki/Ruby_(programming_language)" title="Ruby (programming language)">Ruby</a> before version 1.9<sup id="cite_ref-23" class="reference"><a href="#cite_note-23">&#91;23&#93;</a></sup></li>
+<li><a href="/wiki/Racket_(programming_language)" title="Racket (programming language)">Racket</a> (native threads are also available through Places<sup id="cite_ref-24" class="reference"><a href="#cite_note-24">&#91;24&#93;</a></sup>)</li>
+<li><a href="/wiki/Rust_(programming_language)" title="Rust (programming language)">Rust</a> support for green-threads is possible using <i>mioco</i> library</li>
+<li><a href="/wiki/SML/NJ" class="mw-redirect" title="SML/NJ">SML/NJ</a>'s implementation of <a href="/wiki/Concurrent_ML" title="Concurrent ML">Concurrent ML</a></li>
+<li><a href="/wiki/Smalltalk" title="Smalltalk">Smalltalk</a> (most dialects: <a href="/wiki/Squeak" title="Squeak">Squeak</a>, VisualWorks, <a href="/wiki/GNU_Smalltalk" title="GNU Smalltalk">GNU Smalltalk</a>, etc.)</li>
+<li><a href="/wiki/Stackless_Python" title="Stackless Python">Stackless Python</a> supports either <a href="/wiki/Preemption_(computing)" title="Preemption (computing)">preemptive multitasking</a> or cooperative multitasking through microthreads (termed <i>tasklets</i>).<sup id="cite_ref-25" class="reference"><a href="#cite_note-25">&#91;25&#93;</a></sup></li>
+<li><a href="/wiki/Tcl" title="Tcl">Tcl</a> has <a rel="nofollow" class="external text" href="http://www.tcl.tk/man/tcl8.6/TclCmd/coroutine.htm">coroutines</a> and an event loop<sup id="cite_ref-26" class="reference"><a href="#cite_note-26">&#91;26&#93;</a></sup></li>
+<li><a href="/wiki/PHP" title="PHP">PHP</a> supports green threads through <a rel="nofollow" class="external text" href="https://nikic.github.io/2012/12/22/Cooperative-multitasking-using-coroutines-in-PHP.html">coroutines</a></li></ul>
+<p>The <a href="/wiki/Erlang_(programming_language)" title="Erlang (programming language)">Erlang</a> virtual machine has what might be called <i>green processes</i> – they are like operating system processes (they do not share state like threads do) but are implemented within the Erlang Run Time System (erts). These are sometimes termed <i>green threads</i>, but have significant differences<sup class="noprint Inline-Template" style="margin-left:0.1em; white-space:nowrap;">&#91;<i><a href="/wiki/Wikipedia:Please_clarify" title="Wikipedia:Please clarify"><span title="The text near this tag may need clarification or removal of jargon. (June 2015)">clarification needed</span></a></i>&#93;</sup> from standard green threads.<sup class="noprint Inline-Template Template-Fact" style="white-space:nowrap;">&#91;<i><a href="/wiki/Wikipedia:Citation_needed" title="Wikipedia:Citation needed"><span title="This claim needs references to reliable sources. (June 2015)">citation needed</span></a></i>&#93;</sup>
+</p><p>In the case of GHC Haskell, a context switch occurs at the first allocation after a configurable timeout. GHC threads are also potentially run on one or more OS threads during their lifetime (there is a many-to-many relationship between GHC threads and OS threads), allowing for parallelism on <a href="/wiki/Symmetric_multiprocessing" title="Symmetric multiprocessing">symmetric multiprocessing</a> machines, while not creating more costly OS threads than needed to run on the available number of cores.<sup class="noprint Inline-Template Template-Fact" style="white-space:nowrap;">&#91;<i><a href="/wiki/Wikipedia:Citation_needed" title="Wikipedia:Citation needed"><span title="This claim needs references to reliable sources. (July 2010)">citation needed</span></a></i>&#93;</sup>
+</p><p>Occam is unusual in this list because its original implementation was made for the <a href="/wiki/Transputer" title="Transputer">Transputer</a>, and hence no virtual machine was needed. Later ports to other processors have introduced a virtual machine modeled on the design of the Transputer, an effective choice because of the low overheads involved.
+</p><p>Most Smalltalk virtual machines do not count evaluation steps; however, the VM can still preempt the executing thread on external signals (such as expiring timers, or I/O becoming available). Usually <a href="/wiki/Round-robin_scheduling" title="Round-robin scheduling">round-robin scheduling</a> is used so that a high-priority process that wakes up regularly will effectively implement <a href="/wiki/Preemption_(computing)#Preemptive_multitasking" title="Preemption (computing)">time-sharing preemption</a>:
+</p>
+<div class="mw-highlight mw-highlight-lang-smalltalk mw-content-ltr" dir="ltr"><pre><span></span> [
+    [(<span class="nc">Delay</span> <span class="nf">forMilliseconds:</span> <span class="m">50</span>) <span class="nf">wait</span>] <span class="nf">repeat</span>
+ ] <span class="nf">forkAt:</span> <span class="nc">Processor</span> <span class="nf">highIOPriority</span>
+</pre></div>
+<p>Other implementations, e.g., QKS Smalltalk, are always time-sharing. Unlike most green thread implementations, QKS also supports preventing <a href="/wiki/Priority_inversion" title="Priority inversion">priority inversion</a>.
+</p>
+<h2><span class="mw-headline" id="See_also">See also</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=5" title="Edit section: See also">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<ul><li><a href="/wiki/Async/await" title="Async/await">Async/await</a></li>
+<li><a href="/wiki/Light-weight_process" title="Light-weight process">Light-weight process</a></li>
+<li><a href="/wiki/Coroutine" title="Coroutine">Coroutine</a></li>
+<li><a href="/wiki/Java_virtual_machine" title="Java virtual machine">Java virtual machine</a></li>
+<li><a href="/wiki/Global_interpreter_lock" title="Global interpreter lock">Global interpreter lock</a></li>
+<li><a href="/wiki/Fiber_(computer_science)" title="Fiber (computer science)">Fiber (computer science)</a></li>
+<li><a href="/wiki/GNU_Portable_Threads" title="GNU Portable Threads">GNU Portable Threads</a></li>
+<li><a href="/wiki/Protothreads" class="mw-redirect" title="Protothreads">Protothreads</a></li></ul>
+<h2><span class="mw-headline" id="References">References</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=6" title="Edit section: References">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<div class="reflist" style="list-style-type: decimal;">
+<div class="mw-references-wrap mw-references-columns"><ol class="references">
+<li id="cite_note-javaworld-1"><span class="mw-cite-backlink">^ <a href="#cite_ref-javaworld_1-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-javaworld_1-1"><sup><i><b>b</b></i></sup></a></span> <span class="reference-text"><cite id="CITEREFSintes2001" class="citation web cs1">Sintes, Tony (April 13, 2001). <a rel="nofollow" class="external text" href="https://www.infoworld.com/article/2077383/four-for-the-ages.html">"Four for the ages"</a>. <i><a href="/wiki/JavaWorld" class="mw-redirect" title="JavaWorld">JavaWorld</a></i><span class="reference-accessdate">. Retrieved <span class="nowrap">2020-07-14</span></span>. <q><i>Green threads, the threads provided by the JVM, run at the user level, meaning that the JVM creates and schedules the threads itself. Therefore, the operating system kernel doesn't create or schedule them. Instead, the underlying OS sees the JVM only as one thread. Green threads prove inefficient for a number of reasons. Foremost, green threads cannot take advantage of a multiprocessor system(...) Thus, the JVM threads are bound to run within that single JVM thread that runs inside a single processor.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=JavaWorld&amp;rft.atitle=Four+for+the+ages&amp;rft.date=2001-04-13&amp;rft.aulast=Sintes&amp;rft.aufirst=Tony&amp;rft_id=https%3A%2F%2Fwww.infoworld.com%2Farticle%2F2077383%2Ffour-for-the-ages.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><style data-mw-deduplicate="TemplateStyles:r951705291">.mw-parser-output cite.citation{font-style:inherit}.mw-parser-output .citation q{quotes:"\"""\"""'""'"}.mw-parser-output .id-lock-free a,.mw-parser-output .citation .cs1-lock-free a{background-image:url("//upload.wikimedia.org/wikipedia/commons/thumb/6/65/Lock-green.svg/9px-Lock-green.svg.png");background-image:linear-gradient(transparent,transparent),url("//upload.wikimedia.org/wikipedia/commons/6/65/Lock-green.svg");background-repeat:no-repeat;background-size:9px;background-position:right .1em center}.mw-parser-output .id-lock-limited a,.mw-parser-output .id-lock-registration a,.mw-parser-output .citation .cs1-lock-limited a,.mw-parser-output .citation .cs1-lock-registration a{background-image:url("//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Lock-gray-alt-2.svg/9px-Lock-gray-alt-2.svg.png");background-image:linear-gradient(transparent,transparent),url("//upload.wikimedia.org/wikipedia/commons/d/d6/Lock-gray-alt-2.svg");background-repeat:no-repeat;background-size:9px;background-position:right .1em center}.mw-parser-output .id-lock-subscription a,.mw-parser-output .citation .cs1-lock-subscription a{background-image:url("//upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lock-red-alt-2.svg/9px-Lock-red-alt-2.svg.png");background-image:linear-gradient(transparent,transparent),url("//upload.wikimedia.org/wikipedia/commons/a/aa/Lock-red-alt-2.svg");background-repeat:no-repeat;background-size:9px;background-position:right .1em center}.mw-parser-output .cs1-subscription,.mw-parser-output .cs1-registration{color:#555}.mw-parser-output .cs1-subscription span,.mw-parser-output .cs1-registration span{border-bottom:1px dotted;cursor:help}.mw-parser-output .cs1-ws-icon a{background-image:url("//upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Wikisource-logo.svg/12px-Wikisource-logo.svg.png");background-image:linear-gradient(transparent,transparent),url("//upload.wikimedia.org/wikipedia/commons/4/4c/Wikisource-logo.svg");background-repeat:no-repeat;background-size:12px;background-position:right .1em center}.mw-parser-output code.cs1-code{color:inherit;background:inherit;border:inherit;padding:inherit}.mw-parser-output .cs1-hidden-error{display:none;font-size:100%}.mw-parser-output .cs1-visible-error{font-size:100%}.mw-parser-output .cs1-maint{display:none;color:#33aa33;margin-left:0.3em}.mw-parser-output .cs1-subscription,.mw-parser-output .cs1-registration,.mw-parser-output .cs1-format{font-size:95%}.mw-parser-output .cs1-kern-left,.mw-parser-output .cs1-kern-wl-left{padding-left:0.2em}.mw-parser-output .cs1-kern-right,.mw-parser-output .cs1-kern-wl-right{padding-right:0.2em}.mw-parser-output .citation .mw-selflink{font-weight:inherit}</style></span>
+</li>
+<li id="cite_note-2"><span class="mw-cite-backlink"><b><a href="#cite_ref-2">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://web.archive.org/web/20080530073139/http://java.sun.com/features/1998/05/birthday.html">"Java Technology: The Early Years"</a>. <i>java.sun.com</i>. 2014-12-22. Archived from <a rel="nofollow" class="external text" href="http://java.sun.com/features/1998/05/birthday.html">the original</a> on 2008-05-30.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=java.sun.com&amp;rft.atitle=Java+Technology%3A+The+Early+Years&amp;rft.date=2014-12-22&amp;rft_id=http%3A%2F%2Fjava.sun.com%2Ffeatures%2F1998%2F05%2Fbirthday.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-3"><span class="mw-cite-backlink"><b><a href="#cite_ref-3">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://www.jguru.com/faq/view.jsp?EID=143462">"What is the difference between "green" threads and "native" threads?"</a>. <i>jguru.com</i>. 2000-09-06<span class="reference-accessdate">. Retrieved <span class="nowrap">2009-06-01</span></span>. <q><i>On multi-CPU machines, native threads can run more than one thread simultaneously by assigning different threads to different CPUs. Green threads run on only one CPU.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=jguru.com&amp;rft.atitle=What+is+the+difference+between+%22green%22+threads+and+%22native%22+threads%3F&amp;rft.date=2000-09-06&amp;rft_id=http%3A%2F%2Fwww.jguru.com%2Ffaq%2Fview.jsp%3FEID%3D143462&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-4"><span class="mw-cite-backlink"><b><a href="#cite_ref-4">^</a></b></span> <span class="reference-text"><cite class="citation journal cs1">"Comparative performance evaluation of Java threads for embedded applications: Linux Thread vs. Green Thread". <a href="/wiki/CiteSeerX_(identifier)" class="mw-redirect" title="CiteSeerX (identifier)">CiteSeerX</a>&#160;<span class="cs1-lock-free" title="Freely accessible"><a rel="nofollow" class="external text" href="//citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.8.9238">10.1.1.8.9238</a></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.atitle=Comparative+performance+evaluation+of+Java+threads+for+embedded+applications%3A+Linux+Thread+vs.+Green+Thread&amp;rft_id=%2F%2Fciteseerx.ist.psu.edu%2Fviewdoc%2Fsummary%3Fdoi%3D10.1.1.8.9238&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span> <span class="cs1-hidden-error error citation-comment">Cite journal requires <code class="cs1-code">&#124;journal=</code> (<a href="/wiki/Help:CS1_errors#missing_periodical" title="Help:CS1 errors">help</a>)</span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-5"><span class="mw-cite-backlink"><b><a href="#cite_ref-5">^</a></b></span> <span class="reference-text"><cite id="CITEREFStallings2008" class="citation book cs1">Stallings, William (2008). <i>Operating Systems, Internal and Design Principles</i>. New Jersey: Prentice Hall. p.&#160;171. <a href="/wiki/ISBN_(identifier)" class="mw-redirect" title="ISBN (identifier)">ISBN</a>&#160;<a href="/wiki/Special:BookSources/9780136006329" title="Special:BookSources/9780136006329"><bdi>9780136006329</bdi></a>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Operating+Systems%2C+Internal+and+Design+Principles&amp;rft.place=New+Jersey&amp;rft.pages=171&amp;rft.pub=Prentice+Hall&amp;rft.date=2008&amp;rft.isbn=9780136006329&amp;rft.aulast=Stallings&amp;rft.aufirst=William&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-6"><span class="mw-cite-backlink"><b><a href="#cite_ref-6">^</a></b></span> <span class="reference-text"><cite id="CITEREFSieger2011" class="citation web cs1">Sieger, Nick (2011-07-22). <a rel="nofollow" class="external text" href="https://blog.engineyard.com/2011/concurrency-in-jruby">"Concurrency in JRuby"</a>. <a href="/wiki/Engine_Yard" title="Engine Yard">Engine Yard</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2013-01-26</span></span>. <q><i>For systems with large volumes of email, this naive approach may not work well. Native threads carry a bigger initialization cost and memory overhead than green threads, so JRuby normally cannot support more than about 10,000 threads. To work around this, we can use a thread pool.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Concurrency+in+JRuby&amp;rft.pub=Engine+Yard&amp;rft.date=2011-07-22&amp;rft.aulast=Sieger&amp;rft.aufirst=Nick&amp;rft_id=https%3A%2F%2Fblog.engineyard.com%2F2011%2Fconcurrency-in-jruby&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-7"><span class="mw-cite-backlink"><b><a href="#cite_ref-7">^</a></b></span> <span class="reference-text"><cite id="CITEREFGoetz2005" class="citation web cs1">Goetz, Brian (2005-10-18). <a rel="nofollow" class="external text" href="http://www-128.ibm.com/developerworks/java/library/j-jtp10185/">"Java theory and practice: Synchronization optimizations in Mustang"</a>. <a href="/wiki/IBM" title="IBM">IBM</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2013-01-26</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Java+theory+and+practice%3A+Synchronization+optimizations+in+Mustang&amp;rft.pub=IBM&amp;rft.date=2005-10-18&amp;rft.aulast=Goetz&amp;rft.aufirst=Brian&amp;rft_id=http%3A%2F%2Fwww-128.ibm.com%2Fdeveloperworks%2Fjava%2Flibrary%2Fj-jtp10185%2F&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-8"><span class="mw-cite-backlink"><b><a href="#cite_ref-8">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://docs.oracle.com/cd/E19455-01/806-3461/6jck06gqe/">"Java Threads in the Solaris Environment – Earlier Releases"</a>. <a href="/wiki/Oracle_Corporation" title="Oracle Corporation">Oracle Corporation</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2013-01-26</span></span>. <q><i>As a result, several problems arose: Java applications could not interoperate with existing MT applications in the Solaris environment, Java threads could not run in parallel on multiprocessors, An MT Java application could not harness true OS concurrency for faster applications on either uniprocessors or multiprocessors. To substantially increase application performance, the green threads library was replaced with native Solaris threads for Java on the Solaris 2.6 platform; this is carried forward on the Solaris 7 and Solaris 8 platforms.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Java+Threads+in+the+Solaris+Environment+%E2%80%93+Earlier+Releases&amp;rft.pub=Oracle+Corporation&amp;rft_id=http%3A%2F%2Fdocs.oracle.com%2Fcd%2FE19455-01%2F806-3461%2F6jck06gqe%2F&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-sco-9"><span class="mw-cite-backlink"><b><a href="#cite_ref-sco_9-0">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://www.sco.com/developers/java/j2sdk122-001/ReleaseNotes.html#THREADS">"Threads: Green or Native"</a>. <a href="/wiki/SCO_Group" title="SCO Group">SCO Group</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2013-01-26</span></span>. <q><i>The performance benefit from using native threads on an MP machine can be dramatic. For example, using an artificial benchmark where Java threads are doing processing independent of each other, there can be a three-fold overall speed improvement on a 4-CPU MP machine.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Threads%3A+Green+or+Native&amp;rft.pub=SCO+Group&amp;rft_id=http%3A%2F%2Fwww.sco.com%2Fdevelopers%2Fjava%2Fj2sdk122-001%2FReleaseNotes.html%23THREADS&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-10"><span class="mw-cite-backlink"><b><a href="#cite_ref-10">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://web.archive.org/web/20130116024929/http://www.codestyle.org/java/faq-Threads.shtml#greenthread">"Threads: Green or Native"</a>. codestyle.org. Archived from <a rel="nofollow" class="external text" href="http://www.codestyle.org/java/faq-Threads.shtml#greenthread">the original</a> on 2013-01-16<span class="reference-accessdate">. Retrieved <span class="nowrap">2013-01-26</span></span>. <q><i>There is a significant processing overhead for the JVM to keep track of thread states and swap between them, so green thread mode has been deprecated and removed from more recent Java implementations.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Threads%3A+Green+or+Native&amp;rft.pub=codestyle.org&amp;rft_id=http%3A%2F%2Fwww.codestyle.org%2Fjava%2Ffaq-Threads.shtml%23greenthread&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-11"><span class="mw-cite-backlink"><b><a href="#cite_ref-11">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://github.com/kilim/kilim">"kilim"</a>. <i>GitHub</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2016-06-09</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=GitHub&amp;rft.atitle=kilim&amp;rft_id=https%3A%2F%2Fgithub.com%2Fkilim%2Fkilim&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-12"><span class="mw-cite-backlink"><b><a href="#cite_ref-12">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://www.malhar.net/sriram/kilim/">"Kilim"</a>. <i>www.malhar.net</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2016-06-09</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=www.malhar.net&amp;rft.atitle=Kilim&amp;rft_id=http%3A%2F%2Fwww.malhar.net%2Fsriram%2Fkilim%2F&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-13"><span class="mw-cite-backlink"><b><a href="#cite_ref-13">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://github.com/puniverse/quasar">"Quasar Code on GitHub"</a>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Quasar+Code+on+GitHub&amp;rft_id=https%3A%2F%2Fgithub.com%2Fpuniverse%2Fquasar&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-14"><span class="mw-cite-backlink"><b><a href="#cite_ref-14">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://paralleluniverse.co/quasar">"Parallel Universe"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">6 December</span> 2015</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Parallel+Universe&amp;rft_id=https%3A%2F%2Fparalleluniverse.co%2Fquasar&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-15"><span class="mw-cite-backlink"><b><a href="#cite_ref-15">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://wiki.call-cc.org/man/4/Unit%20srfi-18/">"Chicken Scheme"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">5 November</span> 2017</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Chicken+Scheme&amp;rft_id=http%3A%2F%2Fwiki.call-cc.org%2Fman%2F4%2FUnit%2520srfi-18%2F&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-16"><span class="mw-cite-backlink"><b><a href="#cite_ref-16">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://github.com/thezerobit/green-threads">"thezerobit/green-threads"</a>. <i>GitHub</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2016-04-08</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=GitHub&amp;rft.atitle=thezerobit%2Fgreen-threads&amp;rft_id=https%3A%2F%2Fgithub.com%2Fthezerobit%2Fgreen-threads&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-17"><span class="mw-cite-backlink"><b><a href="#cite_ref-17">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://doc.pypy.org/en/latest/stackless.html">"Application-level Stackless features – PyPy 4.0.0 documentation"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">6 December</span> 2015</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Application-level+Stackless+features+%E2%80%93+PyPy+4.0.0+documentation&amp;rft_id=http%3A%2F%2Fdoc.pypy.org%2Fen%2Flatest%2Fstackless.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-18"><span class="mw-cite-backlink"><b><a href="#cite_ref-18">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://crystal-lang.org/docs/guides/concurrency.html">"Concurrency: GitBook"</a>. <i>crystal-lang.org</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2018-04-03</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=crystal-lang.org&amp;rft.atitle=Concurrency%3A+GitBook&amp;rft_id=https%3A%2F%2Fcrystal-lang.org%2Fdocs%2Fguides%2Fconcurrency.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-19"><span class="mw-cite-backlink"><b><a href="#cite_ref-19">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://help.dyalog.com/latest/Content/Language/Introduction/Threads/Multithreading%20Overview.htm">"Threads: Overview"</a>. <i>Dyalog APL 17.0 Help</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2018-12-14</span></span>. <q>A <i>thread</i> is a strand of execution in the APL workspace.</q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=Dyalog+APL+17.0+Help&amp;rft.atitle=Threads%3A+Overview&amp;rft_id=http%3A%2F%2Fhelp.dyalog.com%2Flatest%2FContent%2FLanguage%2FIntroduction%2FThreads%2FMultithreading%2520Overview.htm&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-20"><span class="mw-cite-backlink"><b><a href="#cite_ref-20">^</a></b></span> <span class="reference-text"><a rel="nofollow" class="external free" href="https://twitter.com/joeerl/status/1010485913393254401">https://twitter.com/joeerl/status/1010485913393254401</a></span>
+</li>
+<li id="cite_note-GoDogma-21"><span class="mw-cite-backlink">^ <a href="#cite_ref-GoDogma_21-0"><sup><i><b>a</b></i></sup></a> <a href="#cite_ref-GoDogma_21-1"><sup><i><b>b</b></i></sup></a></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://research.swtch.com/dogma">"Go and Dogma"</a>. <i>research!rsc</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2017-01-14</span></span>. <q>for example both Go and Haskell need some kind of “green threads”, so there are more shared runtime challenges than you might expect.</q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=research%21rsc&amp;rft.atitle=Go+and+Dogma&amp;rft_id=https%3A%2F%2Fresearch.swtch.com%2Fdogma&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-22"><span class="mw-cite-backlink"><b><a href="#cite_ref-22">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://www.vitanuova.com/inferno/papers/limbo.html">"The Limbo Programming Language"</a>. <i>www.vitanuova.com</i><span class="reference-accessdate">. Retrieved <span class="nowrap">2019-04-01</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=unknown&amp;rft.jtitle=www.vitanuova.com&amp;rft.atitle=The+Limbo+Programming+Language&amp;rft_id=http%3A%2F%2Fwww.vitanuova.com%2Finferno%2Fpapers%2Flimbo.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-23"><span class="mw-cite-backlink"><b><a href="#cite_ref-23">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://bugfactory.io/2014/10/10/multithreading-in-the-mri-ruby-interpreter/">"Multithreading in the MRI Ruby Interpreter ~ BugFactory"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2019-06-08</span></span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Multithreading+in+the+MRI+Ruby+Interpreter+~+BugFactory&amp;rft_id=https%3A%2F%2Fbugfactory.io%2F2014%2F10%2F10%2Fmultithreading-in-the-mri-ruby-interpreter%2F&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-24"><span class="mw-cite-backlink"><b><a href="#cite_ref-24">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://docs.racket-lang.org/reference/places.html">"Racket Places"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">2011-10-13</span></span>. <q><i>Places enable the development of parallel programs that take advantage of machines with multiple processors, cores, or hardware threads. A place is a parallel task that is effectively a separate instance of the Racket virtual machine.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Racket+Places&amp;rft_id=http%3A%2F%2Fdocs.racket-lang.org%2Freference%2Fplaces.html&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-25"><span class="mw-cite-backlink"><b><a href="#cite_ref-25">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="https://www.webcitation.org/6EDdBO4UG?url=http://zope.stackless.com/about/sdocument_view">"Stackless.com: About Stackless"</a>. Archived from <a rel="nofollow" class="external text" href="http://zope.stackless.com/about/sdocument_view">the original</a> on 2013-02-06<span class="reference-accessdate">. Retrieved <span class="nowrap">2008-08-27</span></span>. <q><i>A round robin scheduler is built in. It can be used to schedule tasklets either cooperatively or preemptively.</i></q></cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Stackless.com%3A+About+Stackless&amp;rft_id=http%3A%2F%2Fzope.stackless.com%2Fabout%2Fsdocument_view&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+<li id="cite_note-26"><span class="mw-cite-backlink"><b><a href="#cite_ref-26">^</a></b></span> <span class="reference-text"><cite class="citation web cs1"><a rel="nofollow" class="external text" href="http://wiki.tcl.tk/1527">"Tcl event loop"</a><span class="reference-accessdate">. Retrieved <span class="nowrap">6 December</span> 2015</span>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=unknown&amp;rft.btitle=Tcl+event+loop&amp;rft_id=http%3A%2F%2Fwiki.tcl.tk%2F1527&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AGreen+threads" class="Z3988"></span><link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r951705291"/></span>
+</li>
+</ol></div></div>
+<h2><span class="mw-headline" id="External_links">External links</span><span class="mw-editsection"><span class="mw-editsection-bracket">[</span><a href="/w/index.php?title=Green_threads&amp;action=edit&amp;section=7" title="Edit section: External links">edit</a><span class="mw-editsection-bracket">]</span></span></h2>
+<ul><li>"<a rel="nofollow" class="external text" href="https://www.infoworld.com/article/2077383/four-for-the-ages.html">Four for the ages</a>", <a href="/wiki/JavaWorld" class="mw-redirect" title="JavaWorld">JavaWorld</a> article about Green threads</li>
+<li><a rel="nofollow" class="external text" href="https://web.archive.org/web/20130116024929/http://www.codestyle.org/java/faq-Threads.shtml#greenthread">Green threads on Java threads FAQ</a></li></ul>
+<!-- 
+NewPP limit report
+Parsed by mw1363
+Cached time: 20200821171708
+Cache expiry: 2592000
+Dynamic content: false
+Complications: [vary‐revision‐sha1]
+CPU time usage: 0.448 seconds
+Real time usage: 0.586 seconds
+Preprocessor visited node count: 1878/1000000
+Post‐expand include size: 57950/2097152 bytes
+Template argument size: 3348/2097152 bytes
+Highest expansion depth: 13/40
+Expensive parser function count: 6/500
+Unstrip recursion depth: 1/20
+Unstrip post‐expand size: 96662/5000000 bytes
+Lua time usage: 0.244/10.000 seconds
+Lua memory usage: 7.41 MB/50 MB
+Number of Wikibase entities loaded: 0/400
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  529.507      1 -total
+ 42.22%  223.565      1 Template:Reflist
+ 34.61%  183.268     23 Template:Cite_web
+ 18.68%   98.932      2 Template:Ambox
+ 17.45%   92.391      1 Template:Refimprove
+ 16.95%   89.763      1 Template:Short_description
+ 10.56%   55.916      1 Template:Pagetype
+  8.07%   42.709      1 Template:Find_sources_mainspace
+  8.02%   42.490      7 Template:Main_other
+  7.34%   38.889      3 Template:Fix
+-->
+
+<!-- Saved in parser cache with key enwiki:pcache:idhash:7639649-0!canonical and timestamp 20200821171707 and revision id 974204760
+ -->
+</div><noscript><img src="//en.wikipedia.org/wiki/Special:CentralAutoLogin/start?type=1x1" alt="" title="" width="1" height="1" style="border: none; position: absolute;" /></noscript>
+<div class="printfooter">Retrieved from "<a dir="ltr" href="https://en.wikipedia.org/w/index.php?title=Green_threads&amp;oldid=974204760">https://en.wikipedia.org/w/index.php?title=Green_threads&amp;oldid=974204760</a>"</div></div>
+		<div id="catlinks" class="catlinks" data-mw="interface"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="/wiki/Help:Category" title="Help:Category">Categories</a>: <ul><li><a href="/wiki/Category:Threads_(computing)" title="Category:Threads (computing)">Threads (computing)</a></li><li><a href="/wiki/Category:Java_platform" title="Category:Java platform">Java platform</a></li></ul></div><div id="mw-hidden-catlinks" class="mw-hidden-catlinks mw-hidden-cats-hidden">Hidden categories: <ul><li><a href="/wiki/Category:CS1_errors:_missing_periodical" title="Category:CS1 errors: missing periodical">CS1 errors: missing periodical</a></li><li><a href="/wiki/Category:Articles_with_short_description" title="Category:Articles with short description">Articles with short description</a></li><li><a href="/wiki/Category:Short_description_matches_Wikidata" title="Category:Short description matches Wikidata">Short description matches Wikidata</a></li><li><a href="/wiki/Category:Articles_needing_additional_references_from_March_2016" title="Category:Articles needing additional references from March 2016">Articles needing additional references from March 2016</a></li><li><a href="/wiki/Category:All_articles_needing_additional_references" title="Category:All articles needing additional references">All articles needing additional references</a></li><li><a href="/wiki/Category:Wikipedia_articles_in_need_of_updating_from_February_2014" title="Category:Wikipedia articles in need of updating from February 2014">Wikipedia articles in need of updating from February 2014</a></li><li><a href="/wiki/Category:All_Wikipedia_articles_in_need_of_updating" title="Category:All Wikipedia articles in need of updating">All Wikipedia articles in need of updating</a></li><li><a href="/wiki/Category:All_articles_with_unsourced_statements" title="Category:All articles with unsourced statements">All articles with unsourced statements</a></li><li><a href="/wiki/Category:Articles_with_unsourced_statements_from_November_2019" title="Category:Articles with unsourced statements from November 2019">Articles with unsourced statements from November 2019</a></li><li><a href="/wiki/Category:Wikipedia_articles_needing_clarification_from_June_2015" title="Category:Wikipedia articles needing clarification from June 2015">Wikipedia articles needing clarification from June 2015</a></li><li><a href="/wiki/Category:Articles_with_unsourced_statements_from_June_2015" title="Category:Articles with unsourced statements from June 2015">Articles with unsourced statements from June 2015</a></li><li><a href="/wiki/Category:Articles_with_unsourced_statements_from_July_2010" title="Category:Articles with unsourced statements from July 2010">Articles with unsourced statements from July 2010</a></li></ul></div></div>
+	</div>
+</div>
+<div id='mw-data-after-content'>
+	<div class="read-more-container"></div>
+</div>
+
+<div id="mw-navigation">
+	<h2>Navigation menu</h2>
+	<div id="mw-head">
+		<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-personal" class="vector-menu" aria-labelledby="p-personal-label" role="navigation" 
+	 >
+	<h3 id="p-personal-label">
+		<span>Personal tools</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="pt-anonuserpage">Not logged in</li><li id="pt-anontalk"><a href="/wiki/Special:MyTalk" title="Discussion about edits from this IP address [n]" accesskey="n">Talk</a></li><li id="pt-anoncontribs"><a href="/wiki/Special:MyContributions" title="A list of edits made from this IP address [y]" accesskey="y">Contributions</a></li><li id="pt-createaccount"><a href="/w/index.php?title=Special:CreateAccount&amp;returnto=Green+threads" title="You are encouraged to create an account and log in; however, it is not mandatory">Create account</a></li><li id="pt-login"><a href="/w/index.php?title=Special:UserLogin&amp;returnto=Green+threads" title="You&#039;re encouraged to log in; however, it&#039;s not mandatory. [o]" accesskey="o">Log in</a></li></ul>
+		
+	</div>
+</nav>
+
+		<div id="left-navigation">
+			<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-namespaces" class="vector-menu vector-menu-tabs vectorTabs" aria-labelledby="p-namespaces-label" role="navigation" 
+	 >
+	<h3 id="p-namespaces-label">
+		<span>Namespaces</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="ca-nstab-main" class="selected"><a href="/wiki/Green_threads" title="View the content page [c]" accesskey="c">Article</a></li><li id="ca-talk"><a href="/wiki/Talk:Green_threads" rel="discussion" title="Discuss improvements to the content page [t]" accesskey="t">Talk</a></li></ul>
+		
+	</div>
+</nav>
+
+			<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-variants" class="vector-menu-empty emptyPortlet vector-menu vector-menu-dropdown vectorMenu" aria-labelledby="p-variants-label" role="navigation" 
+	 >
+	<input type="checkbox" class="vector-menu-checkbox vectorMenuCheckbox" aria-labelledby="p-variants-label" />
+	<h3 id="p-variants-label">
+		<span>Variants</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="menu vector-menu-content-list"></ul>
+		
+	</div>
+</nav>
+
+		</div>
+		<div id="right-navigation">
+			<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-views" class="vector-menu vector-menu-tabs vectorTabs" aria-labelledby="p-views-label" role="navigation" 
+	 >
+	<h3 id="p-views-label">
+		<span>Views</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="ca-view" class="selected"><a href="/wiki/Green_threads">Read</a></li><li id="ca-edit"><a href="/w/index.php?title=Green_threads&amp;action=edit" title="Edit this page [e]" accesskey="e">Edit</a></li><li id="ca-history"><a href="/w/index.php?title=Green_threads&amp;action=history" title="Past revisions of this page [h]" accesskey="h">View history</a></li></ul>
+		
+	</div>
+</nav>
+
+			<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-cactions" class="vector-menu-empty emptyPortlet vector-menu vector-menu-dropdown vectorMenu" aria-labelledby="p-cactions-label" role="navigation" 
+	 >
+	<input type="checkbox" class="vector-menu-checkbox vectorMenuCheckbox" aria-labelledby="p-cactions-label" />
+	<h3 id="p-cactions-label">
+		<span>More</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="menu vector-menu-content-list"></ul>
+		
+	</div>
+</nav>
+
+			<div id="p-search" role="search">
+	<h3 >
+		<label for="searchInput">Search</label>
+	</h3>
+	<form action="/w/index.php" id="searchform">
+		<div id="simpleSearch">
+			<input type="search" name="search" placeholder="Search Wikipedia" title="Search Wikipedia [f]" accesskey="f" id="searchInput"/>
+			<input type="hidden" name="title" value="Special:Search">
+			<input type="submit" name="fulltext" value="Search" title="Search Wikipedia for this text" id="mw-searchButton" class="searchButton mw-fallbackSearchButton"/>
+			<input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="searchButton" class="searchButton"/>
+		</div>
+	</form>
+</div>
+
+		</div>
+	</div>
+	
+<div id="mw-panel">
+	<div id="p-logo" role="banner">
+		<a  title="Visit the main page" class="mw-wiki-logo" href="/wiki/Main_Page"></a>
+	</div>
+	<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-navigation" class="vector-menu vector-menu-portal portal portal-first" aria-labelledby="p-navigation-label" role="navigation" 
+	 >
+	<h3 id="p-navigation-label">
+		<span>Navigation</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="n-mainpage-description"><a href="/wiki/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li><li id="n-contents"><a href="/wiki/Wikipedia:Contents" title="Guides to browsing Wikipedia">Contents</a></li><li id="n-currentevents"><a href="/wiki/Portal:Current_events" title="Find background information on current events">Current events</a></li><li id="n-randompage"><a href="/wiki/Special:Random" title="Visit a randomly selected article [x]" accesskey="x">Random article</a></li><li id="n-aboutsite"><a href="/wiki/Wikipedia:About" title="Learn about Wikipedia and how it works">About Wikipedia</a></li><li id="n-contactpage"><a href="//en.wikipedia.org/wiki/Wikipedia:Contact_us" title="How to contact Wikipedia">Contact us</a></li><li id="n-sitesupport"><a href="https://donate.wikimedia.org/wiki/Special:FundraiserRedirector?utm_source=donate&amp;utm_medium=sidebar&amp;utm_campaign=C13_en.wikipedia.org&amp;uselang=en" title="Support us by donating to the Wikimedia Foundation">Donate</a></li><li id="n-shoplink"><a href="//shop.wikimedia.org" title="Visit the Wikipedia store">Wikipedia store</a></li></ul>
+		
+	</div>
+</nav>
+
+	<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-interaction" class="vector-menu vector-menu-portal portal" aria-labelledby="p-interaction-label" role="navigation" 
+	 >
+	<h3 id="p-interaction-label">
+		<span>Contribute</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="n-help"><a href="/wiki/Help:Contents" title="Guidance on how to use and edit Wikipedia">Help</a></li><li id="n-portal"><a href="/wiki/Wikipedia:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li><li id="n-recentchanges"><a href="/wiki/Special:RecentChanges" title="A list of recent changes to Wikipedia [r]" accesskey="r">Recent changes</a></li><li id="n-upload"><a href="/wiki/Wikipedia:File_Upload_Wizard" title="Add images or other media for use on Wikipedia">Upload file</a></li></ul>
+		
+	</div>
+</nav>
+<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-tb" class="vector-menu vector-menu-portal portal" aria-labelledby="p-tb-label" role="navigation" 
+	 >
+	<h3 id="p-tb-label">
+		<span>Tools</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="t-whatlinkshere"><a href="/wiki/Special:WhatLinksHere/Green_threads" title="List of all English Wikipedia pages containing links to this page [j]" accesskey="j">What links here</a></li><li id="t-recentchangeslinked"><a href="/wiki/Special:RecentChangesLinked/Green_threads" rel="nofollow" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li><li id="t-upload"><a href="/wiki/Wikipedia:File_Upload_Wizard" title="Upload files [u]" accesskey="u">Upload file</a></li><li id="t-specialpages"><a href="/wiki/Special:SpecialPages" title="A list of all special pages [q]" accesskey="q">Special pages</a></li><li id="t-permalink"><a href="/w/index.php?title=Green_threads&amp;oldid=974204760" title="Permanent link to this revision of this page">Permanent link</a></li><li id="t-info"><a href="/w/index.php?title=Green_threads&amp;action=info" title="More information about this page">Page information</a></li><li id="t-cite"><a href="/w/index.php?title=Special:CiteThisPage&amp;page=Green_threads&amp;id=974204760&amp;wpFormIdentifier=titleform" title="Information on how to cite this page">Cite this page</a></li><li id="t-wikibase"><a href="https://www.wikidata.org/wiki/Special:EntityPage/Q3555595" title="Structured data on this page hosted by Wikidata [g]" accesskey="g">Wikidata item</a></li></ul>
+		
+	</div>
+</nav>
+<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-coll-print_export" class="vector-menu vector-menu-portal portal" aria-labelledby="p-coll-print_export-label" role="navigation" 
+	 >
+	<h3 id="p-coll-print_export-label">
+		<span>Print/export</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li id="coll-download-as-rl"><a href="/w/index.php?title=Special:DownloadAsPdf&amp;page=Green_threads&amp;action=show-download-screen" title="Download this page as a PDF file">Download as PDF</a></li><li id="t-print"><a href="/w/index.php?title=Green_threads&amp;printable=yes" title="Printable version of this page [p]" accesskey="p">Printable version</a></li></ul>
+		
+	</div>
+</nav>
+
+	<!-- Please do not use role attribute as CSS selector, it is deprecated. -->
+<nav id="p-lang" class="vector-menu vector-menu-portal portal" aria-labelledby="p-lang-label" role="navigation" 
+	 >
+	<h3 id="p-lang-label">
+		<span>Languages</span>
+	</h3>
+	<!-- Please do not use the .body class, it is deprecated. -->
+	<div class="body vector-menu-content">
+		<!-- Please do not use the .menu class, it is deprecated. -->
+		<ul class="vector-menu-content-list"><li class="interlanguage-link interwiki-de"><a href="https://de.wikipedia.org/wiki/Green_Thread" title="Green Thread – German" lang="de" hreflang="de" class="interlanguage-link-target">Deutsch</a></li><li class="interlanguage-link interwiki-el"><a href="https://el.wikipedia.org/wiki/%CE%A0%CF%81%CE%AC%CF%83%CE%B9%CE%BD%CE%B1_%CE%BD%CE%AE%CE%BC%CE%B1%CF%84%CE%B1" title="Πράσινα νήματα – Greek" lang="el" hreflang="el" class="interlanguage-link-target">Ελληνικά</a></li><li class="interlanguage-link interwiki-hr"><a href="https://hr.wikipedia.org/wiki/Zelene_niti" title="Zelene niti – Croatian" lang="hr" hreflang="hr" class="interlanguage-link-target">Hrvatski</a></li><li class="interlanguage-link interwiki-ja"><a href="https://ja.wikipedia.org/wiki/%E3%82%B0%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B9%E3%83%AC%E3%83%83%E3%83%89" title="グリーンスレッド – Japanese" lang="ja" hreflang="ja" class="interlanguage-link-target">日本語</a></li><li class="interlanguage-link interwiki-pl"><a href="https://pl.wikipedia.org/wiki/Green_thread" title="Green thread – Polish" lang="pl" hreflang="pl" class="interlanguage-link-target">Polski</a></li><li class="interlanguage-link interwiki-ru"><a href="https://ru.wikipedia.org/wiki/Green_threads" title="Green threads – Russian" lang="ru" hreflang="ru" class="interlanguage-link-target">Русский</a></li><li class="interlanguage-link interwiki-zh"><a href="https://zh.wikipedia.org/wiki/%E7%BB%BF%E8%89%B2%E7%BA%BF%E7%A8%8B" title="绿色线程 – Chinese" lang="zh" hreflang="zh" class="interlanguage-link-target">中文</a></li></ul>
+		<div class="after-portlet after-portlet-lang"><span class="wb-langlinks-edit wb-langlinks-link"><a href="https://www.wikidata.org/wiki/Special:EntityPage/Q3555595#sitelinks-wikipedia" title="Edit interlanguage links" class="wbc-editpage">Edit links</a></span></div>
+	</div>
+</nav>
+
+</div>
+
+</div>
+<footer id="footer" class="mw-footer" role="contentinfo" >
+	<ul id="footer-info" >
+		<li id="footer-info-lastmod"> This page was last edited on 21 August 2020, at 17:17<span class="anonymous-show">&#160;(UTC)</span>.</li>
+		<li id="footer-info-copyright">Text is available under the <a rel="license" href="//en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</a><a rel="license" href="//creativecommons.org/licenses/by-sa/3.0/" style="display:none;"></a>;
+additional terms may apply.  By using this site, you agree to the <a href="//foundation.wikimedia.org/wiki/Terms_of_Use">Terms of Use</a> and <a href="//foundation.wikimedia.org/wiki/Privacy_policy">Privacy Policy</a>. Wikipedia® is a registered trademark of the <a href="//www.wikimediafoundation.org/">Wikimedia Foundation, Inc.</a>, a non-profit organization.</li>
+	</ul>
+	<ul id="footer-places" >
+		<li id="footer-places-privacy"><a href="https://foundation.wikimedia.org/wiki/Privacy_policy" class="extiw" title="wmf:Privacy policy">Privacy policy</a></li>
+		<li id="footer-places-about"><a href="/wiki/Wikipedia:About" title="Wikipedia:About">About Wikipedia</a></li>
+		<li id="footer-places-disclaimer"><a href="/wiki/Wikipedia:General_disclaimer" title="Wikipedia:General disclaimer">Disclaimers</a></li>
+		<li id="footer-places-contact"><a href="//en.wikipedia.org/wiki/Wikipedia:Contact_us">Contact Wikipedia</a></li>
+		<li id="footer-places-mobileview"><a href="//en.m.wikipedia.org/w/index.php?title=Green_threads&amp;mobileaction=toggle_view_mobile" class="noprint stopMobileRedirectToggle">Mobile view</a></li>
+		<li id="footer-places-developers"><a href="https://www.mediawiki.org/wiki/Special:MyLanguage/How_to_contribute">Developers</a></li>
+		<li id="footer-places-statslink"><a href="https://stats.wikimedia.org/#/en.wikipedia.org">Statistics</a></li>
+		<li id="footer-places-cookiestatement"><a href="https://foundation.wikimedia.org/wiki/Cookie_statement">Cookie statement</a></li>
+	</ul>
+	<ul id="footer-icons" class="noprint">
+		<li id="footer-copyrightico"><a href="https://wikimediafoundation.org/"><img src="/static/images/footer/wikimedia-button.png" srcset="/static/images/footer/wikimedia-button-1.5x.png 1.5x, /static/images/footer/wikimedia-button-2x.png 2x" width="88" height="31" alt="Wikimedia Foundation" loading="lazy" /></a></li>
+		<li id="footer-poweredbyico"><a href="https://www.mediawiki.org/"><img src="/static/images/footer/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" srcset="/static/images/footer/poweredby_mediawiki_132x47.png 1.5x, /static/images/footer/poweredby_mediawiki_176x62.png 2x" width="88" height="31" loading="lazy"/></a></li>
+	</ul>
+	<div style="clear: both;"></div>
+</footer>
+
+
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.448","walltime":"0.586","ppvisitednodes":{"value":1878,"limit":1000000},"postexpandincludesize":{"value":57950,"limit":2097152},"templateargumentsize":{"value":3348,"limit":2097152},"expansiondepth":{"value":13,"limit":40},"expensivefunctioncount":{"value":6,"limit":500},"unstrip-depth":{"value":1,"limit":20},"unstrip-size":{"value":96662,"limit":5000000},"entityaccesscount":{"value":0,"limit":400},"timingprofile":["100.00%  529.507      1 -total"," 42.22%  223.565      1 Template:Reflist"," 34.61%  183.268     23 Template:Cite_web"," 18.68%   98.932      2 Template:Ambox"," 17.45%   92.391      1 Template:Refimprove"," 16.95%   89.763      1 Template:Short_description"," 10.56%   55.916      1 Template:Pagetype","  8.07%   42.709      1 Template:Find_sources_mainspace","  8.02%   42.490      7 Template:Main_other","  7.34%   38.889      3 Template:Fix"]},"scribunto":{"limitreport-timeusage":{"value":"0.244","limit":"10.000"},"limitreport-memusage":{"value":7772607,"limit":52428800}},"cachereport":{"origin":"mw1363","timestamp":"20200821171708","ttl":2592000,"transientcontent":false}}});});</script>
+<script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"Article","name":"Green threads","url":"https:\/\/en.wikipedia.org\/wiki\/Green_threads","sameAs":"http:\/\/www.wikidata.org\/entity\/Q3555595","mainEntity":"http:\/\/www.wikidata.org\/entity\/Q3555595","author":{"@type":"Organization","name":"Contributors to Wikimedia projects"},"publisher":{"@type":"Organization","name":"Wikimedia Foundation, Inc.","logo":{"@type":"ImageObject","url":"https:\/\/www.wikimedia.org\/static\/images\/wmf-hor-googpub.png"}},"datePublished":"2006-10-27T00:04:31Z","dateModified":"2020-08-21T17:17:05Z","headline":"lightweight threading implemented in userspace"}</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgBackendResponseTime":162,"wgHostname":"mw1261"});});</script>
+</body></html>

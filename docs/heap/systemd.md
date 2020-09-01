@@ -1,5 +1,19 @@
 # Systemd
 
+Overview over these new common configuration files systemd supports on all distributions:
+* /etc/hostname: the host name for the system. One of the most basic and trivial system settings. Nonetheless previously all distributions used different files for this. Fedora used /etc/sysconfig/network, OpenSUSE /etc/HOSTNAME. We chose to standardize on the Debian configuration file /etc/hostname.
+* /etc/vconsole.conf: configuration of the default keyboard mapping and console font.
+* /etc/locale.conf: configuration of the system-wide locale.
+* /etc/modules-load.d/*.conf: a drop-in directory for kernel modules to statically load at boot (for the very few that still need this).
+* /etc/sysctl.d/*.conf: a drop-in directory for kernel sysctl parameters, extending what you can already do with /etc/sysctl.conf.
+* /etc/tmpfiles.d/*.conf: a drop-in directory for configuration of runtime files that need to be removed/created/cleaned up at boot and during uptime.
+* /etc/binfmt.d/*.conf: a drop-in directory for registration of additional binary formats for systems like Java, Mono and WINE.
+* /etc/os-release: a standardization of the various distribution ID files like /etc/fedora-release and similar. Really every distribution introduced their own file here; writing a simple tool that just prints out the name of the local distribution usually means including a database of release files to check. The LSB tried to standardize something like this with the lsb_release tool, but quite frankly the idea of employing a shell script in this is not the best choice the LSB folks ever made. To rectify this we just decided to generalize this, so that everybody can use the same file here.
+* /etc/machine-id: a machine ID file, superseding D-Bus' machine ID file. This file is guaranteed to be existing and valid on a systemd system, covering also stateless boots. By moving this out of the D-Bus logic it is hopefully interesting for a lot of additional uses as a unique and stable machine identifier.
+* /etc/machine-info: a new information file encoding meta data about a host, like a pretty host name and an icon name, replacing stuff like /etc/favicon.png and suchlike. This is maintained by systemd-hostnamed.
+
+
+
 юниты разложены в трех каталогах:
 /usr/lib/systemd/system/ – юниты из установленных пакетов RPM — всякие nginx, apache, mysql и прочее
 /run/systemd/system/ — юниты, созданные в рантайме — тоже, наверное, нужная штука
@@ -188,3 +202,8 @@ WantedBy=multi-user.target
 4. Обратите внимание, что режим графической загрузки в systemd (graphical.target, аналог runlevel 5 в SysV) является надстройкой над режимом многопользовательской консольной загрузки (multi-user.target, аналог runlevel 3 в SysV). Таким образом, все службы, запускаемые в режиме multi-user.target, будут также запускаться и в режиме graphical.target.
 
 5. В настоящее время практически все службы дистрибутива Fedora после запуска регистрируется на шине D-Bus.
+
+## Links
+
+http://0pointer.de/
+https://www.freedesktop.org/wiki/Software/systemd/
