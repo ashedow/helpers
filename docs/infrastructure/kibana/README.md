@@ -34,6 +34,8 @@ Kibana Discover interface elements:
 
 Kibana querying KQL (Kibana Querying Language - default language for querying since version 7.0) is an art unto itself, and there are various methods for performing searches on your data. 
 
+> https://www.elastic.co/guide/en/kibana/7.8/kuery-query.html
+
 Free text search works within all fields — including the _source field, which includes all the other fields. If no specific field is indicated in the search, the search will be done on all of the fields that are being analyzed.
 
 The search syntax is pretty self-explanatory, allows boolean operators, wildcards, and field filtering. 
