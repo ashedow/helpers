@@ -43,3 +43,23 @@ CMD[“--help”]
 ## Cache
 
 
+## Do not use root!
+
+
+```python
+import os, socket, pwd
+HOST, PORT = '', 90
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind((HOST, PORT))
+    user = pwd.getpwnam('nobody')
+    os.setgid(arguments.user.pw_gid) # first change group
+    os.setuid(arguments.user.pw_uid)
+    s.listen(1)
+    conn, addr = s.accept()
+    with conn:
+        while True:
+            data = conn.recv(1024)
+            conn.sendall(data)
+```
+
