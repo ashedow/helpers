@@ -252,3 +252,7 @@ getconf -a |grep MAX
 https://man7.org/linux/man-pages/man2/execve.2.html -  `On architectures with a 4-kB page size, this yields a maximum size of 128 kB. (edited`
 
 ***
+
+fd - command is an quick and efficient way to find files in the terminal. Like the find command, it comes in handy often, however, the find command can be a bit tricky for those new to Linux and especially it’s command line. This guide will help you get up to speed with this very useful command line tool.
+
+***
