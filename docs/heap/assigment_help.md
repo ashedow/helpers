@@ -301,7 +301,41 @@ set - mutable, unordered collection with no duplicate elements. Items in set can
 
 * Dict comprehensions ★★
 
+* How to dict ★★
+> https://eng.lyft.com/hashing-and-equality-in-python-2ea8c738fb9d
+Hash map. Need `__hash__` and `__eq__`
+Don’t override __hash__ and __eq__ to force objects to hashable. Use immutable objects instead.
+
+Dict and Sets are some of the most common data structures, used heavily for their O(1) lookup times. This O(1) look is enabled by hash functions which have the following properties:
+* If a == b then hash(a) == hash(b)
+* If hash(a) == hash(b), then a might equal b
+* If hash(a) != hash(b), then a != b
+
+*Storing an object*:
+    * Call __hash__ on the key to compute the hash of the key. If the key is not hashable raise a TypeError
+    * Store (hash_value, key, value) in an array at location hash_value % len(array).
+    * If the array requires resizing, re-use the previously computed hash_values to re-insert all previously stored values.
+
+*Retrieving an object by key*
+    * Call __hash__ on the key to compute the hash of the key. If the key is not hashable raise a TypeError
+    * Look in hash(key) % len(array)for an entry with a matching hash_value. If one exists — check for equality, first by identity, then by calling __eq__.
+
+    * Таблицы Hash должны допускать коллизии hash, то есть даже если два различных ключа имеют одно и то же значение hash, реализация таблицы должна иметь стратегию однозначной вставки и извлечения пар ключей и значений.
+    * Python dict использует открытую адресацию для разрешения коллизий hash (объяснено ниже) (см. dictobject.c:296-297 ).
+    *Таблица Python hash-это просто непрерывный блок памяти (что-то вроде массива, поэтому вы можете выполнить поиск O(1) по индексу).
+    * Каждый слот в таблице может хранить одну и только одну запись. Это очень важно.
+    * Каждая запись в таблице фактически представляет собой комбинацию трех значений: < hash, ключ, значение > . Это реализовано как структура C (см. dictobject.h:51-56 ).
+    Когда новый дикт инициализируется, он начинается с 8 слотов . (см. dictobject.h:49 )
+    * При добавлении записей в таблицу мы начинаем с некоторого слота i, который основан на hash ключа. CPython изначально использует i = hash(key) & mask (где mask = PyDictMINSIZE - 1, но это не очень важно). Просто обратите внимание, что начальный слот , i, который проверяется, зависит от hash ключа.
+    * Если этот слот пуст, запись добавляется в слот (под записью я имею в виду <hash|key|value> )., но что делать, если этот слот занят!? Скорее всего, потому что другая запись имеет тот же самый hash (hash столкновение!)
+    * Если слот занят, то CPython (и даже PyPy) сравнивает hash AND ключ (под сравнением я подразумеваю сравнение == , а не сравнение is ) записи в слоте с hash и ключом текущей записи, подлежащей вставке ( dictobject.c:337,344-345 ) соответственно. Если оба совпадают, то он думает, что запись уже существует, сдается и переходит к следующей записи, которую нужно вставить. Если либо hash, либо ключ не совпадают, он начинает зондирование .
+    * Зондирование просто означает, что он ищет слоты по слотам, чтобы найти пустой слот. Технически мы могли бы просто пойти один за другим, i+1, i+2, ... и использовать первый доступный (это линейное зондирование). Но по причинам, прекрасно объясненным в комментариях (см. dictobject.c:33-126), CPython использует случайное зондирование . При случайном зондировании следующий слот выбирается в псевдослучайном порядке. Запись добавляется в первый пустой слот. Для этого обсуждения фактический алгоритм, используемый для выбора следующего слота, на самом деле не важен (см. dictobject.c:33-126 для алгоритма зондирования). Что важно, так это то, что слоты исследуются до тех пор, пока не будет найден первый пустой слот.
+    * То же самое происходит и для поиска, просто начинается с начального слота i (где i зависит от hash ключа). Если hash и ключ не совпадают с записью в слоте, он начинает зондировать, пока не найдет слот с совпадением. Если все слоты исчерпаны, он сообщает о сбое.
+    * BTW, размер dict будет изменен, если он заполнен на две трети. Это позволяет избежать замедления поиска. (см. dictobject.h:64-65 )
+
+
 * What data types are returned if we change braces in list comprehensions to ()/{} ★★
+() - returns generator
 
 * Special collections from "collections" module ★★★
 namedtuple() - factory function for creating tuple subclasses with named fields
@@ -351,14 +385,47 @@ It is as easy as defining a normal function, but with a yield statement instead 
 
 * Difference between range and xrange in python2.x ★★
 In Python 2.x:
-range creates a list, so if you do range(1, 10000000) it creates a list in memory with 9999999 elements.
-xrange is a sequence object that evaluates lazily.
+range creates(return) a list, so if you do range(1, 10000000) it creates a list in memory with 9999999 elements.
+xrange is a sequence object generator that evaluates lazily.
 In Python 3, range does the equivalent of python's xrange, and to get the list, you have to use list(range(...)).
+
+* Difference between python2.x python3.x ★★
+
+|                               | python3                                                                             | python2                                                                      |
+|-------------------------------|-------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| Function print                | print ("hello")                                                                     | print "hello"                                                                |
+| Division of Integers          | Whenever two integers are divided, you get a float value                            | In Python 2, integer division returns an integer.  7/ 2 gives 3. To get the exact answer, the programmer should use 7.0 / 2. 0.	             |
+| Unicode                       | In Python 3, default storing of strings is Unicode.                                 | To store Unicode string value, you require to define them with "u".          |
+| Rules of ordering Comparisons | In this version, Rules of ordering comparisons have been simplified.                |                                                                              |
+| Iteration                     | The new Range() function introduced to perform iterations.                          | In Python 2, the xrange() is used for iterations.                            |
+| Exceptions                    | It should be enclosed in parenthesis.                                               | It should be enclosed in notations.                                          |
+| Leak of variables             | The value of variables never changes.                                               | The value of the global variable will change while using it inside for-loop. |
+| Backward compatibility        | Not difficult to port python 2 to python 3 but it is never reliable.                | Python version 3 is not backwardly compatible with Python 2.                 |
+| Library                       | Many recent developers are creating libraries which you can only use with Python 3. | Many older libraries created for Python 2 is not forward-compatible.         |
+| input |   In Python 3, input() function reads the input as a string. raw_input() function is not available.   |   In Python 2, input() function can be used to read as strings if they are inside quotes else read as numbers. In Python 2, raw_input() function is used to get input from the user. This function reads a string.		|
+
 
 * Usage of generators to provide function input ★★★
 
 * Two way of defenition generators ★★★
 comprehensions def with yeld
+
+* contextlib - module provides utilities for common tasks involving the with statement. 
+Needs `__enter__` and `__exit__`
+Example
+```python
+class ResourceForWith:
+    def __init__(self, name):
+        self.__resource = Resource(name)
+    def __enter__(self):
+        return self.__resource
+    def __exit__(self, type, value, traceback):
+        self.__resource.post_work()
+```
+
+* getattr() -build-in function.
+Return the value of the named attribute of object. name must be a string
+`getattr(x, 'foobar')` is equivalent to `x.foobar` If the named attribute does not exist, default is returned if provided, otherwise AttributeError is raised.
 
 ### Objects
 
@@ -756,6 +823,48 @@ A module is a single file (or files) that are imported under one import and used
 ## Django
 
 ## Lib & Frameworks
+
+
+## Random Python facts
+
+1. list в Python — это вовсе не связный список, а динамический массив. 
+2. Проверка на включение in — это такая же операция как >, < или ==. Помните двойные неравенства вроде 1 < x < 5? Выражение 1 < x in [1, 2, 3] работает так же. Это (1 < x) and (x in [1, 2, 3]).
+3. Да для Python есть компиляторы. И не только JIT как Numba (классная штука, кстати!), но и обычные. Например, Nuitka. Разговор о их целесообразности оставим за скобками.
+4. Если на объект нет ссылок, то он уничтожается сразу, а не ждёт сборки мусора. GC нужен для сложных случаев, когда у нас есть циклические ссылки.
+5. Python очень медленный, но м̶ы̶ ̶л̶ю̶б̶и̶м̶ ̶е̶г̶о̶ ̶н̶е̶ ̶з̶а̶ ̶э̶т̶о̶ обычно это не проблема. Python можно использовать для I/O bound задач или написать бинарный модуль на быстром языке программирования.
+6. Язык для файлов конфигурации Starlark (он же Skylark) от Google — это Python на минималках.
+7. Многие знают, что числа от -5 до 255 интернированы. То есть заранее размещены в памяти. В эту память при желании можно залезть и поменять значение так, чтоб литерал 5 имел значение 7. Весёлой отладки!
+8. У интерпретатора Python есть ключи командной строки для оптимизации, но они просто удаляют assert и строки документации.
+9. __ читается как dunder.
+10. Формат pickle — это последовательность команд для специальной виртуальной машины. Опкод R может вызвать произвольную функцию. Например, os.system. Так что лучше не используйте pickle из ненадёжных источников. И не храните в нём ничего на диске, он не для этого.
+11. В последних версиях в dict ключи упорядочены. Но это не было сделано специально. Это был побочный эффект новой реализации словарей. Однако, разработчикам понравилось, и начиная с Python 3.7 это поведение гарантируется. Так что OrderedDict не нужен.
+12. Если вы скучаете по структурам, посмотрите в сторону namedtuple или датаклассов. Они удобны!
+13. Python — это просто хобби-проект ван Россума на рождественские каникулы 1989 года.
+14. У циклов есть блок else, который часто очень удобен.
+15. У функции может быть вызвано два return. Например:
+```python
+def f():
+    try:
+        return 1
+    finally:
+        return 2
+```
+Функция вернёт 2.
+16. Да, в Python есть многопоточность. Да, там честные потоки операционной системы. Да, они могут работать одновременно во многих случаях. Да, я знаю про GIL.
+17. bool — это подкласс int. Гарантируется, что у False и True числовые значения 0 и 1.
+18. Хэш-таблица любого словаря содержит примерно ⅓ пустых ячеек, чтоб эффективно работать. Ничего полезного в них не хранится.  Но это ячейки для ссылок, так что память расходуется не так сильно.
+20. Модули — это синглтоны, создающиеся в момент первого импорта. Часто это полезно.
+21. yield в генераторах может возвращать значения, которые отправлены в него снаружи методом send (да, есть такой).
+22. Благодаря send и генераторам реализовали асинхронное программирование. async и await — это просто синтаксический сахар.
+23. Список может содержать сам себя. Python это обнаруживает и не зацикливается при выводе.
+```
+>>> a = []
+>>> a.append(a)
+>>> a
+[[...]]
+```
+24. В Python нет оптимизации хвостовой рекурсии не потому, что Гвидо не осилил, а потому, что он не хочет всё усложнять. Если очень хочется, можно реализовать Y-комбинатор с оптимизацией и использовать его. Если вам действительно нужна TCO, то вы знаете, как это сделать.
+25. Для длинной арифметики Python хранит массив цифр в системе счисления с основанием 2³⁰. Кстати, может быть и 2¹⁵. Если кому интересны подробности, читайте тут — https://github.com/python/cpython/blob/master/Include/longintrepr.h
 
 
 # Web
