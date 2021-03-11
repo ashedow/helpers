@@ -678,6 +678,19 @@ By default, the ProcessPoolExecutor creates one subprocess per CPU.
 -  Async/Await (Python 3.5+ only) Concurrency Cooperative 1 Processors The tasks decide when to give up control.
 The async def syntax marks a function as a coroutine. Internally, coroutines are based on Python generators, but aren’t exactly the same thing. Coroutines return a coroutine object similar to how generators return a generator object. Once you have a coroutine, you obtain its results with the await expression. When a coroutine calls await, execution of the coroutine is suspended until the awaitable completes. 
 
+* Async
+Потоки — наиболее распространённый инструмент. Думаю, вы слышали о нём и ранее, однако asyncio оперирует несколько другими понятиями:
+* **цикл событий (event loop)** по большей части всего лишь управляет выполнением различных задач: регистрирует поступление и запускает в подходящий момент
+* **корутины** — специальные функции, похожие на генераторы python, от которых ожидают (await), что они будут отдавать управление обратно в цикл событий. Необходимо, чтобы они были запущены именно через цикл событий
+* **футуры** — объекты, в которых хранится текущий результат выполнения какой-либо задачи. Это может быть информация о том, что задача ещё не обработана или уже полученный результат; а может быть вообще исключение
+
+
+
+* Async gather
+`acync.gather` lets you fire off a bunch of coroutines simultaneously, and the current context will resume once all of the coroutines have completed. The return value is a list of responses from each coroutine.
+
+
+
 * Basic understanding of GIL ★
 https://callhub.io/understanding-python-gil/
 GIL позволяет одновременно выполнять только один поток, даже в многопоточной архитектуре с более чем одним ядром процессора, GIL приобрел репутацию «печально известной» функции Python.
