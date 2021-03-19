@@ -17,7 +17,6 @@ RPC-based APIs are great for actions (that is, procedures or commands).
 RPC. We are sending a message, and that might end up storing something in the database to keep a history, which might be another RPC call with possibly the same field names — who knows?
 
 
-
 ## REST
 REST - Representational State Transfer.
 REST - частный случай JSON RPC

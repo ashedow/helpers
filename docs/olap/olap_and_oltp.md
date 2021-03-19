@@ -8,6 +8,7 @@ OLAP (Online Analytical Processing) is the technology behind many Business Intel
 
 Unlike relational databases, OLAP tools do not store individual transaction records in two-dimensional, row-by-column format, like a worksheet, but instead use multidimensional database structures—known as Cubes in OLAP terminology—to store arrays of consolidated information. The data and formulas are stored in an optimized multidimensional database, while views of the data are created on demand.
 
+## OLAP vs OLTP
 Comparing characteristics of transaction processing versus analytic systems
 | Property       | OLTP     | OLAP     |
 | :------------- | :----------: | -----------: |

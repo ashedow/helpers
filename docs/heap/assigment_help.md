@@ -1,4 +1,4 @@
-# Bekitzur assessment
+# Assessment
 
 Help information/crib for assessment
 
@@ -254,6 +254,15 @@ Descriptors are Python objects that implement a method of the descriptor protoco
 
 ### Datatypes in python
 
+* **Numeric data types**: int, float, complex
+* **String data types**: str
+* **Sequence types**: list, tuple, range
+* **Binary types**: bytes, bytearray, memoryview
+* **Mapping data type**: dict
+* **Boolean type**: bool
+* **Set data types**: set, frozenset
+
+
 * What the difference is between a Numpy array and a normal list?
 You can append elements to a list, but you can't change the size of a ´numpy.ndarray´ without making a full copy.
 Lists can containt about everything, in numpy arrays all the elements must have the same type.
@@ -298,6 +307,9 @@ set - mutable, unordered collection with no duplicate elements. Items in set can
 ```
 *result* = [*transform* *iteration* *filter* ]
 ```
+
+* Time complexity
+https://wiki.python.org/moin/TimeComplexity
 
 * Dict comprehensions ★★
 
@@ -364,13 +376,16 @@ for char in rev_str("hello"):
     print(char)
 ```
 
-* Defining generators ★★
+* Defining generators and iterators ★★
+
 Итераторы — объекты, которые позволяют обходить коллекции. 
 Итерируемый — объект, в котором есть метод __iter__. В свою очередь, итератор — объект, в котором есть два метода: __iter__ и __next__. почти всегда iterator возвращает себя из метода __iter__, так как они выступают итераторами для самих себя, но есть исключения.
 Некоторые итерируемые (iterable) не являются итераторами, но используют другие объекты как итераторы. Например, объект list относится к итерируемым, но не является итератором. В нём реализован метод __iter__, но отсутствует метод __next__. Итераторы объектов list относятся к типу listiterator. Обратите внимание, у объектов list есть определённая длина, а у listiterator нету.
 Важная поправка к сказанному выше: если у объекта нет метода __iter__, его можно обойти, если определить метод __getitem__. В этом случае встроенная функция iter возвращает итератор с типом iterator, который использует __getitem__ для обхода элементов списка. Этот метод возвращает StopIteration или IndexError, когда обход завершается. 
 В модуле itertools есть набор итераторов, которые упрощают работу с перестановками, комбинациями, декартовыми произведениями и другими комбинаторными структурами
 
+generator expressions don’t construct list-objects, they generate values “just in time” as a generator function or class-based iterator would. 
+A generator function returns a generator object that can be iterated to get the values.
 В целом стоит избегать прямого вызова __iter__ и __next__. При использовании for или генераторов списков Python вызывает эти методы сам. Если всё-таки необходимо вызвать методы напрямую, используйте встроенные функции iter и next и в параметрах передавайте итератор или контейнер. Например, если c — итерируемый, используйте конструкцию iter(c) вместо c.__iter__(). Если a — итератор, используйте next(a), а не a.__next__(). Это похоже на использование len.
 A generator is simply a function which returns an object on which you can call next, such that for every call it returns some value, until it raises a StopIteration exception, signaling that all values have been generated. Such an object is called an iterator.
 It is as easy as defining a normal function, but with a yield statement instead of a return statement.
@@ -380,6 +395,15 @@ It is as easy as defining a normal function, but with a yield statement instead 
  - Once the function yields, the function is paused and the control is transferred to the caller.
  - Local variables and their states are remembered between successive calls.
  - Finally, when the function terminates, StopIteration is raised automatically on further calls.
+
+List comprehension uses 87724 bytes of memory while the generator function uses only 125 bytes of memory. By using generators we save memory when compared to list comprehension where a lot of memory is used.
+
+The getsizeof() object returns the amount of memory that holds the nums_squared_list list compared to len() object that would return the total number of items with the nums_sqaured_list list.
+
+* Lazy evaluations
+Lazy Evaluation will not immediately evaluate the expression but only does it when the outcome is needed.
+map() - lazy
+property isn’t really creating a lazy attribute itself. Instead, it’s just a matter of providing an interface to ease data handling.
 
 * Positive and negative sides ★★
 
@@ -409,6 +433,7 @@ In Python 3, range does the equivalent of python's xrange, and to get the list, 
 
 * Two way of defenition generators ★★★
 comprehensions def with yeld
+generator expression and generator function. generator expression is similar with list comprehension, except we use ().
 
 * contextlib - module provides utilities for common tasks involving the with statement. 
 Needs `__enter__` and `__exit__`
@@ -426,6 +451,27 @@ class ResourceForWith:
 * getattr() -build-in function.
 Return the value of the named attribute of object. name must be a string
 `getattr(x, 'foobar')` is equivalent to `x.foobar` If the named attribute does not exist, default is returned if provided, otherwise AttributeError is raised.
+
+Unlike the __getattr__ method, which doesn’t get called when a particular attribute is in the instance dictionary, the __getattribute__ method gets called every time an attribute is retrieved.
+
+* diff between yeld and return
+
+`yeld`
+    * Yield is generally used to convert a regular Python function into a generator.
+    * It replace the return of a function to suspend its execution without destroying local variables.	
+    * It is used when the generator returns an intermediate result to the caller.	
+    * Code written after yield statement execute in next function call.	
+    * It can run multiple times.	
+    * Yield statement function is executed from the last state from where the function get paused.
+
+`return`
+    * Return is generally used for the end of the execution and “returns” the result to the caller statement.
+    * Return statement does not retain any state. Every time you call function, it executed independently.
+    * It exits from a function and handing back a value to its caller.
+    * It is used when a function is ready to send a value.
+    * while, code written after return statement wont execute.
+    * It only runs single time.
+    * Every function calls run the function from the start.
 
 ### Objects
 
@@ -518,9 +564,12 @@ class C(B, A):
 ```
 
 * Public, protected and private fields ★★
+Incapsulation in python:
 public - default. 
 self._salary=sal # protected attribute
 self.__name=name  # private attribute 
+
++ magic methods
 
 * Underscore
 Single underscore:
@@ -801,10 +850,15 @@ class Foo(object):
 
 * Base clase for metaclasses if we define it as class ★★★
 
-### Modules 
+### Modules and packages
 
 * What is module ★
 A module is a single file (or files) that are imported under one import and used.
+There are actually three different ways to define a module in Python:
+* A module can be written in Python itself.
+* A module can be written in C and loaded dynamically at run-time, like the re (regular expression) module.
+* A built-in module is intrinsically contained in the interpreter, like the itertools module.
+* A module’s contents are accessed the same way in all three cases: with the import statement.
 
 * File module and dir module ★
 
@@ -817,6 +871,16 @@ A module is a single file (or files) that are imported under one import and used
 * Cycling imports and how to avoid ★★★
 
 * Module name collision (base module name from req. and local submodules name)/ How works import in this cse and how to avoid this behavor ★★★
+
+* Packages
+The Python Package Index (PyPI) is a repository of software for the Python programming language.
+Packages allow for a hierarchical structuring of the module namespace using dot notation. In the same way that modules help avoid collisions between global variable names, packages help avoid collisions between module names.
+
+If a file named __init__.py is present in a package directory, it is invoked when the package or a module in the package is imported. This can be used for execution of package initialization code, such as initialization of package-level data.
+
+
+
+
 
 ### Testing
 

@@ -171,6 +171,33 @@ indexing3
 3. Multilevel Indexing
 With the growth of the size of the database, indices also grow. As the index is stored in the main memory, a single-level index might become too large a size to store with multiple disk accesses. The multilevel indexing segregates the main block into various smaller blocks so that the same can stored in a single block. The outer blocks are divided into inner blocks which in turn are pointed to the data blocks. This can be easily stored in the main memory with fewer overheads.
 
+### CBC Gcm
+
+DB столбцов для режима:
+ID (первичный ключ, int) (уникальный)
+Зашифрованное Значение
+Соль
+Итерации
+(Другие ... стандартные вещи, такие как дата создания и т. д.)
+
+Столбцы БД для режима Gcm:
+ID (первичный ключ, int) (уникальный)
+Зашифрованное Значение
+Связанный Текст
+(Другое... стандартные вещи, такие как дата создания и т. д.)
+
+### CTE & OBT
+Common Table Expression (CTE) или обобщенное табличное выражение (OTB) – это временные результирующие наборы (т.е. результаты выполнения SQL запроса), которые не сохраняются в базе данных в виде объектов, но к ним можно обращаться.
+
+Главной особенностью обобщенных табличных выражений является то, что с помощью них можно писать рекурсивные запросы.
+
+Предназначены:
+* Основной целью OTB является написание рекурсивных запросов, можно сказать для этого они, и были созданы;
+* OTB можно использовать также и для замены представлений (VIEW), например, в тех случаях, когда нет необходимости сохранять в базе SQL запрос представления, т.е. его определение;
+* Обобщенные табличные выражения повышают читаемость кода путем разделения запроса на логические блоки, и тем самым упрощают работу со сложными запросами;
+* Также OTB предназначены и для многократных ссылок на результирующий набор из одной и той же SQL инструкции
+
+Можно определить с помощью [WITH](sql.md)
 ## B-Tree
 
 B-Tree is a self-balancing search tree. In most of the other self-balancing search trees (like AVL and Red-Black Trees), it is assumed that everything is in main memory. 

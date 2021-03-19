@@ -369,6 +369,62 @@ There are several features that make HDFS particularly useful, including:
 - **Streaming data access**. HDFS is built for high data throughput, which is best for access to streaming data.
 
 
+# YARN
+YARN — Yet Another Resource Negotiator, is a part of Hadoop 2 version, is one of the two major components of Apache Hadoop (with HDFS). It plans the use of cluster resources as well as the treatments applied to the data.
+
+![](0_Y-uQ3E40ltiwCyGA.gif)
+
+**The Resource Manager**: it controls the resource management of the cluster, also makes allocation decisions. The resource manager has two main components: 
+
+    - **scheduler**: is called the YarnScheduler, which allows different policies for managing constraints such as capacity, fairness, and service level agreements.
+    
+    - **Applications Manager**: is responsible for maintaining a list of submitted application. After application is submitted by the client, application manager firstly validates whether application requirement of resources for its application master can be satisfied or not.If enough resources are available then it forwards the application to scheduler otherwise application will be rejected.
+
+**The Node Manager**: is responsible for launching and managing containers on a node. Containers execute tasks as specified by the AppMaster.
+
+    - **Container**: Signifies an allocated resources to an ApplicationMaster. ResourceManager is responsible for issuing resource/container to an ApplicationMaster. and it refers to a collection of resources such as memory, CPU, disk and network IO.
+
+    - **Application Master**: is an instance of a framework-specific library that negotiates resources from the Resource Manager and works with the NodeManager to execute and monitor the granted resources (bundled as containers) for a given application. An application can be mapreduce job, hive framework…
+
+
+**Steps of executing Applications with YARN:**
+
+![](0_1lPfwWJnbLqldZpP.png)
+
+1. A client submits an application to the YARN ResourceManager.
+2. The ApplicationsManager (in the ResourceManager) negotiates a container and bootstraps the ApplicationMaster instance for the application.
+3. The ApplicationMaster registers with the ResourceManager and requests containers(RAMs and CPUs).
+4. The ApplicationMaster communicates with NodeManagers to launch the containers it has been granted.
+5. The ApplicationMaster manages application execution. During execution, the application provides progress and status information to the ApplicationMaster. The client can monitor the application’s status by querying the ResourceManager or by communicating directly with the ApplicationMaster.
+6. The ApplicationMaster reports completion of the application to the ResourceManager.
+7. The ApplicationMaster un-registers with the ResourceManager, which then cleans up the ApplicationMaster container.
+
+**Yarn Scheduler**
+The Scheduler has a pluggable policy which is responsible for partitioning the cluster resources among the various queues, applications etc.
+
+**2. FIFO scheduler**
+
+![](0_7MtvoR0gTliIMCs2.png)
+
+The FIFO scheduler is one of the earliest deployment strategies used by Hadoop, and can simply be interpreted as a Java queue. which means that there can only be one job in the cluster at the same time. All applications are executed in the order of submission, and the Job after the completion of the previous Job will be executed in the order of the queue.
+This scheduler lets short applications finish in reasonable time while not starving long-lived applications.
+
+**2. Capacity scheduler**
+
+![](0_tcDmQQRrUMQxrpHQ.png)
+
+The Capacity scheduler is a pluggable scheduler for Hadoop that allows multiple tenants to securely share a large cluster. Resources are allocated to each tenant's applications in a way that fully utilizes the cluster, governed by the constraints of allocated capacities.
+Queues are typically set up by administrators to reflect the economics of the shared cluster. The Capacity Scheduler supports hierarchical queues to ensure that resources are shared among the sub-queues of an organization before other queues are allowed to use free resources.
+
+**3. Fair scheduler**
+
+![](0_FCZHVi2t0vVGvkMR.png)
+
+The FairScheduler is a pluggable scheduler for Hadoop that allows YARN applications to share resources in a large cluster fairly. Fair scheduling is a method of assigning resources to applications such that all applications get, on average, an equal share of resources over time.
+By default, the Fair Scheduler bases scheduling fairness decisions only on memory. It can be configured to schedule resources based on memory, CPU, and disk usage.
+When other applications are submitted, resources that free up are assigned to the new applications, so that each application eventually gets approximately the same amount of resources.
+
+
 ## MapReduce
 
 Hadoop divides the job into tasks. There are two types of tasks:
@@ -566,9 +622,41 @@ You can specify the compression parameters for intermediate data for output or f
 4. Snappy often performs better than lzo. 
 5. For MapReduce, we can use bzip and lzo formats, if you would like to have your data splittable. 
 6. Snappy and gzip formats are not splittable at file level compression. But you can use block level compression and splittable container formats such as Avro or SequenceFile--> process the blocks in parallel using MapReduce
+
+
+## Join
+
+* Map-Side Join 
+    - If you have a small dataset, then you can build from a Map-Side Join with the help of distributed cache.
+    - Data should be partitioned and sorted in particular way. (must be sorted by the join key.)
+    - Each input data should be divided in same number of partition.
+    - Must be sorted with same key.
+    - All the records for a particular key must reside in the same partition.
+
+* Reduce-Side Join (also called as Repartitioned join or Repartitioned sort merge join and also it is mostly used join type)
+    - If you have several big datasets, then you can perform a Reduce-Side Join.
+    - There is no necessity in this join to have a dataset in a structured form (or partitioned)
+    - Data Source is referring to data source files, probably taken from RDBMS
+    - Tag would be used to tag every record with it’s source name, so that it’s source can be identified at any given point of time be it is in map/reduce phase. why it is required will cover it later.
+    - Group key is referring column to be used as join key between two data sources.
+
+* Secondary Sort 
+    - use and configure Secondary Sort to reduce the memory footprints. In this case, you should take into consideration the number of records in different datasets for each key.
+
+
+
+    -D stream.num.map.output.key.fields=2
+    -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
+    -D mapred.output.key.comparator.class=org.apache.hadoop.mapred.lib.KeyFieldBasedComparator
+    -D mapred.text.key.comparator.options=-k1,2
+    -D mapred.text.key.partitioner.options=-k1,1
+
+
 ## Links
 
 White, Tom. 2014. Hadoop: The Definitive Guide. O’Reilly Media, Inc.
 
 Dral, Alexey A. 2014. Scaling Distributed File System. Big Data Essentials: HDFS, MapReduce and Spark RDD by Yandex. https://www.coursera.org/learn/big-data-essentials
 
+
+https://elmaslouhy-mouaad.medium.com/introduction-to-hadoop-yarn-92d61ee54c13
