@@ -599,6 +599,27 @@ A double underscore __ prefixed to a variable makes it private. It gives a stron
 2.7 near left by depth
 3 more horisontal
 
+`mro()` stands for Method Resolution Order. It returns a list of types the class is derived from, in the order they are searched for methods.
+
+`mro()` or `__mro__` works only on new style classes. In python 3, they work without any issues. But in python 2 those classes need to inherit from object.
+
+* `@staticmethos` vs `@classmethod`
+A `staticmethod` is a method that knows nothing about the class or instance it was called on. It just gets the arguments that were passed, no implicit first argument. It is basically useless in Python -- you can just use a module function instead of a staticmethod.
+
+A `classmethod` is a method that gets passed the class it was called on, or the class of the instance it was called on, as first argument. This is useful when you want the method to be a factory for the class: since it gets the actual class it was called on as first argument, you can always instantiate the right class, even when subclasses are involved. Observe for instance how `dict.fromkeys()`, a `classmethod`, returns an instance of the subclass when called on a subclass
+```
+class DictSubclass(dict):
+...     def __repr__(self):
+...         return "DictSubclass"
+... 
+>>> dict.fromkeys("abc")
+{'a': None, 'c': None, 'b': None}
+>>> DictSubclass.fromkeys("abc")
+DictSubclass
+```
+
+
+
 ### Decorators
 
 * What is decorator and how it's applied ★
@@ -899,10 +920,21 @@ If a file named __init__.py is present in a package directory, it is invoked whe
 
 * Mocking, request factory (for Django) ★★
 
+* @mock vs @Magicmock
+
+`MagicMock` is a subclass of `Mock` with default implementations of most of the magic methods. You can use MagicMock without having to configure the magic methods yourself.
+
+
+
+
 * Pytest fixtures ★★★
+`@pytest.fixture`
+At a basic level, test functions request fixtures they require by declaring them as arguments.
+When pytest goes to run a test, it looks at the parameters in that test function’s signature, and then searches for fixtures that have the same names as those parameters. Once pytest finds them, it runs those fixtures, captures what they returned (if anything), and passes those objects into the test function as arguments.
 
 * Writing custom Tesst Runner? use cases (for Django) ★★★
 
+@parametrize
 
 ## Django
 
