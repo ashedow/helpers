@@ -61,10 +61,10 @@ function OVER widow
 
 
 PARTITION BY позволяет сгруппировать строки по значению определённого столбца. Это полезно, если данные логически делятся на какие-то категории и нужно что-то сделать с данной строкой с учётом других строк той же группы (скажем, сравнить теннисиста с остальными теннисистами, но не с бегунами или пловцами). Этот оператор работает только с оконными функциями типа LAG, LEAD, RANK и т. д.
-ROW_NUMBER можно объединить с ORDER BY, чтобы определить, в каком порядке строки будут нумероваться. Выберем с помощью DISTINCT все имеющиеся виды спорта и пронумеруем их в алфавитном порядке.
-LAG - Функция LAG берёт строку и возвращает ту, которая шла перед ней.
-LEAD - Функция LEAD похожа на LAG, но вместо предыдущей строки возвращает следующую.
-RANK - Оператор RANK похож на ROW_NUMBER, но присваивает одинаковые номера строкам с одинаковыми значениями, а «лишние» номера пропускает. Есть также DENSE_RANK, который не пропускает номеров.
+* ROW_NUMBER можно объединить с ORDER BY, чтобы определить, в каком порядке строки будут нумероваться. Выберем с помощью DISTINCT все имеющиеся виды спорта и пронумеруем их в алфавитном порядке.
+* LAG - Функция LAG берёт строку и возвращает ту, которая шла перед ней.
+* LEAD - Функция LEAD похожа на LAG, но вместо предыдущей строки возвращает следующую.
+* RANK - Оператор RANK похож на ROW_NUMBER, но присваивает одинаковые номера строкам с одинаковыми значениями, а «лишние» номера пропускает. Есть также DENSE_RANK, который не пропускает номеров.
 
 
 
@@ -74,6 +74,8 @@ SELECT SUM(Quantity) AS Qty_Canada FROM Sumproduct WHERE City IN (SELECT City FR
 ***
 
 Clustered and Nonclustered Index
+
+> [Indexes](./indexes.md)
 
 | A clustered index is a type of index where the table records are physically re-ordered to match the index. | A nonclustered index is a type of index that contains the references to the actual data. |
 
@@ -555,6 +557,62 @@ If a `WITH` query is referred to multiple times, some databases cache (i.e. “m
 * `CTE_query_definition` — запрос `SELECT`, к результирующему набору которого, мы и будем обращаться через обобщенное табличное выражение, т.е. `common_table_expression_name`.
 
 После обобщенного табличного выражения, т.е. сразу за ним должен идти одиночный запрос `SELECT`, `INSERT`, `UPDATE`, `MERGE` или `DELETE`.
+
+***
+
+A transaction is NOT automatically created when you run an executable SQL statement in SQL Server.
+
+Manually create a new transaction using the BEGIN TRAN or BEGIN TRANSACTION statement (TRAN eq to TRANSACTION)
+
+[Transactions](README.md#Concurrency Control ##Transaction)
+
+```sql
+SET TRANSACTION ISOLATION LEVEL
+    { READ UNCOMMITTED
+    | READ COMMITTED
+    | REPEATABLE READ
+    | SNAPSHOT # For MSQL server
+    | SERIALIZABLE
+    }
+```
+
+Set transaction name
+```sql
+BEGIN TRANSACTION update_balance;
+UPDATE account SET balance = balance - 100 WHERE account_id = 1;
+UPDATE account SET balance = balance + 100 WHERE account_id = 2;
+```
+
+To commit a transaction in SQL Server, simply run the COMMIT command:
+```sql
+BEGIN TRANSACTION;
+UPDATE account SET balance = balance - 100 WHERE account_id = 1;
+UPDATE account SET balance = balance + 100 WHERE account_id = 2;
+COMMIT;
+```
+The changes made as part of the transaction are permanently saved to the database.
+
+
+To roll back a transaction in SQL Server, simply run the ROLLBACK command:
+```sql
+BEGIN TRANSACTION;
+UPDATE account SET balance = balance - 100 WHERE account_id = 1;
+UPDATE account SET balance = balance + 100 WHERE account_id = 2;
+ROLLBACK;
+```
+The changes from these statements are not saved to the database after the ROLLBACK command is run.
+
+A savepoint can be created with the SAVE TRANSACTION command:
+```sql
+BEGIN TRANSACTION;
+UPDATE account SET balance = balance - 100 WHERE account_id = 1;
+UPDATE account SET balance = balance + 100 WHERE account_id = 2;
+SAVE TRANSACTION after_bal_transfer;
+```
+SQL commands can be run after the SAVE TRANSACTION command. The transaction can then be rolled back to the savepoint if needed, and the statements before the savepoint are not lost.
+```sql
+ROLLBACK TO SAVEPOINT after_bal_transfer;
+```
 
 
 ***

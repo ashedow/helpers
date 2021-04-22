@@ -78,50 +78,50 @@ The database community has developed a series of guidelines for ensuring that da
 
 * FIRST NORMAL FORM (1NF)
 First normal form (1NF) sets the fundamental rules for an organized database:
- - Eliminate duplicative columns from the same table.
- - Create separate tables for each group of related data and identify each row with a unique column or set of columns (the primary key).
+    - Eliminate duplicative columns from the same table.
+    - Create separate tables for each group of related data and identify each row with a unique column or set of columns (the primary key).
 
 * SECOND NORMAL FORM (2NF)
 Second normal form (2NF) further addresses the concept of removing duplicative data:
- - Meet all the requirements of the first normal form.
- - Remove subsets of data that apply to multiple rows of a table and place them in separate tables.
- - Create relationships between these new tables and their predecessors through the use of foreign keys.
+    - Meet all the requirements of the first normal form.
+    - Remove subsets of data that apply to multiple rows of a table and place them in separate tables.
+    - Create relationships between these new tables and their predecessors through the use of foreign keys.
 
 * THIRD NORMAL FORM (3NF)
 Third normal form (3NF) goes one significant step further:
- - Meet all the requirements of the second normal form.
- - Remove columns that are not dependent upon the primary key.
+    - Meet all the requirements of the second normal form.
+    - Remove columns that are not dependent upon the primary key.
 
 * BOYCE-CODD NORMAL FORM (BCNF OR 3.5NF)
 The Boyce-Codd Normal Form, also referred to as the "third and half (3.5) normal form," adds one more requirement:
- - Meet all the requirements of the third normal form.
- - Every determinant must be a candidate key.
+    - Meet all the requirements of the third normal form.
+    - Every determinant must be a candidate key.
 
 * FOURTH NORMAL FORM (4NF)
 Finally, fourth normal form (4NF) has one additional requirement:
- - Meet all the requirements of the third normal form.
- - A relation is in 4NF if it has no multi-valued dependencies.
+    - Meet all the requirements of the third normal form.
+    - A relation is in 4NF if it has no multi-valued dependencies.
 
 * FIFTH NORMAL FORM5NF (Fifth Normal Form)
- - A table is in 5th Normal Form only if it is in 4NF and it cannot be decomposed into any number of smaller tables without loss of data.
+    - A table is in 5th Normal Form only if it is in 4NF and it cannot be decomposed into any number of smaller tables without loss of data.
 
 * SIXTH NORMAL FORM6NF (Sixth Normal Form)
- - 6th Normal Form is not standardized, yet however, it is being discussed by database experts for some time. Hopefully, we would have a clear & standardized definition for 6th Normal Form in the near future.
+     - 6th Normal Form is not standardized, yet however, it is being discussed by database experts for some time. Hopefully, we would have a clear & standardized definition for 6th Normal Form in the near future.
 
 ### Denormalization
 
 > Denormalization is a strategy used on a previously-normalized database to increase performance. In computing, denormalization is the process of trying to improve the read performance of a database, at the expense of losing some write performance, by adding redundant copies of data or by grouping data.[1][2] It is often motivated by performance or scalability in relational database software needing to carry out very large numbers of read operations. Denormalization differs from the unnormalized form in that denormalization benefits can only be fully realized on a data model that is otherwise normalized.
 
 Pros of Denormalization:
- + Retrieving data is faster since we do fewer joins
- + Queries to retrieve can be simpler(and therefore less likely to have bugs),
- + since we need to look at fewer tables.
+    + Retrieving data is faster since we do fewer joins
+    + Queries to retrieve can be simpler(and therefore less likely to have bugs),
+    + since we need to look at fewer tables.
 
 Cons of Denormalization:
- - Updates and inserts are more expensive.
- - Denormalization can make update and insert code harder to write.
- - Data may be inconsistent . Which is the “correct” value for a piece of data?
- - Data redundancy necessitates more storage.
+    - Updates and inserts are more expensive.
+    - Denormalization can make update and insert code harder to write.
+    - Data may be inconsistent . Which is the “correct” value for a piece of data?
+    - Data redundancy necessitates more storage.
 
 ## Indexes
 
@@ -171,22 +171,23 @@ indexing3
 3. Multilevel Indexing
 With the growth of the size of the database, indices also grow. As the index is stored in the main memory, a single-level index might become too large a size to store with multiple disk accesses. The multilevel indexing segregates the main block into various smaller blocks so that the same can stored in a single block. The outer blocks are divided into inner blocks which in turn are pointed to the data blocks. This can be easily stored in the main memory with fewer overheads.
 
-### CBC Gcm
+### CBC & Gcm
 
-DB столбцов для режима:
-ID (первичный ключ, int) (уникальный)
-Зашифрованное Значение
-Соль
-Итерации
-(Другие ... стандартные вещи, такие как дата создания и т. д.)
+`GCM` and `CBC` modes internally work quite differently; they both involve a block cipher and an exclusive-or, but they use them in different ways.
 
-Столбцы БД для режима Gcm:
-ID (первичный ключ, int) (уникальный)
-Зашифрованное Значение
-Связанный Текст
-(Другое... стандартные вещи, такие как дата создания и т. д.)
+In `CBC` mode, you encrypt a block of data by taking the current plaintext block and exclusive-oring that wth the previous ciphertext block (or IV), and then sending the result of that through the block cipher; the output of the block cipher is the ciphertext block.
+
+`GCM` mode provides both privacy (encryption) and integrity. To provide encryption, GCM maintains a counter; for each block of data, it sends the current value of the counter through the block cipher. Then, it takes the output of the block cipher, and exclusive or's that with the plaintext to form the ciphertext.
+
+Note two key differences:
+
+* What's being exclusive-or'ed; in CBC mode, the plaintext is exclusive-or'ed with data that the attacker knows (the IV or a previous ciphertext block); hence, that in itself does not provide any inherent security (instead, we do it to minimize the chance that we send the same block twice through the block cipher). In GCM mode, the plaintext is exclusive-or'ed with output from the block cipher; it is inherent in the security model that the attacker cannot guess that output (unless he already knows the plaintext and the ciphertext).
+
+* What's being sent through the block cipher; in CBC mode, the plaintext is sent through the block cipher (after it's been 'randomized' with an exclusive-or); in GCM mode, what's being sent through the block cipher doesn't actually depend on the data being encrypted, but instead only on internal state.
+
 
 ### CTE & OBT
+
 Common Table Expression (CTE) или обобщенное табличное выражение (OTB) – это временные результирующие наборы (т.е. результаты выполнения SQL запроса), которые не сохраняются в базе данных в виде объектов, но к ним можно обращаться.
 
 Главной особенностью обобщенных табличных выражений является то, что с помощью них можно писать рекурсивные запросы.
@@ -199,6 +200,8 @@ Common Table Expression (CTE) или обобщенное табличное в�
 
 Можно определить с помощью [WITH](sql.md)
 ## B-Tree
+
+> [Indexes](.indexes.md)
 
 B-Tree is a self-balancing search tree. In most of the other self-balancing search trees (like AVL and Red-Black Trees), it is assumed that everything is in main memory. 
 To understand the use of B-Trees, we must think of the huge amount of data that cannot fit in main memory. When the number of keys is high, the data is read from disk in the form of blocks. Disk access time is very high compared to the main memory access time. 
@@ -232,6 +235,8 @@ A set of logically related operations is known as transaction. The main operatio
 
 ### Properties of a transaction
 
+[ACID](#ACID)
+
 * Atomicity: As a transaction is set of logically related operations, either all of them should be executed or none. A debit transaction discussed above should either execute all three operations or none.If debit transaction fails after executing operation 1 and 2 then its new value 4000 will not be updated in the database which leads to inconsistency.
 
 * Consistency: If operations of debit and credit transactions on same account are executed concurrently, it may leave database in an inconsistent state.
@@ -239,6 +244,40 @@ A set of logically related operations is known as transaction. The main operatio
 * Isolation: Result of a transaction should not be visible to others before transaction is committed. For example, Let us assume that A’s balance is Rs. 5000 and T1 debits Rs. 1000 from A. A’s new balance will be 4000. If T2 credits Rs. 500 to A’s new balance, A will become 4500 and after this T1 fails. Then we have to rollback T2 as well because it is using value produced by T1. So a transaction results are not made visible to other transactions before it commits.
 
 * Durable: Once database has committed a transaction, the changes made by the transaction should be permanent. e.g.; If a person has credited $500000 to his account, bank can’t say that the update has been lost. To avoid this problem, multiple copies of database are stored at different locations.
+
+### Transaction isolation levels
+
+In database systems, isolation determines how transaction integrity is visible to other users and systems. 
+
+A lower isolation level increases the ability of many users to access the same data at the same time, but increases the number of concurrency effects (such as dirty reads or lost updates) users might encounter. 
+Conversely, a *higher isolation level reduces the types of concurrency effects* that users may encounter, but requires more system resources and increases the chances that one transaction will block another.
+
+Isolation levels are defined by the presence or absence of the following phenomena:
+
+* **Dirty Reads** A Dirty read is the situation when a transaction reads a data that has not yet been committed. For example, Let’s say transaction 1 updates a row and leaves it uncommitted, meanwhile, Transaction 2 reads the updated row. If transaction 1 rolls back the change, transaction 2 will have read data that is considered never to have existed.
+
+* **Nonrepeatable Reads** Non Repeatable read occurs when a transaction reads same row twice, and get a different value each time. For example, suppose transaction T1 reads data. Due to concurrency, another transaction T2 updates the same data and commit, Now if transaction T1 rereads the same data, it will retrieve a different value.
+
+* **Phantom Reads** Phantom Read occurs when two same queries are executed, but the rows retrieved by the two, are different. For example, suppose transaction T1 retrieves a set of rows that satisfy some search criteria. Now, Transaction T2 generates some new rows that match the search criteria for transaction T1. If transaction T1 re-executes the statement that reads the rows, it gets a different set of rows this time.
+
+| Isolation Level   |   Dirty Read  |   Serialization Anomaly |
+|--------------------|--------------|-------------------------|
+| Read uncommitted   |   Allowed, but not in PG   |   Possible |
+| Read committed   |   Not possible   |   Possible |
+| Repeatable read   |   Not possible   |   Possible |
+| Serializable   |   Not possible   |   Not possible |
+
+* **Read Uncommitted** – Read Uncommitted is the lowest isolation level. In this level, one transaction may read not yet committed changes made by other transaction, thereby allowing dirty reads. In this level, transactions are not isolated from each other.
+
+* **Read Committed** – This isolation level guarantees that any data read is committed at the moment it is read. Thus it does not allows dirty read. The transaction holds a read or write lock on the current row, and thus prevent other transactions from reading, updating or deleting it.
+
+* **Repeatable Read** – This is the most restrictive isolation level. The transaction holds read locks on all rows it references and writes locks on all rows it inserts, updates, or deletes. Since other transaction cannot read, update or delete these rows, consequently it avoids non-repeatable read.
+
+SNAPSHOT for MSQL
+Specifies that data read by any statement in a transaction will be the transactionally consistent version of the data that existed at the start of the transaction. The transaction can only recognize data modifications that were committed before the start of the transaction. Data modifications made by other transactions after the start of the current transaction are not visible to statements executing in the current transaction. The effect is as if the statements in a transaction get a snapshot of the committed data as it existed at the start of the transaction.
+
+* **Serializable** – This is the Highest isolation level. A serializable execution is guaranteed to be serializable. Serializable execution is defined to be an execution of operations in which concurrently executing transactions appears to be serially executing.
+
 
 ## Schedule
 
@@ -307,7 +346,15 @@ Scalability is the capability of a database to handle a growing amount of data. 
 
 ## master-slave
 
-## zookiper
+## ZooKeeper
+
+Apache ZooKeeper is an open-source server for highly reliable distributed coordination of cloud applications. It is a project of the Apache Software Foundation.
+
+Zookeeper is a top-level software developed by Apache that acts as a centralized service and is *used to maintain naming and configuration data and to provide flexible and robust synchronization within distributed systems*. 
+
+Zookeeper it self is *allowing multiple clients to perform simultaneous reads and writes and acts as a shared configuration service within the system*. The **Zookeeper atomic broadcast (ZAB) protocol** is the brains of the whole system, making it possible for Zookeeper to act as an atomic broadcast system and issue orderly updates.
+
+[ZooKeeper](BigData/ZooKeeper/README.md)
 
 ## Shard
 

@@ -25,6 +25,7 @@ Spark Core is the underlying general execution engine for spark platform that al
 
 ### Spark SQL
 Spark SQL is a component on top of Spark Core that introduces a new data abstraction called SchemaRDD, which provides support for structured and semi-structured data.
+[Sparkk sql](./spark_sql.md)
 
 ### Spark Streaming
 Spark Streaming leverages Spark Core's fast scheduling capability to perform streaming analytics. It ingests data in mini-batches and performs RDD (Resilient Distributed Datasets) transformations on those mini-batches of data.

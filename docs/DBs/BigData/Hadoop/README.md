@@ -558,7 +558,17 @@ To sort octets of IPV4 address by the second octet in an increasing order, and b
 
 ### Speculative Execution / Backup Tasks
 
-One of the most common problems that causes a MapReduce application to wait longer for a job completion is a straggler--a machine that takes an unusually long time to complete one of the last few tasks in the computation.
+One of the most common problems that causes a MapReduce application to wait longer for a job completion is a straggler-a machine that takes an unusually long time to complete one of the last few tasks in the computation. or task which runs significantly slower than all the others
+
+Reason for stragglers
+* Equal workload, unequal resources
+* Equal resources, unequal workload
+* Bugs
+
+Skewed data causes false stragglers Solution:
+* salting
+* repartition
+* custom partitioner
 
 ![](se2.png)
 

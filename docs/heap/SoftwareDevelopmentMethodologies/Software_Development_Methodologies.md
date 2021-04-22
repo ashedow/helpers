@@ -97,3 +97,17 @@ Originally promoted by Mary Poppendieck and Tom Poppendieck, Lean Software Devel
 Extreme Programming (XP) is an agile software development framework that aims to produce higher quality software, and higher quality of life for the development team. XP is the most specific of the agile frameworks regarding appropriate engineering practices for software development.
 
 It is a set of best practices of which some are taken to an “extreme” level. As with other agile methods, XP regards ongoing changes to requirements as a natural and desirable aspect of software development. In the selection of its practices XP leans towards the daily software engineering activities of developers. XP is often seen as complementary to Scrum, filling most of the holes that Scrum leaves wide open.
+
+## SDLC
+SDLC (Software development lifecycle)
+
+![](sdlc.png)
+
+SDLC это замкнутый цикл, в котором каждый этап влияет на действия в последующих и дает перспективные указания на будущее.
+
+* **Анализ требований** отвечает на вопрос «Какие проблемы требуют решений?»
+* **Планирование** отвечает на вопрос «Что мы хотим сделать?»
+* **Проектирование и дизайн** отвечает на вопрос «Как мы добьемся наших целей?»
+* **Разработка ПО** регулирует процесс создания продукта.
+* **Тестирование** регулирует обеспечение качественной работы продукта.
+* **Развертывание** регулирует использование финального продукта.

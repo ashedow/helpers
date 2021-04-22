@@ -278,15 +278,14 @@ Yoy can for example divide Arrays `array([3, 6, 9, 12])/3` but if you tried to d
 
 * list/set/tuple ★
 https://docs.python.org/3.2/tutorial/datastructures.html
-List - ordered array of items. Mutable. Implication of iterations is Time-consuming. The list is better for performing operations, such as insertion and deletion. Lists consume more memory. Lists have several built-in methods. The unexpected changes and errors are more likely to occur.
+list - ordered array of items. Mutable. Implication of iterations is Time-consuming. The list is better for performing operations, such as insertion and deletion. Lists consume more memory. Lists have several built-in methods. The unexpected changes and errors are more likely to occur.
 typle - array of items. Immutable. Implication of iterations is comparatively Faster. Tuple data type is appropriate for accessing the elements. Tuple consume less memory as compared to the list. Tuple does no have must built-in methods. In tuple, it is hard to take place.
-set - mutable, unordered collection with no duplicate elements. Items in set cannot be changed or replaced. 
+set - mutable, unordered collection with no duplicate elements. Items in set cannot be changed or replaced. sort data but not garanted (good for int)
 
     * operation cost ★★
     Стоимость сортировки отсортированного массива - 
     Стоимость сортировки reverse массива - 
     `list.sort(reverse=True|False, key=myFunc)`
-
 
     * Memory cost ★★
         Your list of tuples adds an extra layer. You have 3 layers of items:
@@ -305,7 +304,7 @@ set - mutable, unordered collection with no duplicate elements. Items in set can
 
 * Most generic form of list comprehensions ★
 ```
-*result* = [*transform* *iteration* *filter* ]
+*result* = [*transform* *iteration* *filter*]
 ```
 
 * Time complexity
@@ -378,13 +377,13 @@ for char in rev_str("hello"):
 
 * Defining generators and iterators ★★
 
-Итераторы — объекты, которые позволяют обходить коллекции. 
+**Итераторы** — объекты, которые позволяют обходить коллекции. 
 Итерируемый — объект, в котором есть метод __iter__. В свою очередь, итератор — объект, в котором есть два метода: __iter__ и __next__. почти всегда iterator возвращает себя из метода __iter__, так как они выступают итераторами для самих себя, но есть исключения.
 Некоторые итерируемые (iterable) не являются итераторами, но используют другие объекты как итераторы. Например, объект list относится к итерируемым, но не является итератором. В нём реализован метод __iter__, но отсутствует метод __next__. Итераторы объектов list относятся к типу listiterator. Обратите внимание, у объектов list есть определённая длина, а у listiterator нету.
 Важная поправка к сказанному выше: если у объекта нет метода __iter__, его можно обойти, если определить метод __getitem__. В этом случае встроенная функция iter возвращает итератор с типом iterator, который использует __getitem__ для обхода элементов списка. Этот метод возвращает StopIteration или IndexError, когда обход завершается. 
 В модуле itertools есть набор итераторов, которые упрощают работу с перестановками, комбинациями, декартовыми произведениями и другими комбинаторными структурами
 
-generator expressions don’t construct list-objects, they generate values “just in time” as a generator function or class-based iterator would. 
+**generator** expressions don’t construct list-objects, they generate values “just in time” as a generator function or class-based iterator would. 
 A generator function returns a generator object that can be iterated to get the values.
 В целом стоит избегать прямого вызова __iter__ и __next__. При использовании for или генераторов списков Python вызывает эти методы сам. Если всё-таки необходимо вызвать методы напрямую, используйте встроенные функции iter и next и в параметрах передавайте итератор или контейнер. Например, если c — итерируемый, используйте конструкцию iter(c) вместо c.__iter__(). Если a — итератор, используйте next(a), а не a.__next__(). Это похоже на использование len.
 A generator is simply a function which returns an object on which you can call next, such that for every call it returns some value, until it raises a StopIteration exception, signaling that all values have been generated. Such an object is called an iterator.
@@ -431,13 +430,14 @@ In Python 3, range does the equivalent of python's xrange, and to get the list, 
 
 * Usage of generators to provide function input ★★★
 
+
 * Two way of defenition generators ★★★
 comprehensions def with yeld
 generator expression and generator function. generator expression is similar with list comprehension, except we use ().
 
 * contextlib - module provides utilities for common tasks involving the with statement. 
 Needs `__enter__` and `__exit__`
-Example
+Example:
 ```python
 class ResourceForWith:
     def __init__(self, name):
@@ -483,6 +483,8 @@ Implement `__str__` for classes which you think readability is more important of
 `__new__` accepts cls as it's first parameter and `__init__` accepts self, because when calling `__new__` you actually don't have an instance yet, therefore no self exists at that moment, whereas `__init__` is called after `__new__` and the instance is in place, so you can use self with it.
 Old-style classes don't actually have a `__new__` method because for them `__init__` is the constructor. The body of `__new__` will never be executed in this case because it is not the purpose for old-style classes.
 The new-style classes let the developer override both `__new__` and `__init__` and they have distinct purposes, `__new__` (the constructor) is solely for creating the object and `__init__` (the initializer) for initializing it.
+
+* Что происходит при создании объекта (какие вызовы) что при создании инстанса etc
 
 * Inheritance type ★
 1. Multiple Inheritance
@@ -594,6 +596,8 @@ Python's convention to make an instance variable protected is to add a prefix _ 
 A double underscore __ prefixed to a variable makes it private. It gives a strong suggestion not to touch it from outside the class. Any attempt to do so will result in an AttributeError.
 
 * MRO of new and old style obj ★★★
+2.7 near left by depth
+3 more horisontal
 
 ### Decorators
 
@@ -711,7 +715,6 @@ for
 Geeks
 ```
 
-
 * Downside of functools.wraps and how to avoid it ★★★
 
 * Nesting decorators ★★★
@@ -734,11 +737,8 @@ The async def syntax marks a function as a coroutine. Internally, coroutines are
 * **футуры** — объекты, в которых хранится текущий результат выполнения какой-либо задачи. Это может быть информация о том, что задача ещё не обработана или уже полученный результат; а может быть вообще исключение
 
 
-
 * Async gather
 `acync.gather` lets you fire off a bunch of coroutines simultaneously, and the current context will resume once all of the coroutines have completed. The return value is a list of responses from each coroutine.
-
-
 
 * Basic understanding of GIL ★
 https://callhub.io/understanding-python-gil/
@@ -785,6 +785,10 @@ Threading 1 Processors The operating system decides when to switch tasks externa
     - If not following a command queue/message pump model (using the Queue module), then manual use of synchronization primitives become a necessity (decisions are needed for the granularity of locking)
     - Code is usually harder to understand and to get right - the potential for race conditions increases dramatically
 
+* Event loop vs Treading
+
+
+
 * Create a process in python ★★
 
 * Creating a thread in python ★★
@@ -802,6 +806,7 @@ https://realpython.com/python-concurrency/
 - I/O-Bound Process
 Your program spends most of its time talking to a slow device, like a network connection, a hard drive, or a printer.
 Speeding it up involves overlapping the times spent waiting for these devices.
+Юзать treading ибо iowait небольшой и предсказуем
 - CPU-Bound Process
 You program spends most of its time doing CPU operations.
 Speeding it up involves finding ways to do more computations in the same amount of time.
@@ -821,6 +826,8 @@ multiprocessing
 threading
  - Rblock: This class implements reentrant lock objects. A reentrant lock must be released by the thread that acquired it. Once a thread has acquired a reentrant lock, the same thread may acquire it again without blocking; the thread must release it once for each time it has acquired it.
  - Semaphore:
+
+iowait - переключение потока
 
 * When we need to use threads and when processes and why (non based  python) ★★★
 
@@ -899,6 +906,89 @@ If a file named __init__.py is present in a package directory, it is invoked whe
 
 ## Django
 
+> https://www.knowledgehut.com/interview-questions/django
+
+* Django design pattern?
+Django follows MVC pattern (Model-View-Controller), also referred to as MTV (Model-Template-View). 
+    Model – describes database schema 
+    Views – Controls what user can view. It retrieves data from the table and passes it to the template which is rendered to Browser eventually.
+    Template – Determines how the user sees it. 
+    Controller – controls the entire flow of models and data.
+
+* How Django process a request?
+When a user requests a page, Django determines whether the request URL pattern is mentioned in URLs.py. Once the regex matches, Django calls the corresponding view. HttpRequest is passed as an argument to that view function and the implementation part is executed further.
+
+We know that all web application uses HTTP/HTTPS protocol. The basic principle of the HTTP protocol is Client sends a request to the server and the data server sends a response back to the client based on request data. We need a web server and WSGIserver while setting up a Django application on the server. Without a web server, WSGI server will result in a more number of requests resulting in gradually slow down the application performance. The web server will help in balancing the requests load on the server. 
+
+The client is a piece of software which sends a request by following HTTP/HTTPS protocol and mostly we consider Web Browser as a client. "Nginx, uWSGI and Django" or "Nginx, gunicorn and Django" or "Apache, mod_wsgi and Nginx" are the three types of combinations in Django application deployment on the server and we can use any one of the combinations. Now let us discuss on how a request is processed and response is created and sent to the client.
+
+When a client sends request it first passed to a web server. The request contains configuration rules to be dispatch to the WSGI server. WSGI server sends the request to the Django application.
+
+For dealing with request-response lifecycle, Django application has the following layers -
+    * Request middlewares
+    * URL Router
+    * Views
+    * Context processors
+    * Template Renderers
+    * Response middleware
+Any request that comes in is *handled by Request middleware*. There can be multiple middlewares and can find it in `settings.py` (project settings). While processing the request Django Request middlewares follow the order. Django has some default middlewares and we can also write or customize middleware. Middleware process the request and submits it to the *URL Router* or *URL dispatcher*.
+
+*URL Router* receives a request from the middleware and from the request it collects the URL path. From the URL path, the URL router tries to match the request path with available URL patterns. These patterns are in the regular expression form. Once the URL path is matched with URL patterns the request is submitted to the View associated with URL.
+
+*Views* are the business logic layer, which processes the business logic using request and request data. A request is processed in the view, it is sent to Context processor. Context processor adds context data that helps Template Renders to deliver the template to generate HTTP response and again this request will be sent back to Response middleware to process. Request middleware adds or modifies header information or body information before sending it to the client again.
+
+* What are the disadvantages of Django?
+
+Django is an amazing framework, still, there are a few cons. The URL specifying with regular expressions is not an easy task.  Template errors fail silently by default, to know that, you may waste a lot of time to figure out what’s wrong, or you might not even know that your application has a problem. Along with the advantages, there are many disadvantages to Django mentioned below.
+
+Template Mistakes Flop Discreetly itself - System developers do not pay attention to mistakes when they undertake a class-based viewpoint and they are extended through inheritance.
+
+Does Not Have The Capacity To Manage Different Requests At The Same Time:
+
+Django does not support individual procedures to deal with many requests at the same time. Developers need to investigate approaches and make singular procedures to control various requests proficiently and rapidly at once.
+
+Django is Excessively Monolithic: Django framework directs you into a given specific pattern.
+
+Regex To Indicate Its URL: Django uses regex to determine its URL routing models, which makes the code bigger and makes convoluted syntaxes. 
+
+While Managing Backwards Compatibility, It’s Moving Extremely Gradually: Django has a tendency to get greater and heavier after some time. Django stresses more on dev profitability and backward compatibility than the speed.
+
+Django uses routing patterns to specify its URL.
+Everything is based on Django ORM and the ORM system lacks features.
+Components are tightly coupled and get deployed together
+To work with Django, knowledge of the full system is required.
+There are many pros and cons of Django, still, when a project with a deadline is considered, using Django for the project provides the ultimate solution.
+
+* What is CRUD?
+
+The most common task in web application development is to write create, read, update and delete functionality (CRUD) for each table. It refers to the set of common operations that are used in web applications to interact with data from the database. It provides a CRUD interface that allows users to create, read, update or delete data in the application database.
+
+Django helps us with its simplified implementation for CRUD operations using Function-Based views and class-based Views.
+
+* **Function-based views** are simple to implement and easy to read but they are hard to customize or extend the functionality. Code reuse is not allowed and so there is repetitiveness.
+* **Class-based views** - In no time CRUD operations can be implemented using CBVs. As the model evolves changes would be reflected automatically in CBVs. CBVs are easily extendable and allow code reuse. Django has built-in generic CBVs which makes it easy to use
+
+## Flask 
+* What is the default host port and port of Flask?
+Flask default host is a localhost (127.0.0.1), and the default port is 5000.
+
+* How to change default host and port in Flask?
+Flask default host and port can be changed by passing the values to host and port parameters while calling run method on the app.
+```python
+from flask import Flask
+app = Flask(__name__)
+ 
+@app.route("/")
+def index():
+    return "Hello, World!"
+ 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080)
+```
+* Which Flask extension can be used to create an Ajax application?
+We can use Flask-Sijax to create an Ajax application. Flask-Sijax is an extension that uses Python/JQuery. It is available on PyPI and can be installed using pip.
+
+Sijax stands for Simple Ajax. Once configured and initialized, it enables the use of @flask_sijax decorator, which we can use for making Ajax aware of the views in a Flask Application.
 ## Lib & Frameworks
 
 
@@ -934,7 +1024,7 @@ def f():
 21. yield в генераторах может возвращать значения, которые отправлены в него снаружи методом send (да, есть такой).
 22. Благодаря send и генераторам реализовали асинхронное программирование. async и await — это просто синтаксический сахар.
 23. Список может содержать сам себя. Python это обнаруживает и не зацикливается при выводе.
-```
+```python
 >>> a = []
 >>> a.append(a)
 >>> a

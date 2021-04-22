@@ -78,6 +78,14 @@ date: to_date, from_unixtimestamp, year, …
 conditional: if, isnull, case, coalesce, …
 string: char, concat, lower, trim, repeat, …
 
+`concat_ws` function to concatenate values with ^ as a delimiter.
+Example with constants:
+```sql
+hive> select concat_ws('^','ABCD','10', 'XYZ');
+OK
+ABCD^10^XYZ
+```
+
 
 **Agregate (UDAF)**
 Ex: sum, agv, min, max, corr.
@@ -91,6 +99,13 @@ Used for PTF m:n and 1:n matching
 May be develop jar -> add jar with the help of a distributed cache. 
 can `create temporary function <func_name> as "java.class.name"` - attach hyper store
 Can be used in Map and in Reduse phase
+
+```sql
+ADD JAR /opt/cloudera/parcels/CDH/lib/hive/lib/hive-contrib.jar;
+ADD JAR /opt/cloudera/parcels/CDH/lib/hive/lib/hive-serde.jar;
+```
+hive-contrib - for
+hive-serde - for building custom Hive SerDes.
 
 **PTF**
 (Window functions)
@@ -181,11 +196,17 @@ You can have a nested folder structure. For instance, you can group your data in
 
 
 **Static partitioning**
+Static partitioning means that you have already sharded data in the appropriate directories. With static partitions, you add Hive partitions manually based on the directory location.
+
+Partitioned tables can be created using the PARTITIONED BY clause.
+
 * We need to manually create each partition before inserting data into a partition	
 * We need to know all partitions in advance. So it is suitable for use cases where partitions are defined well ahead and are small in number
 * Departments, State Names, etc		
 
 **Dynmic prtitioning**
+Dynamic partitioning means that you want Hive to create partitions automatically for you. Since you have already created the partitioning table from the staging table, all you need to do is insert data to the partitioned table
+
 * The dynamic partitioned columns have to be specified after all other columns in the SELECT statement.
 * Partitions will be created dynamically based on input data to the table.
 * The order of dynamic partitions is important. They have to be specified in the same order in the `SELECT` clause as in the `PARTITION` clause.
@@ -195,8 +216,32 @@ You can have a nested folder structure. For instance, you can group your data in
 * Populating dynamic partitions takes longer than static partitions
 * Date, city names etc
 
+Advantages of Dynamic Partition
+* Good for loading huge files in tables.
+* Row wise data is read.
+* Partition is based on memory and RAM available, so resources are utilized well all over.
+* Generally used to load data from the non-partitioned table.
+* If columns count is unknown and we want to partition data based on columns, a dynamic partition is used.
+* Data load is distributed horizontally.
+* Generally, the query processing time is reduced.
+* The column values over which partition is to be done are known at RUN TIME.
+* We can use to load data from the table that is not partitioned.
+* Both external and managed tables can be used for dynamic partition.
+
+Disadvantages of Dynamic Partition
+* It generally takes more time in loading data as compared to static partition.
+* We cannot perform alter on Dynamic Partition.
+* Having large no of partition makes the possibility of creating overhead for NameNode.
+* Query processing sometimes can take more time to execute.
+* It can sometimes be a costly operation.
+
 By the way, you can easily mix static and dynamic partitions. 
 
+To Enable the dynamic partition, we use the following HIVE Commands:
+`set hive.exec.dynamic.partition=true;`
+This will set the dynamic partitioning for our hive application.
+And one more thing other than setting the partition to true you need to set mode to nonstrict:
+`set hive.exec.dynamic.partition.mode=nonstrict`
 
 #### Bucketing
 

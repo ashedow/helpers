@@ -49,7 +49,7 @@ Automted deployment - any version can be deployed to any env.
 * Change management
 * Deploy to production
 
-Means that every change is automaticlly deployed to prod. In order to do so CD relies on the results of Continious Delivery  vallidation.
+Means that every change is automaticlly deployed to prod. In order to do so CD relies on the results of Continious Delivery vallidation.
 
 ## Pipelines
 
