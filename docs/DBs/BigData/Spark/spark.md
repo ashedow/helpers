@@ -197,6 +197,8 @@ Freq used
     ›Y.dependencies()  Array[Dependency]
         › k-th partition of Y depends on k-th partition of X
 
+не  изменяет  исходного набора  inputRDD  - она  возвращает  указатель  на  совершенно  новый набор RDD.
+
 On closures
 › Y = X.filter(lambda x: x % 2 == 0)
     ›predicate closure is captured within the Y (it is a part of the definition of Y)
@@ -210,6 +212,7 @@ On closures
 Something that is not that obvious in the MapReduce paradigm is the **cogroup transformation**. Unlike the previous transformations, cogroup operates on two keyed inputs. The result is the keyed output with the value being a pair of arrays holding the values collected for the given key from the first and the second input.
 Joins, GroupBy - shuffle
 
+`union()` отличается от `filter()` тем, что принимает два на­ бора  RDD  вместо  одного.  Вообще,  преобразования  могут  опериро­ вать любым числом исходных наборов RDD.
 
 
 #### Actions

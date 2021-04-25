@@ -33,4 +33,35 @@ With this approach, both read and write operations have low latency. The downsid
 
 ## Cache invalidation problem
 
-Cache invalidation can be used to push new content to a client. This method functions as an alternative to other methods of displaying new content to connected clients. Invalidation is carried out by changing the application data, which in turn marks the information received by the client as out-of-date. After the cache is invalidated, if the client requests the cache, they are delivered a new version.[1]
+Cache invalidation can be used to push new content to a client.
+This method functions as an alternative to other methods of displaying new content to connected clients. Invalidation is carried out by changing the application data, which in turn marks the information received by the client as out-of-date. After the cache is invalidated, if the client requests the cache, they are delivered a new version.
+
+### Solution
+
+**Solution 1**: Use Local Caches and Cache Timeouts
+
+Simplest solution is to use a local cache, set a short a cache timeout, and do nothing. If the token is revoked, it will get flushed after the timeout.
+
+**Solution 2**: Explicitly invalidate the Cache Entry in each Local Cache
+
+Idea is that, when a token has revoked, we talk to each server and explicitly invalidate the cache. We need to add to each server an service API to invalidate the cache. However, adding an API is relatively straight forward.
+
+Unfortunately, we are not done. How did you get the list of current servers? How about getting it from a distributed coordination framework such as Hazelcast or Zookeeper. It is possible. However, if you did, then you will have earlier troubles minus data shuffling. Actually, data shuffling is one of the hardest problems here and without that you might be good.
+
+On the other hand, there is a simpler solution. We can give each node a list of other nodes in the cluster as configuration. This is much simpler. However, then you will have to restart the cluster if you want to add a new node, or have some way to refresh the node list at the run time (e.g. put it to a config file, get server to check it every 15min, and use rysnc to update it in all nodes when required).
+
+**Solution 3**:Explicit invalidation with reliable delivery
+
+When we try to revoke the cache entry and if a node has failed, then we have several options.
+We can retry, until the cache timeout has reached with some wait time in between. This should be OK as long as the number of invalidation are relatively small.
+
+We can use a persistant messaging system ( like WSO2 MB or ActiveMQ) to deliver the invalidation messages. Then, even if node is not available, the node will pick up the invalidation message when it come back. This solution is very stable. 
+However, this means you need highly available deployment of the messaging system. Given that load on messaging system is small such deployments are well understood.
+
+**Solution 4**:Use Session affinity and Explicit Invalidation
+
+If you already use session affinity, then there is a simpler solution. On that case, the cache entry will only reside in the node where that client is bound by session affinity. To invalidate, send a invalidation request with client token set as the session, and the invalidation request will be routed to the only node
+
+Links
+https://medium.com/systems-architectures/distributed-caching-woes-cache-invalidation-c3d389198af3
+https://emacsway.github.io/en/cache-dependencies/

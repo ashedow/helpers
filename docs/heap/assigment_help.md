@@ -300,6 +300,7 @@ set - mutable, unordered collection with no duplicate elements. Items in set can
         It's those 1 million tuples plus the list to hold the references to them that take up more memory than the 1 million cached hashes. There are some 50% more pointers involved here, easily accounting for the 50% more memory use you see.
 
         There is another downside to your list of tuples: lookup time. To find a matching key in the dict, there is a O(1) complexity cost. To do the same in the list of tuples, you have to potentially scan the whole list for a O(n) cost. Don't use a list of tuples if you need to map keys to values.
+
     * Internal structure of list/set/tuple ★★★
 
 * Most generic form of list comprehensions ★

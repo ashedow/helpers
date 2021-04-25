@@ -530,56 +530,59 @@ The list of system calls that are available as at kernel 4.19 (or in a few cases
 On many platforms, including x86-32, socket calls are all multiplexed (via glibc wrapper functions)  through  socketcall(2)  and  similarly System V IPC calls are multiplexed through ipc(2).
 
 Although  slots  are  reserved for them in the system call table, the following system calls are not implemented in  the  standard  kernel:
-       afs_syscall(2),  
-       break(2),  
-       ftime(2),  
-       getpmsg(2),  
-       gtty(2), 
-       idle(2),
-       lock(2),   
-       madvise1(2),
-       mpx(2),   
-       phys(2),   
-       prof(2),    
-       profil(2),
-       putpmsg(2),   
-       security(2),   
-       stty(2),   
-       tuxcall(2),   
-       ulimit(2),
-       vserver(2)   
-       (see   also   unimplemented(2)).    
+       - afs_syscall(2)  
+       - break(2)  
+       - ftime(2)  
+       - getpmsg(2)  
+       - gtty(2) 
+       - idle(2)
+       - lock(2)   
+       - madvise1(2)
+       - mpx(2)   
+       - phys(2)   
+       - prof(2)    
+       - profil(2)
+       - putpmsg(2)   
+       - security(2)   
+       - stty(2)   
+       - tuxcall(2)   
+       - ulimit(2)
+       - vserver(2)  
+       - (see   also  unimplemented(2)).    
        
-       ftime(3), profil(3),  and  ulimit(3)  exist  as library routines.  
-       The slot for phys(2) is in use since kernel 2.1.116 for  umount(2);  phys(2)  will
-       never  be  implemented.   
-       The getpmsg(2) and putpmsg(2) calls are for kernels patched to support STREAMS, and may never be in the  standard kernel.
-
-       set_zone_reclaim(2),  added in Linux 2.6.13, and removed in 2.6.16; this system  call  was  never  available  to  user space.
+       * `ftime(3)`, `profil(3)`,  and  `ulimit(3)`  exist  as library routines.  
+       * The slot for phys(2) is in use since kernel 2.1.116 for  umount(2);  phys(2)  will never  be  implemented.   
+       * The `getpmsg(2)` and `putpmsg(2)` calls are for kernels patched to support STREAMS, and may never be in the  standard kernel.
+       * `set_zone_reclaim(2)`,  added in Linux 2.6.13, and removed in 2.6.16; this system  call  was  never  available  to  user space.
 
 ## Types of System Calls
 
 ![](./system_calls_types.png)
 
-* Process Control
+* **Process Control**
+
 These system calls deal with processes such as process creation, process termination etc.
 
-* File Management
+* **File Management**
+
 These system calls are responsible for file manipulation such as creating a file, reading a file, writing into a file etc.
 
-* Device Management
+* **Device Management**
+
 These system calls are responsible for device manipulation such as reading from device buffers, writing into device buffers etc.
 
-* Information Maintenance
+* **Information Maintenance**
+
 These system calls handle information and its transfer between the operating system and the user program.
 
-* Communication
+* **Communication**
+
 These system calls are useful for interprocess communication. They also deal with creating and deleting a communication connection.
 
 
 | Types of System Calls   | Windows                                               | Linux                            |
 |-------------------------|-------------------------------------------------------|----------------------------------|
-| Process Control         | CreateProcess()  ExitProcess()  WaitForSingleObject() | fork() exit()  wait()           |
+| Process Control         | CreateProcess()  ExitProcess()  WaitForSingleObject() | fork() exit()  wait()      exec()     |
 | File Management         | CreateFile()  ReadFile()  WriteFile()  CloseHandle()  | open()  read()  write()  close() |
 |    Device Management    | SetConsoleMode() ReadConsole() WriteConsole()         | ioctl()  read()  write()         |
 | Information Maintenance | GetCurrentProcessID() SetTimer() Sleep()              | getpid()  alarm()  sleep()       |
@@ -587,19 +590,25 @@ These system calls are useful for interprocess communication. They also deal wit
 | Communication           | CreatePipe() CreateFileMapping() MapViewOfFile()      | pipe()  shmget()  mmap()         |
 | Protection | | get/set file permissions
 
-* wait() / Process Control
+
+* `wait()` / Process Control
+
 In some systems, a process may wait for another process to complete its execution. This happens when a parent process creates a child process and the execution of the parent process is suspended until the child process executes. The suspending of the parent process occurs with a wait() system call. When the child process completes execution, the control is returned back to the parent process.
 
-* exec() / Process Control
+* `exec()` / Process Control
+
 This system call runs an executable file in the context of an already running process. It replaces the previous executable file. This is known as an overlay. The original process identifier remains since a new process is not created but data, heap, stack etc. of the process are replaced by the new process.
 
-* fork() / Process Control
+* `fork()` / Process Control
+
 Processes use the fork() system call to create processes that are a copy of themselves. This is one of the major methods of process creation in operating systems. When a parent process creates a child process and the execution of the parent process is suspended until the child process executes. When the child process completes execution, the control is returned back to the parent process.
 
-* exit() / Process Control
+* `exit()` / Process Control
+
 The exit() system call is used by a program to terminate its execution. In a multithreaded environment, this means that the thread execution is complete. The operating system reclaims resources that were used by the process after the exit() system call.
 
-* kill() / Process Control
+* `kill()` / Process Control
+
 The kill() system call is used by the operating system to send a termination signal to a process that urges the process to exit.However, kill system call does not necessary mean killing the process and can have various meanings.
 
 

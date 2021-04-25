@@ -32,7 +32,7 @@ where
 Actions return something else or nothing.
 show
 
-## Spark SQL workong with Hive
+## Spark SQL working with Hive
 Spark SQL and Hive can be used together
 use `enableHiveSupport()`
 

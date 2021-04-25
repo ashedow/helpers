@@ -29,17 +29,20 @@ NoSQL databases can be categorized in the following five major categories,
 
 A column data store, also known as a column-oriented DBMS or columnar database management system, stores data in columns, rather than rows. Relational database management systems (RDBMS) store data in rows and data properties as column headers. Both row-based and column-based DBMS use SQL as their query language but column-oriented DBMS may offer better performance. Imagine you need to list all names from a table based on an ID, rather than going through all rows, you could just access a single column of the table.
 Here are some of the key characteristics of column data store DBMS.
-Column store DBMS use a keyspace that is like a database schema in RDBMS.
-Column store DBMS have a concept called a key family. A key family is like a table on RDBMS. The keyspace contains all the column families in a database.
-A column family contains multiple rows. Each row has a unique key called Row Key, which is a unique identifier for that row. While each row has a single Row Key, it may have multiple columns. Each column has a Name, Value, and TimeStamp fields.
-Each row can contain a different number of columns. All rows don’t have to have the same columns.
-Each column can contain multiple rows. All rows don’t have to have the same data.
-Column-oriented DBMS are often used on OLAP data operations. Some of the popular column-oriented DBMS include Bigtable, Apache HBase, MariaDB, Azure SQL Data Warehouse, Google BigQuery, IBM Db2, MemSQL, Microsoft SQL Server 2012 or later, and SAP HANA.
+* Column store DBMS use a keyspace that is like a database schema in RDBMS.
+* Column store DBMS have a concept called a key family. A key family is like a table on RDBMS. * The keyspace contains all the column families in a database.
+* A column family contains multiple rows. Each row has a unique key called Row Key, which is a unique identifier for that row. While each row has a single Row Key, it may have multiple columns. Each column has a Name, Value, and TimeStamp fields.
+* Each row can contain a different number of columns. All rows don’t have to have the same columns.
+* Each column can contain multiple rows. All rows don’t have to have the same data.
+* Column-oriented DBMS are often used on OLAP data operations. 
+
+Example: Some of the popular column-oriented DBMS include Bigtable, Apache HBase, MariaDB, Azure SQL Data Warehouse, Google BigQuery, IBM Db2, MemSQL, Microsoft SQL Server 2012 or later, and SAP HANA.
 
 ### 2. Document Databases
 
-Document databases management systems are designed to store full documents as one entity with its attributes. Documents are typically in JSON and XML documents formats that are easy to read, store, and parse using APIs and libraries. Document DBMS are faster to load, access, and parse. User profiles, content management systems, and catalogs are some common use case of document DBMS.
-ArangoDB, Couchbase Server, CouchDB, Amazon DocumentDB, MongoDB, CouchBase, Azure DocumentDB, Cosmos DB, Elasticsearch, Informix, Lotus Notes, and SAP HANA are some of the popular document DBMS.
+Document databases management systems are designed to store *full documents as one entity* with its attributes. Documents are typically in JSON and XML documents formats that are easy to read, store, and parse using APIs and libraries. Document DBMS are faster to load, access, and parse. User profiles, content management systems, and catalogs are some common use case of document DBMS.
+
+Example: ArangoDB, Couchbase Server, CouchDB, Amazon DocumentDB, MongoDB, CouchBase, Azure DocumentDB, Cosmos DB, Elasticsearch, Informix, Lotus Notes, and SAP HANA are some of the popular document DBMS.
 
 ### 3. Graph Databases
 
@@ -49,7 +52,10 @@ Popular graph databases are Neo4j, OrientDB, and AangoDB. Microsoft Azure Cosmos
 
 ### 4. Key-value Store
 
-Key value store is designed to store dictionary type of data structure where data is stored in a key-value pair and key is used to retrieve data. A dictionary is a collection of objects or records. Popular key-value databases are Dynamo, ArangoDB, Berkeley DB, FoundationDB, and MemcacheDB.
+Key value store is designed to *store dictionary type (collection of objects or records) of data structure where data is stored in a key-value pair and key is used to retrieve data*. 
+
+Example:
+Popular key-value databases are Dynamo, ArangoDB, Berkeley DB, FoundationDB, and MemcacheDB.
 
 ### 5. Object databases
 
