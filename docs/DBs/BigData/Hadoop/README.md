@@ -37,7 +37,7 @@ To understand the recovery process of HDFS, let’s first introduce two concepts
 
 1) Replica: A physical data storage on a data node. Usually, there are several replicas with the same content on different data nodes.
 
-2) Block: This is meta-info storage on a name node that provides information about replicas’ locations and their states.
+2) Block: This is meta-info storage on a name node that provides information about replica's locations and their states.
 
 Both replica and block have their own states. First, let’s take a look at the data node replica states.
 
@@ -48,7 +48,7 @@ Both replica and block have their own states. First, let’s take a look at the 
 ![](replica_states.jpg)
 
 **Finalized Replica**
-When a replica is in a finalized state, that means its content is frozen. ‘Frozen’ means that the meta-info for this block is aligned with its corresponding replicas’ states and data. This means you can safely read data from any data node and get the same exact content, preserving read consistency. Each block of data has a version number called Generation Stamp (GS). Finalized replicas are guaranteed to all have the same GS number.
+When a replica is in a finalized state, that means its content is frozen. `Frozen` means that the meta-info for this block is aligned with its corresponding replicas’ states and data. This means you can safely read data from any data node and get the same exact content, preserving read consistency. Each block of data has a version number called Generation Stamp (GS). Finalized replicas are guaranteed to all have the same GS number.
 
 **Replica Being Written to (RBW)**
 In this state, the last block of a file is opened or reopened for appending. Bytes that are acknowledged by the downstream data nodes in a pipeline are visible for a reader of this replica. Additionally, the data-node and name node meta-info may not match during this state. In the case of failure, the data node will try to preserve as many bytes as possible with the goal of data durability.
@@ -69,18 +69,18 @@ As data grows and different nodes are added/removed from the cluster, data can b
 
 ![](block_state.jpg)
 
-*Block Under Construction*
-As soon as a user opens a file for writing, the name node creates the corresonding block in the under_construction state. It is always the last block of a file and its length and GS stamp are mutable. The name node block keeps track of the data pipeline and keeps a watchful eye over all RBW and RWR replicas. replica state transition
+**Block Under Construction**
+As soon as a user opens a file for writing, the name node creates the corresonding block in the `under_construction` state. It is always the last block of a file and its length and GS stamp are mutable. The name node block keeps track of the data pipeline and keeps a watchful eye over all RBW and RWR replicas. replica state transition
 
 ![](replica_states_sm1.jpg)
 
 **Block Under Recovery**
-Replicas transition from RWR to RUR state when the client dies or when a client’s lease expires. Consequently, the corresponding block transitions from under_construction to the under_recovery state. 
+Replicas transition from RWR to RUR state when the client dies or when a client’s lease expires. Consequently, the corresponding block transitions from `under_construction` to the `under_recovery` state. 
 
 ![](replica_states_sm2.jpg)
 
 **Committed**
-The under_construction block transitions to a committed state when a client successfully requests tge name node to close a file or to create a new consecutive block of data. ‘Committed’ that there are already some finalized replicas but not all are finalized. For this reason in order to serve a read request, the committed block needs to keep track of RBW replicas, until all the replicas are transitioned to the finalized state and HDFS client will be able to close the file.
+The `under_construction` block transitions to a committed state when a client successfully requests tge name node to close a file or to create a new consecutive block of data. `‘Committed’` that there are already some finalized replicas but not all are finalized. For this reason in order to serve a read request, the committed block needs to keep track of RBW replicas, until all the replicas are transitioned to the finalized state and HDFS client will be able to close the file.
 
 ![](replica_states_sm3.jpg)
 
@@ -98,11 +98,13 @@ There are several types of recovery procedures:
 - Pipeline Recovery
 
 **Block Recovery**
+
 During the block recovery process, the namenode has to ensure that all of the corresponding replicas of a block will transition to a common state, logically and physically, mean that all the corresponding replicas should have the same content. The NameNode choses a **primary datanode (PD)** which should contain a replica for the target block. PD requests a new GS, info, and location of other replicas from the NameNode. PD then contacts each relevant datanode to participate in the **replica recovery process**.
 
 ![](block_recovery.jpg)
 
 **Replica Recovery**
+
 Replica recovery process include aborting active clients writing to a replica, aborting the previous replica or block recovery process, and participating in final replica size agreement process. During this phase, all the necessary info and data is propagated through the pipeline.
 
 Lastly, PD notifies the NameNode of its success or failure. In case of failure, NameNode can retry block recovery.
@@ -110,6 +112,7 @@ Lastly, PD notifies the NameNode of its success or failure. In case of failure, 
 ![](replica_recovery.jpg)
 
 **Lease Recovery**
+
 The Block Recovery Process can only happen as a part of a Lease Recovery Process
 
 The **Lease Manager** manages all the leases at the NameNode where the HDFS clients request a lease every time they want to write to a file. The Lease Manager maintains soft and hard time limits where if the current lease holder doesn’t renew its lease during the soft limit, another client will take over the lease. If the hard limit is reached, the lease recovery process will begin.
@@ -121,6 +124,7 @@ Throughout this process, there are a couple important of guarantees:
 ![](lease_recovery.jpg)
 
 **Pipeline Recovery**
+
 When you write to an HDFS file, HDFS client writes data block by block. Each block is constructed through a write pipeline and each block breaks down into pieces called packets. These packets are propagated to the datanodes through the pipeline
 
 There are three stages to the pipeline recovery process:
@@ -202,14 +206,14 @@ With the -getmerge utility, all of this data can be merged into one local file.
 $ hdfs dfs -getmerge hdfs_test* hdfs_merged.txt
 ```
 
-chown, which stands for ‘change ownership’ can be used to configure access permissions.
+`chown`, which stands for ‘change ownership’ can be used to configure access permissions.
 groups is useful to get information about your HDFS ID
 setrep provides API to decrease and increase replication factor
 ```
 $ time hdfs dfs -setrep -w 1 hdfs_test_file.txt
 ```
 
-hdfs fsck, which stands for ‘file system checking utility’, can be used to request name node to provide you with the information about file blocks and the allocations
+hdfs `fsck`, which stands for ‘file system checking utility’, can be used to request name node to provide you with the information about file blocks and the allocations
 ```
 $ hdfs fsck /data/wiki/en_articles -files -blocks -locations
 ```
@@ -224,23 +228,16 @@ To create a new directory within the HDFS, use the command
 hadoop fs -mkdir <directory_name>
 ```
 
-To copy a file from your host machine onto HDFS, use the command
-```
-hadoop fs -put ~/path/to/localfile /path/to/hadoop/directory
-```
-
-The reverse of put is get, which copies files from HDFS back to host file system.
-```
-hadoop fs -get /hadoop/path/to/file ~/path/to/local/storage
-```
 
 #### Example
+```
 hdfs dfs -mkdir /user/jovyan/assignment1
 hdfs dfs -put ~/test.txt assignment1/test.txt or hdfs dfs -touchz assignment1/test.txt
 hdfs dfs -ls /user/jovyan/assignment1/test.txt
 hdfs dfs -chmod o-r /user/jovyan/assignment1/test.txt
 hdfs dfs -cat /user/jovyan/assignment1/test.txt | head -10
 hdfs dfs -mv /user/jovyan/assignment1/test.txt /user/jovyan/assignment1/test2.txt
+```
 
 • get blocks and their locations in HDFS for this file, show the command without an output
 ` hdfs fsck /data/wiki/en_articles_part/articles-part -files -blocks -locations`
@@ -284,7 +281,7 @@ Or vice versa with 45GB of memory we can store 100 million files with `size/bloc
 
 ### HDDs in your cluster have the following characteristics: average reading speed is 60 MB/s, seek time is 5 ms. You want to spend 0.5 % time for seeking the block, i.e. seek time should be 200 times less than the time to read the block. Estimate the minimum block size.
 
-
+```
 Block size: X
 Block reading time : 5ms * 200 = 1s
 Reading speed : 60 / 1s = X / 1s
@@ -292,6 +289,7 @@ X = 60MB
 
 block_size / 60 MB/s * 0.5 / 100 >= 5 ms
 block_size >= 60 MB/s * 0.005 s / 0.005 = 60 MB
+```
 
 ***
 
@@ -300,9 +298,9 @@ block_size >= 60 MB/s * 0.005 s / 0.005 = 60 MB
 Sizing NameNode Heap Memory
 [File](./5424-1908-shvachko.pdf)
 https://docs.cloudera.com/documentation/enterprise/5-10-x/topics/admin_nn_memory_config.html
-
+```
 10 Pb /(128Mb * 3) * 150 = 3 906 250 000 b ~- 3.9Gb
-
+```
 
 https://en.wikipedia.org/wiki/Write-ahead_logging
 https://en.wikipedia.org/wiki/Network_File_System
@@ -310,14 +308,14 @@ https://en.wikipedia.org/wiki/Network_File_System
 
 Binary Datatypes
 
-
-[avro](http://avro.apache.org/)
-[RCFile](http://web.cse.ohio-state.edu/hpcs/WWW/HTML/publications/papers/TR-11-4.pdf)
-[parquet](https://parquet.apache.org/)
+*[avro](http://avro.apache.org/)
+*[RCFile](http://web.cse.ohio-state.edu/hpcs/WWW/HTML/publications/papers/TR-11-4.pdf)
+* [parquet](https://parquet.apache.org/)
 
 Kinds of compression
 
 Blok levels
+
 File levels
 
 ## How does HDFS work?
@@ -374,20 +372,24 @@ YARN — Yet Another Resource Negotiator, is a part of Hadoop 2 version, is one 
 
 ![](0_Y-uQ3E40ltiwCyGA.gif)
 
-**The Resource Manager**: it controls the resource management of the cluster, also makes allocation decisions. The resource manager has two main components: 
+## YARN components
 
-    - **scheduler**: is called the YarnScheduler, which allows different policies for managing constraints such as capacity, fairness, and service level agreements.
-    
-    - **Applications Manager**: is responsible for maintaining a list of submitted application. After application is submitted by the client, application manager firstly validates whether application requirement of resources for its application master can be satisfied or not.If enough resources are available then it forwards the application to scheduler otherwise application will be rejected.
+### The Resource Manager: 
+it controls the resource management of the cluster, also makes allocation decisions. The resource manager has two main components: 
 
-**The Node Manager**: is responsible for launching and managing containers on a node. Containers execute tasks as specified by the AppMaster.
+* **scheduler**: is called the YarnScheduler, which allows different policies for managing constraints such as capacity, fairness, and service level agreements.
 
-    - **Container**: Signifies an allocated resources to an ApplicationMaster. ResourceManager is responsible for issuing resource/container to an ApplicationMaster. and it refers to a collection of resources such as memory, CPU, disk and network IO.
+* **Applications Manager**: is responsible for maintaining a list of submitted application. After application is submitted by the client, application manager firstly validates whether application requirement of resources for its application master can be satisfied or not.If enough resources are available then it forwards the application to scheduler otherwise application will be rejected.
 
-    - **Application Master**: is an instance of a framework-specific library that negotiates resources from the Resource Manager and works with the NodeManager to execute and monitor the granted resources (bundled as containers) for a given application. An application can be mapreduce job, hive framework…
+### The Node Manager: 
+is responsible for launching and managing containers on a node. Containers execute tasks as specified by the AppMaster.
+
+* **Container**: Signifies an allocated resources to an ApplicationMaster. ResourceManager is responsible for issuing resource/container to an ApplicationMaster. and it refers to a collection of resources such as memory, CPU, disk and network IO.
+
+* **Application Master**: is an instance of a framework-specific library that negotiates resources from the Resource Manager and works with the NodeManager to execute and monitor the granted resources (bundled as containers) for a given application. An application can be mapreduce job, hive framework…
 
 
-**Steps of executing Applications with YARN:**
+## Steps of executing Applications with YARN:
 
 ![](0_1lPfwWJnbLqldZpP.png)
 
@@ -399,7 +401,8 @@ YARN — Yet Another Resource Negotiator, is a part of Hadoop 2 version, is one 
 6. The ApplicationMaster reports completion of the application to the ResourceManager.
 7. The ApplicationMaster un-registers with the ResourceManager, which then cleans up the ApplicationMaster container.
 
-**Yarn Scheduler**
+## Yarn Scheduler
+
 The Scheduler has a pluggable policy which is responsible for partitioning the cluster resources among the various queues, applications etc.
 
 **2. FIFO scheduler**
@@ -427,18 +430,23 @@ When other applications are submitted, resources that free up are assigned to th
 
 ## MapReduce
 
+[MapReduce](../MapReduce.md)
+
 Hadoop divides the job into tasks. There are two types of tasks:
 
 * Map tasks (Splits & Mapping)
+
 * Reduce tasks (Shuffling, Reducing)
+
 Map -> Shuffle & Sort -> Reduce
 Each step map reduce works with key value pairs
 
 The complete execution process (execution of Map and Reduce tasks, both) is controlled by two types of entities called a
 
-Jobtracker: Acts like a master (responsible for complete execution of submitted job)
-Multiple Task Trackers: Acts like slaves, each of them performing the job
-For every job submitted for execution in the system, there is one Jobtracker that resides on Namenode and there are multiple tasktrackers which reside on Datanode.
+**Jobtracker**: Acts like a master (responsible for complete execution of submitted job)
+
+**Multiple Task Trackers**: Acts like slaves, each of them performing the job.
+For *every job submitted* for execution in the system, there is one *Jobtracker that resides on Namenode* and there are *multiple tasktrackers* which *reside on Datanode*.
 
 ![](061114_0930_Introductio2.png)
 
@@ -456,6 +464,7 @@ Example:
 
 
 Base hadoop return sortet by key output
+
 Moving on, if you see one reducer with default implementation which does nothing, then shuffle and sort phase will be executed.
 
 Hadoop provides a reader of input records and passes the records into the stdin file descriptor of a mapper
@@ -463,8 +472,23 @@ Hadoop provides a reader of input records and passes the records into the stdin 
 mapper doesn’t usually group records by key because it works with unsorted input
 
 ### Distributed Cache
-distributed cache uset To deliver the required files to the nodes
 
+Distributed cache is a mechanism supported by hadoop mapreduce framework where we can broadcast small or moderate sized files (read only) to all the worker nodes where the map/reduce tasks are running for a given job.
+(distributed cache used to deliver the required files to the nodes)
+
+Each worker node that runs the tasks of a given job will have one copy of the file(s) sent via Distributed cache. It is possible to control the size of distributed cache with cache size property in mapred-site.xml
+
+After successful run of the job, the distributed cache files (these are temporary files) will be deleted from worker nodes.
+
+For tools that use GenericOptionsParser we can specify the files to get distributed as comma separated URIs in –files option. 
+Files can be on HDFS, local Filesystem, or any Hadoop-readable filesystem like S3. If the user does not specify any scheme then Hadoop assumes that the file is on the local filesystem. This is true even when default filesystem is not the local filesystem.
+
+#### How Hadoop Distributed Cache Works?
+
+When the user launches a job, Hadoop copies the file specified as arguments in `–files`, `-archives`, `-libjars` to HDFS. 
+Before running the task, the `NodeManager` copies these files from HDFS to *local disk — cache*. It does this so that the task can now access these files. At this point, the file gets *tagged as localized*. From the task’s point of view, the files are symbolically linked to the task’s working directory. The files specified under `–libjars` option gets copied to task’s classpath before it starts execution.
+
+The `NodeManager` maintains a count for the number of tasks using these localized files. Before running the task the counter increases by one. And after the task finish execution, the counter gets decremented by one. The file is eligible for deletion only when there are no tasks using it. The file gets deleted when the cache size exceeds a certain limit like 10GB (default). The Hadoop deletes the files to make room for other files getting used at present. The file gets deleted using least recently used algorithm. One can change the cache size setting the property
 
 ### Testing
 Three cases for scripts are integrated with Hadoop MapReduce streaming API.:
@@ -615,7 +639,12 @@ Data located in HDFS can be compressed. There is a shuffle and sort phase betwee
 - Native libraries that provide implementation of compression and decompression functionality, usually also support an option to choose a trade-off between speed or space optimization.
 
 
-**Pros & Cons:** - gzip file is a deflate file with extra headers and a footer. - bzip is more aggressive for space requirements, but consequently, it's slower during the compression. - lzo files can be used where you read data far more frequently than write. - You can provide index files for lzo files to make them splittable. - Snappy,even more faster decompression, but you will only be able to split this file records.
+**Pros & Cons:** 
+- gzip file is a deflate file with extra headers and a footer. 
+- bzip is more aggressive for space requirements, but consequently, it's slower during the compression. 
+- lzo files can be used where you read data far more frequently than write. 
+- You can provide index files for lzo files to make them splittable. 
+- Snappy,even more faster decompression, but you will only be able to split this file records.
 
 A **Hadoop codec** is an implementation of a compression, decompression algorithm.
 
@@ -654,13 +683,15 @@ You can specify the compression parameters for intermediate data for output or f
     - use and configure Secondary Sort to reduce the memory footprints. In this case, you should take into consideration the number of records in different datasets for each key.
 
 
-
+```
     -D stream.num.map.output.key.fields=2
     -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
     -D mapred.output.key.comparator.class=org.apache.hadoop.mapred.lib.KeyFieldBasedComparator
     -D mapred.text.key.comparator.options=-k1,2
     -D mapred.text.key.partitioner.options=-k1,1
+```
 
+[MapReduse & HIVE](../MapReduce.md###Hive Map-Side Joins: Plain, Bucket, Sort-Merge)
 
 ## Links
 

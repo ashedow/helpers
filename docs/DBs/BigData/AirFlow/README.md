@@ -2,7 +2,7 @@
 
 ## What is Apache Airflow?
 
-Airflow is a scheduler for workflows such as data pipelines, similar to Luigi and Oozie. Fundamentally, Airflow is an orchestrator of a sequence of tasks.
+Airflow is a *scheduler for workflows* such as data pipelines, similar to Luigi and Oozie. Fundamentally, Airflow is an orchestrator of a sequence of tasks.
 
 It was designed primarily for tasks that move, analyze, and transform data. Most tutorials will assume you will be using it for this purpose. But it could also schedule a tweet to your mom on her birthday or call random pay phones. Airflow doesn’t care.
 
@@ -12,10 +12,10 @@ Airflow manages when these sequences should run, what order to run the tasks in 
 
 
 **Airflow’s primary responsibilities are:**
-* Task scheduling and triggering, including error handling and logging of what happened.
+* Task *scheduling and triggering*, including error handling and logging of what happened.
 Managing the resources necessary to run these tasks. Resources can range from one server to entire clusters. When a task is due to be run, Airflow decides when and how to run it depending on the resources available.
-* Providing a structured way for defining a sequence of tasks (they are just objects in Python).
-* Setting and storing variables and external connection configurations to be referenced by tasks. This helps manage the databases and services tasks will need to talk to.
+* *Providing a structured way for defining a sequence of tasks* (they are just objects in Python).
+* *Setting and storing variables and external connection configurations* to be referenced by tasks. This helps manage the databases and services tasks will need to talk to.
 
 Now, you are ready to go to official documentation and read the first pages from it.
 
@@ -60,23 +60,29 @@ AirFlow tutorial https://github.com/tuanavu/airflow-tutorial
 ![](traditional_etl_approach.png)
 
 Example of a naive approach:
-    * Writing a script to pull data from database and send it to HDFS to process.
-    * Schedule the script as a cronjob.
+* Writing a script to pull data from database and send it to HDFS to process.
+* Schedule the script as a cronjob.
 
 ### Problems
+
 **Failures:**
-    retry if failure happens (how many times? how often?)
+* retry if failure happens (how many times? how often?)
+
 **Monitoring:**
-    success or failure status, how long does the process runs?
+* success or failure status, how long does the process runs?
+
 **Dependencies:**
-    Data dependencies: upstream data is missing.
-    Execution dependencies: job 2 runs after job 1 is finished.
+* Data dependencies: upstream data is missing.
+* Execution dependencies: job 2 runs after job 1 is finished.
+
 **Scalability:**
-    there is no centralized scheduler between different cron machines.
+* there is no centralized scheduler between different cron machines.
+
 **Deployment:**
-    deploy new changes constantly
+* deploy new changes constantly
+
 **Process historic data:**
-    backfill/rerun historical data
+* backfill/rerun historical data
 
 ## Apache Airflow
 
@@ -92,8 +98,8 @@ Example of a naive approach:
 
 ### Airflow DAG
 
-Workflow as a Directed Acyclic Graph (DAG) with multiple tasks which can be executed independently.
-Airflow DAGs are composed of Tasks.
+Workflow as a **Directed Acyclic Graph (DAG)** with multiple tasks which can be executed independently.
+*Airflow DAGs are composed of Tasks.*
 
 ![](airflow-dag.png)
 
@@ -103,7 +109,7 @@ Documentation (read including ‘Scope’ and ‘Context Manager’ sub modules)
 https://airflow.apache.org/concepts.html#dags 
 
 
-Pay attention to the sentence ‘DAGs are defined in standard Python files that are placed in Airflow’s DAG_FOLDER’ from doc.
+Pay attention to the sentence ‘DAGs are defined in standard Python files that are placed in Airflow’s `DAG_FOLDER’ from doc.
 
 First, those python files are called ‘DAGfile’.
 
@@ -135,6 +141,7 @@ https://www.youtube.com/watch?v=iTg-a4icf_I
 
 
 ### What makes Airflow great?
+
 * Can handle upstream/downstream dependencies gracefully (Example: upstream missing tables)
 * Easy to reprocess historical jobs by date, or re-run for specific intervals
 * Jobs can pass parameters to other jobs downstream
@@ -151,7 +158,7 @@ https://www.youtube.com/watch?v=iTg-a4icf_I
 ### Airflow applications
 * **Data warehousing**: cleanse, organize, data quality check, and publish/stream data into our growing data warehouse
 * **Machine Learning**: automate machine learning workflows
-* Growth analytics: compute metrics around guest and host engagement as well as growth accounting
+* **Growth analytics**: compute metrics around guest and host engagement as well as growth accounting
 * **Experimentation**: compute A/B testing experimentation frameworks logic and aggregates
 * **Email targeting**: apply rules to target and engage users through email campaigns
 * **Sessionization**: compute clickstream and time spent datasets

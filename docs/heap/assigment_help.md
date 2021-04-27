@@ -811,6 +811,7 @@ Threading 1 Processors The operating system decides when to switch tasks externa
 
 
 
+
 * Create a process in python ★★
 
 * Creating a thread in python ★★

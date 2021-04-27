@@ -15,18 +15,18 @@ different ways to represent graph:
 
 ## GraphFrames
 
-1. A graph processing library for Apache Spark (ыштсу 1.4)
+1. A graph processing library for Apache Spark (since 1.4)
 2. API available from Scala, Java and Python
 3. Are built on top of Spark DataFrames:
-    › powerful queries
-    › saving & loading graphs
+    * powerful queries
+    * saving & loading graphs
 
 **Creating GraphFrames**
 From vertex and edge DataFrames
-    › a vertex DataFrame should contain a special column named "id"
-    › an edge DataFrame should contain two special columns: "src" and "dst"
+* a vertex DataFrame should contain a special column named "id"
+* an edge DataFrame should contain two special columns: "src" and "dst"
 
-usage example:
+Usage example:
 ```python
 vertices = sparkSession.createDataFrame([
 ("1", "Alex", 28, "M", "MIPT" ),
@@ -49,7 +49,8 @@ g.inDegrees.filter("inDegree > 2").show()
 ```
 
 ### Motif Finding: DSL
-Graph frame Motif finding uses a simple domain specific language, DSL, for expressing structural queries. 
+
+Graph frame Motif finding uses a simple domain specific language, *DSL*, for expressing structural queries. 
 
 1. Edge
 "(a)-[e]->(b)"
@@ -57,9 +58,9 @@ Graph frame Motif finding uses a simple domain specific language, DSL, for expre
 "(a)-[e]->(b); (b)-[e2]->(c)"
 3. Names:
 "(a)-[e]->(b)"
-    • Identify common elements
+    * Identify common elements
     "(a)-[e]->(b); (b)-[e2]->(a)"
-    • Identify names of columns in the result DataFrame
+    * Identify names of columns in the result DataFrame
     "(a)-[e]->(b); (b)-[e2]->(a)"
 4. Anonymous edges and vertices
 "(a)-[]->(b)"
@@ -91,15 +92,15 @@ motifs = gf.find("(A)-[]->(B); (B)-[]->(C)")
 **1. Creating a collection of Patterns**
 
 Types of patterns:
-• NamedVertex(vertexName)
-• AnonymousVertex
-• NamedEdge(edgeName,
+* NamedVertex(vertexName)
+* AnonymousVertex
+* NamedEdge(edgeName,
     src: NamedVertex(srcVertexName) | AnonymousVertex,
     dst: NamedVertex(dstVertexName) | AnonymousVertex)
-• AnonymousEdge(
+* AnonymousEdge(
     src: NamedVertex(srcVertexName) | AnonymousVertex,
     dst: NamedVertex(dstVertexName) | AnonymousVertex)
-• Negation(NamedEdge | AnonymousEdge)
+* Negation(NamedEdge | AnonymousEdge)
 
 Example: "(A)-[]->(B); (B)-[]->(C)"
 [NamedVertex("A"),

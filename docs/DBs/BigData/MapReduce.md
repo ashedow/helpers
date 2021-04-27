@@ -1,4 +1,25 @@
-# Map Reduce
+# Map Reduce & HIVE
+
+## MapReduce
+
+MapReduce task is mainly divided into 2 phases i.e. Map phase and Reduce phase.
+
+1. **Map**: As the name suggests its main use is to map the input data in key-value pairs. 
+The *input* to the map may be a *key-value* pair where the key can be the id of some kind of address and value is the actual value that it keeps.
+The `Map()` function will be executed in its memory repository on each of these input key-value pairs and generates the intermediate key-value pair which works as input for the `Reducer` or `Reduce()` function.
+ 
+2. **Reduce**: The intermediate key-value pairs that work as input for `Reducer` are shuffled and sort and send to the `Reduce()` function. 
+`Reducer` *aggregate* or *group* the data based on its key-value pair as per the reducer algorithm written by the developer.
+
+![](MapReduce-Architecture.jpg)
+
+Components of MapReduce Architecture:
+* **Client**: The MapReduce client is the one who brings the Job to the MapReduce for processing. There can be multiple clients available that continuously send jobs for processing to the Hadoop MapReduce Manager.
+* **Job**: The MapReduce Job is the actual work that the client wanted to do which is comprised of so many smaller tasks that the client wants to process or execute.
+* Hadoop MapReduce Master: It divides the particular job into subsequent job-parts.
+* **Job-Parts**:  The task or sub-jobs that are obtained after dividing the main job. The result of all the job-parts combined to produce the final output.
+* **Input Data**: The data set that is fed to the MapReduce for processing.
+* **Output Data**: The final result is obtained after the processing.
 
 ## languages for batch processing MapReduce
 
@@ -10,7 +31,7 @@ Hive is quite similar to a Structured Query Language also known as SQL.
 * Pig
 Pig is a procedural language used to explain in script how you would like to process your data. 
 
-### HIVE
+## HIVE
 
 Hive was originally developed as a data warehouse solution at Facebook.
 Hive can work on top of different execution layers, such as Apache Tez and Spark.
@@ -27,36 +48,42 @@ Hive provides a low-latency access for the metastore objects.
 DDL
 `^A` - ASCII code as a default delimiter
 
-Hive tables can be *managed* or *external*. *Managed* is a default option. 
+Hive tables can be *managed* or *external*. 
+
+*Managed* is a default option. 
 If you create a managed table, then Hive is responsible to manage data in HDFS. So if you drop a table, then Hive will remove table metadata and will remove data in HDFS. 
-But if you use an external table, then data in HDFS will be left unchanged. DROP statement will only remove table metadata. 
+
+But if you use an *external* table, then data in HDFS will be left unchanged. DROP statement will only remove table metadata. 
+
 In addition to managed or external tables, there are temporary ones, so it will be automatically removed after the Hive session is closed.
 
 Several extra options you can control:
-COLLECTION ITEMS delimiter, Ctrl B, 
-MAP KEY value delimiter, Ctrl C, 
-LINES delimiter, and special characters for escaping, and null value. 
-LINES are delimited by by default, which is natural. 
+`COLLECTION ITEMS` delimiter, `Ctrl B`, 
+`MAP KEY` value delimiter, `Ctrl C`, 
+`LINES` delimiter, and special characters for escaping, and null value. 
+`LINES` are delimited by \n default, which is natural. 
 
-Default storage format is TEXTFILE, which is a plain text.
+Default storage format is `TEXTFILE`, which is a plain text.
 
 ### DML
 
 First, if you have data in HDFS folder, then you can move it into Hive warehouse location with the following DML query. 
 By default, data that you move into Hive warehouse location is added into existing files in HDFS folder.  If there are files with the same names, then they will be over written.
 You can create and populate one Hive tables with the help of the others. it is the most common workflow.
+> [warehouse](../warehouse.md)
 
 CTAS - create table as select
 `EXPLAIN <some_queue>` -  In the output, you'll see how your query is parsed into abstract syntax tree, how many stages you have and what is the connection between them. And most importantly, you'll see detailed information about each stage. So, you should be able to figure out what will exactly happen during the execution, and where you will have map or reduce phases.
 
-RegexSerDe - Row format is used to explain how to serialize Hive row objects into bytes to store in HDFS and deserialize from bytes back into Hive row object.
+*RegexSerDe* - Row format is used to explain how to serialize Hive row objects into bytes to store in HDFS and deserialize from bytes back into Hive row object.
 SERDE - is a shortcut for serialization and deserialization library.
 For RegexSerde, you have to provide regular expression groups that correspond to table columns. 
 
 
-`CREATE VIEW <view_name>`. Then a list of columns without data types (Data types will be extracted automatically from SELECT query). `AS SELECT` statement to populate this view.
+`CREATE VIEW <view_name>`. Then a list of columns without data types (Data types will be extracted automatically from `SELECT` query). `AS SELECT` statement to populate this view.
 View schema reflects connection to tables or other views at the time of writing. If corresponding tables of use are updated then this view could become invalid. And you will see errors at the time of running HiveQL query.
-View is a read only table that is only stored as metainformation and generated on the fly than necessary.
+
+*View is a read only table that is only stored as metainformation and generated on the fly than necessary.*
 
 ### Hive Analytics: UDF, UDAF, UDTF
 
@@ -139,6 +166,8 @@ For each window function you will have a special object on the work note to stor
 
 > https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Transform
 
+data stream by using features natively supported in the Hive language. e.g. in order to run a custom mapper script - `map_script` - and a custom reducer script - `reduce_script` - the user can issue the following command which uses the TRANSFORM clause to embed the mapper and the reducer scripts.
+
 ```SQL
 FROM my_table
 SELECT TRANSFORM (column_A, column_B)
@@ -146,15 +175,17 @@ USING "/bin/cat"
 AS (new_A STRING, new_B DOUBLE)
 ```
 
-SELECT TRANSFORM statement is used for such purpose. The syntax of TRANSFORM is the following. TRANSFORM and a list of columns to process, USING and a streaming script, optional AS clause with a list of output fields. Output of streaming script would always be a string. That is why there are several options to specify output fields and data types. For instance, you can specify data types within parentheses along with field names. 
+`SELECT TRANSFORM` statement is used for such purpose. 
+`TRANSFORM` and a list of columns to process, `USING` and a streaming script, optional `AS` clause with a list of output fields. 
+Output of streaming script would always be a string. That is why there are several options to specify output fields and data types. For instance, you can specify data types within parentheses along with field names. 
 
 ![](hive_streaming.png)
 
-map and reduce streaming
+#### Map and Reduce streaming
 
-There is no difference from TRANSFORM syntax point of view, but there is a way to persuade Hive to execute some scripts during a map phase and others during a reduce phase. 
+There is no difference from `TRANSFORM` syntax point of view, but there is a way to persuade Hive to execute some scripts during a map phase and others during a reduce phase. 
 
-During the reduce phase you take pairs sorted by words, accumulate word_count and emit the final statistics. For simplicity, I call scripts mapper.py and reducer.py. The magic clause to execute reducer.py in a proper way is a `DISTRIBUTE BY` clause.
+During the reduce phase you take pairs sorted by words, accumulate `word_count` and emit the final statistics. For simplicity, I call scripts `mapper.py` and `reducer.py`. The magic clause to execute `reducer.py` in a proper way is a `DISTRIBUTE BY` clause.
 
 `DISTRIBUTE BY` is essentially an implementation of a partition. You can partition or `DISTRIBUTE BY` any set of columns and even use the simple operators and UDF functions.
 
@@ -176,6 +207,7 @@ Hive users who are starting to use streaming scripts to extend Hive functionalit
 
 #### Partitioning
 
+
 Apache Hive organizes tables into partitions for grouping same type of data together based on a column or partition key. 
 Each table in the hive can have one or more partition keys to identify a particular partition. Using partition we can make it faster to do queries on slices of the data.
 
@@ -187,27 +219,58 @@ if you can skip data region from a disk, then you would better do it.
 
 You can have a nested folder structure. For instance, you can group your data in HDFS by year, by month, and then by day. Hive DDL query used for creating a table against it And when you spawn HiveQL query, the framework will automatically determine folders to be read or skipped.
 
-
+**proc**
 + It distributes execution load horizontally.
 + In partition faster execution of queries with the low volume of data takes place. For example, search population from Vatican City returns very fast instead of searching entire world population.
-- There is the possibility of too many small partition creations- too many directories.
+**cons**
+- There is the possibility of too many small partition creations - too many directories.
 - Partition is effective for low volume data. But there some queries like group by on high volume of data take a long time to execute. For example, grouping population of China will take a long time as compared to a grouping of the population in Vatican City.
 - There is no need for searching entire table column for a single record.
 
 
 **Static partitioning**
+
 Static partitioning means that you have already sharded data in the appropriate directories. With static partitions, you add Hive partitions manually based on the directory location.
 
-Partitioned tables can be created using the PARTITIONED BY clause.
+Partitioned tables can be created using the `PARTITIONED BY` clause.
 
 * We need to manually create each partition before inserting data into a partition	
 * We need to know all partitions in advance. So it is suitable for use cases where partitions are defined well ahead and are small in number
 * Departments, State Names, etc		
 
+1. Create Table:
+```sql
+CREATE EXTERNAL TABLE sp_ratings ( 
+                  userid INT, 
+                  movieid INT, 
+                  tstamp BIGINT 
+) PARTITIONED BY (rating INT)
+  ROW FORMAT DELIMITED 
+  FIELDS TERMINATED BY '#'
+  STORED AS TEXTFILE; 
+```
+2. Load partitioned data:
+```sql      
+LOAD DATA INPATH '/hive/data/rating' INTO TABLE sp_ratings PARTITION (rating=1)
+```
+3. Verify data load:
+```sql    
+SELECT * from sp_ratings where rating = 1;
+```
+Did you notice, It prints all data i.e. data with rating 2,3,4,5, as well. 
+
+4. Verify file location:
+```bash
+hadoop fs -ls /user/hive/warehouse/movielens.db/sp_ratings/
+```
+It should have folder named `rating=1`.
+
+
 **Dynmic prtitioning**
+
 Dynamic partitioning means that you want Hive to create partitions automatically for you. Since you have already created the partitioning table from the staging table, all you need to do is insert data to the partitioned table
 
-* The dynamic partitioned columns have to be specified after all other columns in the SELECT statement.
+* The dynamic partitioned columns have to be specified after all other columns in the `SELECT` statement.
 * Partitions will be created dynamically based on input data to the table.
 * The order of dynamic partitions is important. They have to be specified in the same order in the `SELECT` clause as in the `PARTITION` clause.
 * Dynamic partitions are suitable when we have lot of partitions and we can not predict in advance new partitions ahead of time.
@@ -243,7 +306,56 @@ This will set the dynamic partitioning for our hive application.
 And one more thing other than setting the partition to true you need to set mode to nonstrict:
 `set hive.exec.dynamic.partition.mode=nonstrict`
 
+1. Create Table:
+```sql
+CREATE EXTERNAL TABLE dp_ratings ( 
+                  userid INT, 
+                  movieid INT, 
+                  tstamp BIGINT 
+) PARTITIONED BY (rating INT)
+  ROW FORMAT DELIMITED 
+  FIELDS TERMINATED BY '#'
+  STORED AS TEXTFILE; 
+```
+2. Create TEMP table:
+```sql
+CREATE EXTERNAL TABLE temp_ratings ( 
+                    userid INT, 
+                    movieid INT,
+                    rating INT, 
+                    tstamp BIGINT 
+  ) 
+    ROW FORMAT DELIMITED 
+    FIELDS TERMINATED BY '#'
+    STORED AS TEXTFILE; 
+```
+3. Load data in temp table from file:
+```sql
+LOAD DATA LOCAL INPATH '/home/sushil/bigadata/hivedata/ratings' INTO TABLE temp_ratings;
+```
+4. Load data in dynamic partitioned table:
+```sql
+INSERT INTO TABLE dp_ratings PARTITION (rating) SELECT userid, movieid, tstamp,rating FROM temp_ratings;
+```
+NOTE: The column order while select should be maintained except partitioned column,
+which should be selected last and if multiple they should be in creation order.
+
+5. Verify data load:
+```sql
+SELECT * from sp_ratings where rating = 1;
+SELECT * from sp_ratings where rating = 2;
+SELECT * from sp_ratings where rating = 3;
+SELECT * from sp_ratings where rating = 4;
+```
+6. Verify file location:
+```bash
+hadoop fs -ls /user/hive/warehouse/movielens.db/dp_ratings/
+```
+It should have folder named `rating=1, rating=2` etc...
+
 #### Bucketing
+
+> https://data-flair.training/blogs/bucketing-in-hive/
 
 Bucketing is a data organization technique.
 Buckets in hive is used in segregating of hive table-data into multiple files or directories. bucketing offers the additional functionality of dividing large datasets into smaller and more manageable sets called buckets. it is used for efficient querying.
@@ -254,31 +366,55 @@ The Hive command for Bucketing is:
 ```sql
 CREATE TABLE table_name PARTITIONED BY (partition1 data_type, partition2 data_type,….) CLUSTERED BY (column_name1, column_name2, …) SORTED BY (column_name [ASC|DESC], …)] INTO num_buckets BUCKETS;
 ```
+or
+```sql
+CREATE TABLE bucketed_user(
+  firstname VARCHAR(64),
+  lastname  VARCHAR(64),
+  address   STRING,
+  city  VARCHAR(64),
+  state  VARCHAR(64),
+  post      STRING,
+  phone1    VARCHAR(64),
+  phone2    STRING,
+  email     STRING,
+  web       STRING
+  )
+  COMMENT ‘A bucketed sorted user table’
+  PARTITIONED BY (country VARCHAR(64))
+  CLUSTERED BY (state) SORTED BY (city) INTO 32 BUCKETS
+STORED AS SEQUENCEFILE;
+```
 
+`CLUSTERED BY` clause is used to do bucketing in Hive. The `SORTED BY` optional clause ensures local ordering in each bucket, by keeping the rows in each bucket ordered by one or more columns. The plausible cases when bucketing should be favoured are:
 
-`CLUSTERED BY` clause is used to do bucketing in Hive. The `SORTED BY` clause ensures local ordering in each bucket, by keeping the rows in each bucket ordered by one or more columns. The plausible cases when bucketing should be favoured are:
+we can not directly load bucketed tables with `LOAD DATA (LOCAL) INPATH` command, similar to partitioned tables. 
+Instead to populate the bucketed tables we need to use `INSERT OVERWRITE TABLE … SELECT …FROM` clause from another table.
 
 ![](bucketing-in-hive.png)
 
-* The concept of bucketing is based on the hashing technique. The hash_function depends on the kind of the bucketing column you have.
-* Here, modules of current column value and the number of required buckets is calculated (let say, F(x) % 3).
-* This function requires you to use the Clustered By clause to divide a table into buckets. 
-* In the table directory, the Bucket numbering is 1-based and every bucket is a file.
-* Bucketing is a standalone function. This means you can perform bucketing without performing partitioning on a table.
+* The concept of bucketing is based on the *hashing technique*. The `hash_function` depends on the kind of the bucketing column you have.
+* Here, *modules of current column value and the number of required buckets is calculated* (let say, F(x) % 3).
+* This function requires you to use the `Clustered By` clause to divide a table into buckets. 
+* In the table directory, the *Bucket numbering* is 1-based and *every bucket is a file*.
+* *Bucketing is a standalone function*. This means you can perform bucketing without performing partitioning on a table.
 * A bucketed table creates nearly equally distributed data file sections. 
-* Note that bucketing doesn’t ensure your table would be properly populated. So you’ll have to manage the Data Loading into the buckets yourself, which can be cumbersome. 
+* Note that *bucketing doesn’t ensure your table would be properly populated*. So you’ll have to manage the Data Loading into the buckets yourself, which can be cumbersome. 
 * Based on the resulted value, the data is stored into the corresponding bucket.
-* You should keep in mind that the Records with the same bucketed column would be stored in the same bucket. 
-* quantity of buckets in a table is a tradeoff between namenode RAM usage and possible optimizations during Hive query executions.
+* You should keep in mind that the *Records with the same bucketed column would be stored in the same bucket*. 
+* *quantity* of buckets in a table *is a tradeoff between namenode RAM usage and possible optimizations* during Hive query executions.
 * set corresponding quantity of reducers.
 * Distribute data by bucket columns.
-* And sort data if necessary.
+* And *sort data if necessary.*
+
+**proc**
 + It provides faster query response like portioning.
 + In bucketing due to equal volumes of data in each partition, joins at Map side will be quicker.
+**cons**
 - We can define a number of buckets during table creation. But loading of an equal volume of data has to be done manually by programmers.
 
-Neet when:
-* When a column has a high cardinality, we can’t perform partitioning on it. A very high number of partitions will generate too many Hadoop files which would increase the load on the node. That’s because the node will have to keep the metadata of every partition, and that would affect the performance of that node.
+Note when:
+* When a column has a *high cardinality, we can’t perform partitioning on it*. A very high number of partitions will generate too many Hadoop files which would increase the load on the node. That’s because the node will have to keep the metadata of every partition, and that would affect the performance of that node.
 * You should use bucketing if your queries have several map-side joins. A map-side join is a process where you join two tables by only using the map function without using the reduce function. 
 
 you can define how many buckets should be in each partitioned folder. How data is distributed over these files.
@@ -294,7 +430,31 @@ FROM granular_access_log
 ```
 
 Ex:
-Suppose you have access logs sorted by user_id. Word count problem to calculate the number of occurrences of each user_id can be solved within map phase only, without calling shuffle and sort and reduce phases. So if you find yourself frequently clustering data by a fixed set of columns, then an intermediate Hive table with configured buckets can save you a lot of resources.
+Suppose you have access logs sorted by `user_id`. Word count problem to calculate the number of occurrences of each `user_id` can be solved within map phase only, without calling shuffle and sort and reduce phases. So if you find yourself frequently clustering data by a fixed set of columns, then an intermediate Hive table with configured buckets can save you a lot of resources.
+
+#### Hive Partitioning vs Bucketing
+
+![](apache-hive-partitioning-vs-bucketing.jpg)
+
+**a) Pros and Cons of Hive Partitioning**
+
+**Pros:**
+* It distributes execution load horizontally.
+* In partition faster execution of queries with the low volume of data takes place. For example, search population from Vatican City returns very fast instead of searching entire world population.
+**Cons:**
+* There is the possibility of too many small partition creations- too many directories.
+* Partition is effective for low volume data. But there some queries like group by on high volume of data take a long time to execute. For example, grouping population of China will take a long time as compared to a grouping of the population in Vatican City.
+* There is no need for searching entire table column for a single record.
+
+
+**b) Pros and Cons of Hive Bucketing**
+
+**Pros:**
+* It provides faster query response like portioning.
+* In bucketing due to equal volumes of data in each partition, joins at Map side will be quicker.
+**Cons:**
+* We can define a number of buckets during table creation. But loading of an equal volume of data has to be done manually by programmers.
+
 
 ### Hive Map-Side Joins: Plain, Bucket, Sort-Merge
 
@@ -305,7 +465,8 @@ Suppose you have access logs sorted by user_id. Word count problem to calculate 
 
 ![](join_optimization_hive.png)
 
-When you have several Hive tables to join, the default MapReduce implementation is a reduce side join. But tables meta information can help Hive Framework to transform reduce side join into optimized version of MapSide join such as plain MapSide join, back-end join, and sort nodes back-end join.
+When you have several Hive tables to join, the *default MapReduce implementation is a reduce side join*. 
+But tables meta information can help Hive Framework to transform reduce side join into optimized version of MapSide join such as plain MapSide join, back-end join, and sort nodes back-end join.
 
 Having solved this problem with Hadoop MapReduce, you manually put a small table into a distributed cache. Hive Framework is doing similar work:
 1. client node: download small table <— HDFS
@@ -325,7 +486,6 @@ Having solved this problem with Hadoop MapReduce, you manually put a small table
 
 Tables bucketed and joined by the same set of columns can benefit from bucket map side join.
 
-
 **Reduce join**
 
 Reduce-Side joins are more simple than Map-Side joins since the input datasets need not to be structured. But it is less efficient as both datasets have to go through the MapReduce shuffle phase. the records with the same key are brought together in the reducer. We can also use the Secondary Sort technique to control the order of the records.
@@ -340,18 +500,19 @@ Reduce-Side joins are more simple than Map-Side joins since the input datasets n
 * A secondary sort needs to be done to ensure the ordering of the values sent to the reducer.
 * If the input files are of different formats, we would need separate mappers, and we would need to use MultipleInputs class in the driver to add the inputs and associate the specific mapper to the same.
 
-
 **Buckets**
 
-if two tables have the same amount of buckets. Each matter processing a file split from a big table retrieves only the corresponding bucket of a small table to complete the join task.
+If two tables have the same amount of buckets. Each matter processing a file split from a big table retrieves only the corresponding bucket of a small table to complete the join task.
 If there is a different number of buckets in tables, then you should remember the following rule of thumb. Data in a bucket is defined by a hash of column or a set of columns, and then divided by the number of buckets in a table.
 
 Ex:
+```
 So having 2 buckets in one table and 4 buckets in another one, you can easily find out that the first bucket from table one will correspond to buckets 1 and 3 in the second table.
 
 Having 2 buckets in table one and 10 buckets in table two, the first bucket in table one will correspond to all buckets in table two. But having 3 buckets in table one and 5 buckets in table two, you have to read all data from the other table to perform a join. That is why I recommend you to always use a power of 2 as a number of buckets in tables. Even if you have a different number of buckets in tables, you will still be able to benefit from bucket MapSide join.
+```
 
-you can split buckets.
+**You can split buckets.**
 If you use the power of ten, then you will increase NameNode RAM usage for this table by a factor of ten. 
 
 External sorting is based on a merge-sort algorithm, where you read continuous chunks of data only when necessary.
@@ -465,7 +626,7 @@ CREATE TABLE skewed_access_log (
 SKEWED BY (user_id) ON ("unknown", "1")
 ```
 
-#### organizing the skewed dataset
+#### Organizing the skewed dataset
 
 1. list bucketing
 To enforce list bucketing, you have to specify stored as directories statement in a Hive table definition. If you supply this option, then the data for each skewed key will be stored in a separate folder. 
