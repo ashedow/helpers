@@ -563,8 +563,6 @@ The stationary distribution at a vertex is related:
 What property should a matrix have to be called a transition for the stochastic graph:
 The sum of the values in each row is equal to one
 
-
-
 ### Page Rank Algorithm
 
 PageRank of E denoted by PR(E)
@@ -754,7 +752,11 @@ Taste graph
 
 ## Optimisation
 
+### Why RDD is Slow
+
 When using *RDD*, Spark knows *nothing* about your *data*. If you consider this SQL query in the context of a database management system, the *DBMS knows what columns your tables have and what are their types*, thus reducing unnecessary reads and redundant computations.
+
+Using *RDD* directly leads to performance issues as *Spark doesn’t know how to apply the optimization techniques* and RDD *serialize and de-serialize* the data when it distributes across a cluster (repartition & shuffling).
 
 Using the *RDD API*, Spark knows *nothing about your computations* as well. is that Spark gets your lambdas as serialized byte arrays. And the best it can do is just apply it to each row or partition of the data. 
 
@@ -763,19 +765,39 @@ opaque computations and data.
 
 *Spark SQL*, which *restricts you to using operators and expressions provided by the API*, and which enforces you to specify the schema of your data, has all the knowledge to generate the *best possible execution plan*.
 
-### Catalyst
+### Optimizer tools
+
+#### Tungsten
+
+> https://databricks.com/glossary/tungsten
+
+* *optimize Spark jobs for **Memory and CPU*** efficiency. 
+* *Spark SQL component* 
+* increase performance by *rewriting Spark operations in bytecode, at runtime*. Tungsten performance by focusing on jobs close to bare metal CPU and memory efficiency.
+
+##### Includes These Initiatives:
+
+* **Memory Management and Binary Processing**: leveraging application semantics to manage memory explicitly and eliminate the overhead of JVM object model and garbage collection
+* **Cache-aware computation**: algorithms and data structures to exploit memory hierarchy
+* **Code generation**: using code generation to exploit modern compilers and CPUs
+* **No virtual function dispatches**: this reduces multiple CPU calls which can have a profound impact on performance when dispatching billions of times.
+* **Intermediate data in memory vs CPU registers**: Tungsten Phase 2 places intermediate data into CPU registers. This is an order of magnitudes reduction in the number of cycles to obtain data from the CPU registers instead of from memory
+* **Loop unrolling and SIMD**: Optimize Apache Spark’s execution engine to take advantage of modern compilers and CPUs’ ability to efficiently compile and execute simple for loops (as opposed to complex function call graphs).
+
+#### Catalyst
 
 > https://databricks.com/glossary/catalyst-optimizer
 > [sigmod_spark_sql](sigmod_spark_sql.pdf)
 > https://databricks.com/blog/2015/04/13/deep-dive-into-spark-sqls-catalyst-optimizer.html
 
-**Catalyst is the Spark SQL query optimizer**
+* **Catalyst is the Spark SQL query optimizer**
+* *optimize Datasets, DataFrame and SQL*
+* *can't optimize* programs with *RDDs*.
 
 Catalyst is based on functional programming constructs in Scala and designed with these key two purposes:
 * Easily add new optimization techniques and features to Spark SQL
 * Enable external developers to extend the optimizer (e.g. adding data source specific rules, support for new data types, etc.)
 
-Catalyst *can optimize Datasets, DataFrame and SQL*, but *can't optimize* programs with *RDDs*.
 Catalyst starts with a SQL query or a computation written using the DataFrame API, which is then, parsed into unresolved logical plan.
 
 
@@ -833,6 +855,209 @@ tree.transform {
     * `spark.sql.orc.filterPushdown`
 * Check `join` physical plan
 * Check pruned columns
+
+### Use `coalesce()` over `repartition()`
+
+When you want to reduce the number of partitions prefer using [`coalesce()` as it is an optimized or improved version of `repartition()`](https://sparkbyexamples.com/spark/spark-repartition-vs-coalesce/) where **the movement of the data across the partitions is lower using coalesce** which ideally performs better when you dealing with bigger datasets.
+
+> Use `repartition()` when you wanted to increase the number of partitions.
+
+Example `repartition()`:
+```python
+val rdd1 = spark.sparkContext.parallelize(Range(0,25), 6)
+  println("parallelize : "+rdd1.partitions.size)
+
+val rdd2 = rdd1.repartition(4)
+  println("Repartition size : "+rdd2.partitions.size)
+  rdd2.saveAsTextFile("/tmp/re-partition")
+```
+
+This yields output Repartition size : 4 and the repartition re-distributes the data(as shown below) from all partitions which is full shuffle leading to very expensive operation when dealing with billions and trillions of data. By tuning the partition size to optimal, you can improve the performance of the Spark application
+
+```
+Partition 1 : 1 6 10 15 19
+Partition 2 : 2 3 7 11 16
+Partition 3 : 4 8 12 13 17
+Partition 4 : 0 5 9 14 18
+```
+
+Example `coalesce()`
+```python
+val rdd3 = rdd1.coalesce(4)
+  println("Repartition size : "+rdd3.partitions.size)
+  rdd3.saveAsTextFile("/tmp/coalesce")
+```
+
+If you compared the below output with section 1, you will notice partition 3 has been moved to 2 and Partition 6 has moved to 5, resulting data movement from just 2 partitions.
+
+```
+Partition 1 : 0 1 2
+Partition 2 : 3 4 5 6 7 8 9
+Partition 4 : 10 11 12 
+Partition 5 : 13 14 15 16 17 18 19
+```
+
+#### Repartition() vs Coalesce()
+
+Spark repartition() and coalesce() are very expensive operations as they shuffle the data across many partitions hence try to minimize repartition as much as possible.
+
+##### RDD
+
+Spark RDD `repartition()` method is used to *increase or decrease the partitions*.
+
+Spark RDD `coalesce()` is used only to *reduce the number of partitions*. This is optimized or improved version of `repartition()` where the movement of the data across the partitions is lower using coalesce.
+
+##### DataFrame
+
+Unlike RDD, you can’t *specify the partition/parallelism while creating DataFrame*. 
+
+Spark DataFrame `repartition()` method is used to *increase or decrease the partitions*.
+
+Spark DataFrame `coalesce()` is used *only to decrease the number of partitions*. This is an optimized or improved version of `repartition()` where the movement of the data across the partitions is fewer using coalesce.
+
+##### Default Shuffle Partition
+
+Calling `groupBy()`, `union()`, `join()` and similar functions on DataFrame results in shuffling data between multiple executors and even machines and finally repartitions data into 200 partitions by default. Spark default defines shuffling partition to *200* using `spark.sql.shuffle.partitions` configuration.
+
+### Use mapPartitions() over map()
+
+Spark map() and mapPartitions() transformation applies the function on each element/record/row of the DataFrame/Dataset and returns the new DataFrame/Dataset. mapPartitions() over map() prefovides performance improvement when you have havy initializations like initializing classes, database connections e.t.c
+
+Spark mapPartitions() provides a facility to do heavy initializations (for example Database connection) once for each partition instead of doing it on every DataFrame row. This helps the performance of the Spark jobs when you dealing with heavy-weighted initialization on larger datasets.
+
+Example `map()`
+```scala
+import spark.implicits._
+  val df3 = df2.map(row=>{
+    val util = new Util() // Initialization happends for every record
+    val fullName = util.combine(row.getString(0),row.getString(1),row.getString(2))
+    (fullName, row.getString(3),row.getInt(5))
+  })
+  val df3Map =  df3.toDF("fullName","id","salary")
+```
+Example `mapPartitions()`
+```scala
+  val df4 = df2.mapPartitions(iterator => {
+    val util = new Util()
+    val res = iterator.map(row=>{
+      val fullName = util.combine(row.getString(0),row.getString(1),row.getString(2))
+      (fullName, row.getString(3),row.getInt(5))
+    })
+    res
+  })
+  val df4part = df4.toDF("fullName","id","salary")
+```
+> Note: One key point to remember is these both transformations returns the Dataset[U] but not the DataFrame (In Spark 2.0,  DataFrame = Dataset[Row]) .
+
+### Use Serialized data format’s
+
+Most of the Spark jobs run as a pipeline where one Spark job writes data into a File and another Spark jobs read the data, process it, and writes to another file for another Spark job to pick up. When you have such use case, prefer writing an intermediate file in Serialized and optimized formats like Avro, Kryo, Parquet e.t.c, any transformations on these formats performs better than text, CSV, and JSON.
+
+*[RCFile](http://web.cse.ohio-state.edu/hpcs/WWW/HTML/publications/papers/TR-11-4.pdf)
+
+#### Parquet
+
+[parquet](https://parquet.apache.org/)
+
+* *columnar* file format 
+* provides *optimizations* to speed up queries and is a far more efficient file format than CSV or JSON, 
+* supported by many data processing systems.
+* compatible with most of the data processing frameworks in the Hadoop echo systems. 
+* provides efficient data compression and encoding schemes with enhanced performance to handle complex data in bulk.
+
+```scala
+val dF = spark.read.parquet(“/tmp/output/people.parquet”) //Read Parquet file df.write.parquet(“/tmp/output/people-new.parquet”)//Writing parquet file
+```
+
+#### Avro
+
+[avro](http://avro.apache.org/)
+
+* developed by databricks as an open-source library that supports reading and writing data in Avro file format. 
+* row-based,
+* data serialization and data exchange framework for Hadoop projects, 
+* When Avro data is stored in a file, its *schema is stored with it*, so that files may be processed later by any program.
+* has build to serialize and exchange big data between different Hadoop based projects
+* serializes data in a compact binary format and schema is in JSON format that defines the field names and data types.
+
+It is mostly used in Apache Spark especially for Kafka-based data pipelines. 
+
+```scala
+val df = spark.read.format("avro").load("person.avro") // Reading avro files
+df.write.format("avro").save("person-new.avro") //Writing Avro file
+//Avro Spark SQL
+spark.sqlContext.sql("CREATE TEMPORARY VIEW PERSON USING avro 
+    OPTIONS (path \"person.avro\")")
+spark.sqlContext.sql("SELECT * FROM PERSON").show()
+```
+
+### Persisting & Caching data in memory
+
+Spark persisting/caching is one of the best techniques to improve the performance of the Spark workloads. [Spark Cache and Persist are optimization techniques in DataFrame / Dataset](https://sparkbyexamples.com/spark/spark-dataframe-cache-and-persist-explained/) for iterative and interactive Spark applications to improve the performance of Jobs.
+
+Using `cache()` and `persist()` methods, Spark provides an optimization mechanism to store the intermediate computation of a Spark DataFrame so they can be reused in subsequent actions.
+
+When you *persist* a dataset, *each node stores it’s partitioned data in memory and reuses them in other actions on that dataset*. 
+
+Spark’s persisted data on nodes are fault-tolerant meaning *if any partition of a Dataset is lost, it will automatically be recomputed using the original transformations that created it.*
+
+```scala
+df.where(col("State") === "PR").cache()
+```
+
+When caching use in-memory columnar format, By tuning the `batchSize` property you can also improve Spark performance.
+
+```scala
+spark.conf.set("spark.sql.inMemoryColumnarStorage.compressed", true)
+spark.conf.set("spark.sql.inMemoryColumnarStorage.batchSize",10000)
+```
+Spark provides [several storage levels to store the cached data](./spark.md###Cache-methods), use the once which suits your cluster.
+
+#### Advantages for Caching and Persistence of DataFrame
+
+* **Cost efficient** – Spark computations are very expensive hence reusing the computations are used to save cost.
+* **Time efficient** – Reusing the repeated computations saves lots of time.
+* **Execution time** – Saves execution time of the job and we can perform more jobs on the same cluster.
+
+
+### Reduce expensive Shuffle operations
+
+Shuffling is a mechanism Spark uses to redistribute the data across different executors and even across machines. Spark shuffling triggers when we perform certain transformation operations like `gropByKey()`, `reducebyKey()`, `join()` on RDD and DataFrame.
+
+Spark Shuffle is an expensive operation since it involves the following
+* Disk I/O
+* Involves data serialization and deserialization
+* Network I/O
+
+We cannot completely avoid shuffle operations in but when possible try to reduce the number of shuffle operations removed any unused operations.
+
+Spark provides `spark.sql.shuffle.partitions` configurations to control the partitions of the shuffle, By tuning this property you can improve Spark performance.
+```scala
+spark.conf.set("spark.sql.shuffle.partitions",100)
+sqlContext.setConf("spark.sql.shuffle.partitions", "100") // older version
+```
+
+### Disable DEBUG & INFO Logging
+
+This is one of the simple ways to improve the performance of Spark Jobs and can be easily avoided by following good coding principles. During the development phase of Spark/PySpark application, we usually write debug/info messages to console using `println()` and logging to a file using some logging framework (log4j);
+
+These both methods results I/O operations hence cause performance issues when you run Spark jobs with greater workloads. Before promoting your jobs to production make sure you review your code and take care of the following.
+
+Remove or convert all `println()` statements to log4j info/debug.
+```scala
+    logger.debug("Debug logging messages") 
+    logger.info("Info logging messages")
+```
+Disable `DEBUG`/`INFO` by enabling `ERROR/WARN/FATAL` logging
+
+If you are using `log4j.properties` use the following or use appropriate configuration based on your logging framework and configuration method (XML vs properties vs yaml)
+
+```scala
+log4j.rootLogger=warn, stdout
+```
+Personally I’ve seen this in my project where our team written 5 log statements in a `map()` transformation; When we are processing 2 million records which resulted 10 million I/O operations and caused my job running for hrs. After disabling `DEBUG` & `INFO` logging I’ve witnessed jobs running in few mins.
+
+> Note: Spark workloads are increasingly bottlenecked by CPU and memory use rather than I/O and network, but still avoiding I/O operations are always a good practice.
 
 ### SQL query
 
@@ -936,11 +1161,11 @@ If you're absolutely sure that using the shuffle hash join is good for the perfo
 
 * You can force shuffle hash join if you are sure
 
-
-
-#### sort-merge join
+#### Sort-merge join
 
 > dafault for spark
+>
+> `spark.sql.join.preferSortMergeJoin` is `True`
 
 * O(n * log(n) + m * log(m))
 * Can be used for huge tables
@@ -969,12 +1194,6 @@ To accomplish ideal performance in Sort Merge Join:
 • Make sure the partitions have been co-located. Otherwise, there will be shuffle operations to co-locate the data as it has a pre-requirement that all rows having the same value for the join key should be stored in the same partition.
 • The DataFrame should be distributed uniformly on the joining columns.
 • To leverage parallelism the DataFrame should have an adequate number of unique keys
-
-#### Sort-merge join
-
-* spark.sql.join.preferSortMergeJoin is True
-
-* Default join implementation
 
 * Keys must be sortable
 
@@ -1034,7 +1253,11 @@ Shuffles data uniformly
 
 * Tune parallelism for large joins
 
-### UDF optimization
+### UDF optimization = Avoid UDF
+
+Try to avoid Spark/PySpark UDF’s at any cost and use when existing Spark built-in functions are not available for use. UDF’s are a black box to Spark hence it can’t apply optimization and you will lose all the optimization Spark does on Dataframe/Dataset. When possible you should use Spark SQL built-in functions as these functions provide optimization
+
+Before you create any UDF, do your research to check if the similar function you wanted is already available in Spark SQL Functions. Spark SQL provides several predefined common functions and many more new functions are added with every release. hence, It is best to check before you reinventing the wheel.
 
 * Spark SQL avoids almost all communication with Python
 * Spark SQL can be extended via UDFs/UDAFs

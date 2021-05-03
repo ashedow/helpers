@@ -10,6 +10,8 @@ Spark is built around the concepts of Resilient Distributed Datasets and Direct 
 
 Spark Application (often referred to as Driver Program or Application Master) at high level consists of SparkContext and user code which interacts with it creating RDDs and performing series of transformations to achieve final result. These transformations of RDDs are then translated into DAG and submitted to Scheduler to be executed on set of worker nodes.
 
+[How Spark Runs Your Applications](./spark_run_app.md)
+
 ## RDD: Resilient Distributed Dataset
 
 Resilient Distributed Datasets (RDD) is a fundamental data structure of Spark. It is an *immutable distributed collection of objects*. Each dataset in RDD is divided into *logical partitions*, which may be computed on different nodes of the cluster. 
@@ -75,8 +77,10 @@ MapPartitionsRDD
 
 
 **Partitions** logical chunk of a large distributed data set. It provides the possibility to distribute the work across the cluster, divide the task into smaller parts, and reduce memory requirements for each node.
-Partition is the main unit of parallelism in Apache Spark. 
+**Partition is the main unit of parallelism in Apache Spark.**
 Spark partitions ≠ hive partitions (*Spark* splits data in order to process it in parallel *in memory*. *Hive* partition is *in the storage, in the disk, in persistence*.)
+
+![](spark-partitions-2.jpg)
 
 **Dependencies** (that models the relationships a RDD and its partitions and the partition which it was derived from)
 
@@ -88,30 +92,37 @@ Spark partitions ≠ hive partitions (*Spark* splits data in order to process it
 **a binary file in HDFS**
 
 **partitions() -> Array[Partition]**
-• lookup blocks information from the NameNode
-• make a partition for every block
-› return an array of the partitions
+* lookup blocks information from the NameNode
+* make a partition for every block
+    * return an array of the partitions
 **iterator(p: Partition, parents: Array[Iterator[_]]) -> Iterator[Byte]**
-• parents are not used
-• return a reader for the block of the given partition
+* parents are not used
+* return a reader for the block of the given partition
 **dependencies() -> Array[Dependency]**
 
 **Example: an sliced* in-memory array**
 * can be used to parallelize in-memory computations
 
 **partitions() -> Array[Partition]**
-› slice array in chunks of size N
-› make a partition for every chunk
-› return an array of a single partition with the source array of the
+* slice array in chunks of size N
+* make a partition for every chunk
+* return an array of a single partition with the source array of the
 partitions
 **iterator(p: Partition, parents: Array[Iterator[_]]) -> Iterator[T]**
-›parents are not used
-›return an iterator over the source array chunk in the given partition
+* parents are not used
+* return an iterator over the source array chunk in the given partition
 **dependencies() -> Array[Dependency]**
-›return an empty array (no dependencies)
+* return an empty array (no dependencies)
 
 
 #### Prtitioner
+
+> https://luminousmen.com/post/spark-partitions
+
+Once the user has submitted his job into the cluster, each partition is sent to a specific executor for further processing. 
+*Only one partition is processed by one executor at a time*, so the size and number of partitions *transferred to the executor are directly proportional* to the time it takes to complete them. Thus the more partitions the more work is distributed to executors, with a smaller number of partitions the work will be done in larger pieces (and often faster).
+
+Looking at the partition structure, we can see that our data is divided into four partitions (because my laptop has 4 cores and the spark created 4 executables in standalone mode), and if we apply the transformations on this data frame, the work of each partition will be done in a separate thread (and in my case on each individual processor core).
 
 The partitioner defines how records will be distributed and thus which records will be completed by each task.
 
@@ -156,11 +167,36 @@ Interface with 2 methods:
 
 *"Shuffle Read"* means the sum of read serialized data on all executors at the beginning of a stage.
 
+##### Repartitioning
+
+*The first **way to manage partitions** is **repartition** operation.*
+
+Under repartitioning meant the operation to *reduce or increase the number of partitions* in which the data in the cluster will be split. *This process involves a full shuffle.*
+
+Consequently, it is clear that repartitioning is an expensive process. In a typical scenario, most of the data should be serialized, moved, and deserialized.
+
+Example:
+```python
+repartitioned = transactions.repartition(8)
+print('Number of partitions: {}'.format(repartitidoned.rdd.getNumPartitions()))
+print('Partitions structure: {}'.format(repartitioned.rdd.glom().collect()))
+```
+In addition to specifying the number of partitions directly, you can pass in the name of the column by which you want to partition the data.
+
+Example,
+```python
+repartitioned = transactions.repartition('country')
+print('Number of partitions: {}'.format(repartitidoned.rdd.getNumPartitions()))
+print('Partitions structure: {}'.format(repartitioned.rdd.glom().collect()))
+```
+We see that the number of partitions has become *200* and many of these partitions are completely empty. We will discuss this point a little further in the article.
+
+
 ##### Coalesce
 
 *The second **way to manage partitions** is **coalesce**.*
 
-This operation reduces the number of partitions and avoids a full shuffle. The executor can safely leave data on a minimum number of partitions, moving data only from redundant nodes. Therefore, it is better to use coalesce than repartition if you need to reduce the number of partitions.
+This operation reduces the number of partitions and **avoids a full shuffle**. The executor can safely leave data on a minimum number of partitions, moving data only from redundant nodes. Therefore, it is better to use coalesce than repartition if you need to reduce the number of partitions.
 
 ```python
 coalesced = transactions.coalesce(2)
@@ -264,7 +300,7 @@ Main - transformtions nd actions
 * apply user function to every element in a partition (or to the whole partition)
 * apply aggregation function to the whole dataset (`groupBy`, `sortBy`)
 * introduce dependencies between RDDs to form DAG
-* provide functionality for repartitioning (`repartition`, `partitionBy`)
+* provide functionality for [repartitioning](#####Repartitioning) (`repartition`, `partitionBy`)
 * filter records and group them by a key
 * create new RDDs from existing RDDs by specifying how to obtain new items from the existing items
 * all transformtions are lazy
@@ -848,3 +884,13 @@ straggler > 180s (120 * 1.5)
 * Speculative execution may help
 * Skew data causes false stragglers
 
+
+## Streaming
+
+> https://spark.apache.org/docs/latest/streaming-programming-guide.html
+
+![](streaming-arch.png)
+
+Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream processing of live data streams. Data can be ingested from many sources like Kafka, Kinesis, or TCP sockets, and can be processed using complex algorithms expressed with high-level functions like map, reduce, join and window. Finally, processed data can be pushed out to filesystems, databases, and live dashboards. In fact, you can apply Spark’s machine learning and graph prochdessing algorithms on data streams.
+
+![](streaming-flow.png)

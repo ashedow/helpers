@@ -44,32 +44,43 @@ REVOKE - Takes back privileges granted from user.
 
 
 
-COUNT - The SQL COUNT aggregate function is used to count the number of rows in a database table.
-MAX- The SQL MAX aggregate function allows us to select the highest (maximum) value for a certain column.
-MIN - The SQL MIN aggregate function allows us to select the lowest (minimum) value for a certain column.
-AVG - The SQL AVG aggregate function selects the average value for certain table column.
-SUM - The SQL SUM aggregate function allows selecting the total for a numeric column.
-SQRT - This is used to generate a square root of a given number.
-RAND - This is used to generate a random number using SQL command.
-CONCAT - This is used to concatenate any string inside any SQL command.
-Numeric - Complete list of SQL functions required to manipulate numbers in SQL.
-String - Complete list of SQL functions required to manipulate strings in SQL.
+`COUNT` - The SQL COUNT aggregate function is used to count the number of rows in a database table.
 
-function OVER widow
+`MAX`- The SQL MAX aggregate function allows us to select the highest (maximum) value for a certain column.
+
+`MIN` - The SQL MIN aggregate function allows us to select the lowest (minimum) value for a certain column.
+
+`AVG` - The SQL AVG aggregate function selects the average value for certain table column.
+
+`SUM` - The SQL SUM aggregate function allows selecting the total for a numeric column.
+
+`SQRT` - This is used to generate a square root of a given number.
+
+`RAND` - This is used to generate a random number using SQL command.
+
+`CONCAT` - This is used to concatenate any string inside any SQL command.
+
+`Numeric` - Complete list of SQL functions required to manipulate numbers in SQL.
+
+`String` - Complete list of SQL functions required to manipulate strings in SQL.
+
+**function OVER widow**
 Окно — это некоторое выражение, описывающее набор строк, которые будет обрабатывать функция и порядок этой обработки.
-истинные оконные функции из мануала — это row_number(), rank(), lead() и т.д., а можно использовать функции-агрегаты, такие как: sum(), count() и т.д. Так вот, это важно, агрегатные функции работают слегка по-другому: если не задан ORDER BY в окне, идет подсчет по всей партиции один раз, и результат пишется во все строки (одинаков для всех строк партиции). Если же ORDER BY задан, то подсчет в каждой строке идет от начала партиции до этой строки. Если же мы для агрегатной фунции sum не будем использовать ORDER BY в окне, тогда мы просто посчитаем общую сумму и покажем её во всех строках. Т.е. фреймом для каждой из строк будет весь набор строк
+истинные оконные функции из мануала — это `row_number()`, `rank()`, `lead()` и т.д., а можно использовать функции-агрегаты, такие как: `sum()`, `count()` и т.д. Так вот, это важно, агрегатные функции работают слегка по-другому: если не задан `ORDER BY` в окне, идет подсчет по всей партиции один раз, и результат пишется во все строки (одинаков для всех строк партиции). Если же ORDER BY задан, то подсчет в каждой строке идет от начала партиции до этой строки. Если же мы для агрегатной фунции sum не будем использовать `ORDER BY` в окне, тогда мы просто посчитаем общую сумму и покажем её во всех строках. Т.е. фреймом для каждой из строк будет весь набор строк
 
 
-PARTITION BY позволяет сгруппировать строки по значению определённого столбца. Это полезно, если данные логически делятся на какие-то категории и нужно что-то сделать с данной строкой с учётом других строк той же группы (скажем, сравнить теннисиста с остальными теннисистами, но не с бегунами или пловцами). Этот оператор работает только с оконными функциями типа LAG, LEAD, RANK и т. д.
-* ROW_NUMBER можно объединить с ORDER BY, чтобы определить, в каком порядке строки будут нумероваться. Выберем с помощью DISTINCT все имеющиеся виды спорта и пронумеруем их в алфавитном порядке.
-* LAG - Функция LAG берёт строку и возвращает ту, которая шла перед ней.
-* LEAD - Функция LEAD похожа на LAG, но вместо предыдущей строки возвращает следующую.
-* RANK - Оператор RANK похож на ROW_NUMBER, но присваивает одинаковые номера строкам с одинаковыми значениями, а «лишние» номера пропускает. Есть также DENSE_RANK, который не пропускает номеров.
+* `PARTITION BY` позволяет сгруппировать строки по значению определённого столбца. Это полезно, если данные логически делятся на какие-то категории и нужно что-то сделать с данной строкой с учётом других строк той же группы (скажем, сравнить теннисиста с остальными теннисистами, но не с бегунами или пловцами). Этот оператор работает только с оконными функциями типа `LAG`, `LEAD`, `RANK` и т. д.
+* `ROW_NUMBER` можно объединить с `ORDER BY`, чтобы определить, в каком порядке строки будут нумероваться. Выберем с помощью `DISTINCT` все имеющиеся виды спорта и пронумеруем их в алфавитном порядке.
+* `LAG` - Функция LAG берёт строку и возвращает ту, которая шла перед ней.
+* `LEAD` - Функция LEAD похожа на LAG, но вместо предыдущей строки возвращает следующую.
+* `RANK` - Оператор RANK похож на ROW_NUMBER, но присваивает одинаковые номера строкам с одинаковыми значениями, а «лишние» номера пропускает. Есть также DENSE_RANK, который не пропускает номеров.
 
 
 
-SQL подзапросы — или внутренние запросы, или вложенные запросы — это запрос внутри другого запроса SQL.
+**SQL подзапросы** — или внутренние запросы, или вложенные запросы — это запрос внутри другого запроса SQL.
+```sql
 SELECT SUM(Quantity) AS Qty_Canada FROM Sumproduct WHERE City IN (SELECT City FROM Sellers WHERE Country = 'Canada')
+```
 
 ***
 
@@ -77,46 +88,44 @@ Clustered and Nonclustered Index
 
 > [Indexes](./indexes.md)
 
+|Clustered | Nonclustered|
+|-----|-----|
 | A clustered index is a type of index where the table records are physically re-ordered to match the index. | A nonclustered index is a type of index that contains the references to the actual data. |
-
- Number of Indexes
-
+|Number of Indexes| |
 | There can be one clustered index per table.                                                                | There can be many non-clustered indexes per table.                                       |
-
-Speed
-
+|Speed||
 | The clustered index is faster than the Nonclustered Index.                                                 | The nonclustered index is slower than the clustered index.                               |
+| Required Space||
+| The clustered index does not require an additional space.                                                  | The nonclustered index required an additional space. |
 
- Required Space
 
-| The clustered index does not require an additional space.                                                  | The nonclustered index required an additional space.                                     |
 
 **Clustered**
 In a clustered index, the index organizes the actual data. It is similar to a phone directory.
 The primary key is used to specify each entry in the table.
 
-
 **Nonclustered**
 
 ***
 
-Primary Key and Candidate Key
+**Primary Key** vs **Candidate Key**
 
-• A table without candidate keys does not represent any relation.
-• There can be many candidate keys for a table in a database, but there should be only one primary key for a table.
-• Although the primary key is one of the candidate keys, sometimes it is the only candidate key.
-• Once a primary key was selected the other candidate keys become unique keys.
-• Practically a candidate key can contain NULL values although it presently does not contain any value. Therefore, the candidate key is not qualified for a primary key because the primary key should not contain any NULL values.
-• It may also be possible that candidate keys, which are unique at the moment,may contain duplicate values that disqualify a candidate key from becoming a primary key.
+* A table without candidate keys does not represent any relation.
+* There can be many candidate keys for a table in a database, but there should be only one primary key for a table.
+* Although the primary key is one of the candidate keys, sometimes it is the only candidate key.
+* Once a primary key was selected the other candidate keys become unique keys.
+* Practically a candidate key can contain NULL values although it presently does not contain any value. Therefore, the candidate key is not qualified for a primary key because the primary key should not contain any NULL values.
+* It may also be possible that candidate keys, which are unique at the moment,may contain duplicate values that disqualify a candidate key from becoming a primary key.
 
 
 **Candidate key** 
+
 Candidate key is a single column or set of columns in a table of a database that can be used to uniquely identify any database record without referring to any other data. Each table of a database can have one or more than one candidate keys. A set of candidate keys can be created by using functional dependencies. There are some important features in a candidate key. They are;
 
-• candidate keys should be unique within the domain and they should not contain any NULL values.
-• the candidate key should never change, and it must hold the same value for a specific occurrence of an entity.
-• main purpose of a candidate key is to help to identify one single row out of millions of rows in a big table. Each candidate key is qualified to become a primary key.
-• A candidate key is the column that qualifies as unique whereas primary key is the column that uniquely identifies a record.
+* candidate keys should be unique within the domain and they should not contain any NULL values.
+* the candidate key should never change, and it must hold the same value for a specific occurrence of an entity.
+* main purpose of a candidate key is to help to identify one single row out of millions of rows in a big table. Each candidate key is qualified to become a primary key.
+* A candidate key is the column that qualifies as unique whereas primary key is the column that uniquely identifies a record.
 
 
 **Primary Key**
@@ -143,10 +152,11 @@ Candidate key is a single column or set of columns in a table of a database that
 
 ***
 
-SQL ALIASES can be used to create a temporary name for columns or tables.
+`SQL ALIASES` can be used to create a temporary name for columns or tables.
 
-COLUMN ALIASES are used to make column headings in your result set easier to read.
-TABLE ALIASES are used to shorten your SQL to make it easier to read or when you are performing a self join (ie: listing the same table more than once in the FROM clause).
+`COLUMN ALIASES` are used to make column headings in your result set easier to read.
+
+`TABLE ALIASES` are used to shorten your SQL to make it easier to read or when you are performing a self join (ie: listing the same table more than once in the `FROM` clause).
 
 
 If the alias_name contains spaces, you must enclose the alias_name in quotes.
@@ -155,83 +165,87 @@ The alias_name is only valid within the scope of the SQL statement.
 
 ***
 
+```sql
 SELECT department, SUM(sales) AS "Total sales"
 FROM order_details
 GROUP BY department
 HAVING SUM(sales) > 1000;
+```
 
 ***
 
 -- CAST Syntax:  
-CAST ( expression AS data_type [ ( length ) ] )  
+`CAST ( expression AS data_type [ ( length ) ] )`
   
 -- CONVERT Syntax:  
-CONVERT ( data_type [ ( length ) ] , expression [ , style ] )  
+`CONVERT ( data_type [ ( length ) ] , expression [ , style ] )`
 
 ***
 
-The CAST() function converts a value (of any type) into a specified datatype.
+The `CAST()` function converts a value (of any type) into a specified datatype.
 
 ***
 
-Difference between JOIN and UNION in SQL
+Difference between `JOIN` and `UNION` in SQL
 
 **JOIN**
-JOIN combines data from many tables based on a matched condition between them.
-It combines data into new columns
-Number of columns selected from each table may not be same.
-Datatypes of corresponding columns selected from each table can be different.
-It may not return distinct columns.
+* JOIN combines data from many tables based on a matched condition between them.
+* It combines data into new columns
+* Number of columns selected from each table may not be same.
+* Datatypes of corresponding columns selected from each table can be different.
+* It may not return distinct columns.
 
 **UNION**
-SQL combines the result-set of two or more SELECT statements.
-It combines data into new rows
-Number of columns selected from each table should be same.
-Datatypes of corresponding columns selected from each table should be same.
-It returns distinct rows.
+* SQL combines the result-set of two or more `SELECT` statements.
+* It combines data into new rows
+* Number of columns selected from each table should be same.
+* Datatypes of corresponding columns selected from each table should be same.
+* It returns distinct rows.
 
 ***
 
-UNION removes duplicate rows.
-UNION ALL does not remove duplicate rows.
+`UNION` removes duplicate rows.
+`UNION ALL` does not remove duplicate rows.
 
 ***
 
-- SQL INNER JOIN (sometimes called simple join) The SQL INNER JOIN would return the records where table1 and table2 intersect.
-FROM customers INNER JOIN orders My be replased with FROM customers, orders
+- SQL `INNER JOIN` (sometimes called simple join) The SQL `INNER JOIN` would return the records where table1 and table2 intersect.
+`FROM customers INNER JOIN orders My be replased with FROM customers, orders`
 
-- SQL EQUI JOIN
+- SQL `EQUI JOIN`
 Syntax:
-SELECT column_list  FROM table1, table2.... WHERE table1.column_name = table2.column_name; 
+`SELECT column_list  FROM table1, table2.... WHERE table1.column_name = table2.column_name; `
 or
-SELECT * FROM table1 JOIN table2 [ON (join_condition)]
+`SELECT * FROM table1 JOIN table2 [ON (join_condition)]`
 
-An equijoin is a join with a join condition containing an equality operator. An equijoin returns only the rows that have equivalent values for the specified columns.
+An `EQUI JOIN` is a join with a join condition containing an equality operator. An `EQUI JOIN` returns only the rows that have equivalent values for the specified columns.
 
-An inner join is a join of two or more tables that returns only those rows (compared using a comparison operator) that satisfy the join condition.
+An `inner join` is a join of two or more tables that returns only those rows (compared using a comparison operator) that satisfy the join condition.
 
-- SQL NON EQUI JOIN uses comparison operator instead of the equal sign like >, <, >=, <= along with conditions.
+- SQL `NON EQUI JOIN` uses comparison operator instead of the equal sign like >, <, >=, <= along with conditions.
 
-- SQL NATURAL JOIN is a type of EQUI JOIN and is structured in such a way that, columns with the same name of associated tables will appear once only.
+- SQL `NATURAL JOIN` is a type of `EQUI JOIN` and is structured in such a way that, columns with the same name of associated tables will appear once only.
 
 Natural Join: 
     * The associated tables have one or more pairs of identically named columns.
     * The columns must be the same data type.
-    * Don’t use ON clause in a natural join.
+    * **Don’t use** `ON` clause in a natural join.
 
 Syntax:
 `SELECT * FROM table1 NATURAL JOIN table2;`
-To get all the unique columns from foods and company tables, the following SQL statement can be used: `SELECT * FROM foods NATURAL JOIN company;` INNER JOIN will return all columns from foods and company tables
 
-- SQL CROSS JOIN produces a result set which is the number of rows in the first table multiplied by the number of rows in the second table if no WHERE clause is used along with CROSS JOIN.This kind of result is called as Cartesian Product.
+To get all the unique columns from foods and company tables, the following SQL statement can be used: `SELECT * FROM foods NATURAL JOIN company;` 
+`INNER JOIN` will return all columns from foods and company tables
 
-If WHERE clause is used with CROSS JOIN, it functions like an INNER JOIN.
+- SQL `CROSS JOIN` produces a result set which is the number of rows in the first table multiplied by the number of rows in the second table if no `WHERE` clause is used along with `CROSS JOIN`.This kind of result is called as Cartesian Product.
+
+If WHERE clause is used with `CROSS JOIN`, it functions like an `INNER JOIN`.
 
 ![](cross-join-example.png)
 
-- SQL OUTER JOIN returns all rows from both the participating tables which satisfy the join condition along with rows which do not satisfy the join condition. The SQL OUTER JOIN operator (+) is used only on one side of the join condition only.
+- SQL `OUTER JOIN` returns all rows from both the participating tables which satisfy the join condition along with rows which do not satisfy the join condition. The SQL `OUTER JOIN` operator `(+)` is used only on one side of the join condition only.
 
-The subtypes of SQL OUTER JOIN
+The subtypes of SQL `OUTER JOIN`
     * LEFT OUTER JOIN or LEFT JOIN
     * RIGHT OUTER JOIN or RIGHT JOIN
     * FULL OUTER JOIN
@@ -240,15 +254,15 @@ Syntax: `Select * FROM table1, table2 WHERE conditions [+];`
 
 This SQL statement would return all rows from the company table and only those rows from the foods table where the joined fields are equal.
 
-The (+) after the foods.company_id field indicates that, if a company_id value in the company table does not exist in the foods table, all fields in the foods table will be displayed as NULL in the result set.
+The (+) after the `foods.company_id` field indicates that, if a `company_id` value in the company table does not exist in the foods table, all fields in the foods table will be displayed as `NULL` in the result set.
 
-- SQL LEFT OUTER JOIN (sometimes called LEFT JOIN)
+- SQL `LEFT OUTER JOIN` (sometimes called LEFT JOIN)
 
-- SQL RIGHT OUTER JOIN (sometimes called RIGHT JOIN)
+- SQL `RIGHT OUTER JOIN` (sometimes called RIGHT JOIN)
 
-- SQL FULL OUTER JOIN (sometimes called FULL JOIN)
+- SQL `FULL OUTER JOIN` (sometimes called FULL JOIN)
 
-- SQL SELF JOIN is a join in which a table is joined with itself (which is also called Unary relationships), especially when the table has a FOREIGN KEY which references its own PRIMARY KEY. To join a table itself means that each row of the table is combined with itself and with every other row of the table.
+- SQL `SELF JOIN` is a join in which a table is joined with itself (which is also called Unary relationships), especially when the table has a FOREIGN KEY which references its own PRIMARY KEY. To join a table itself means that each row of the table is combined with itself and with every other row of the table.
 
 The self join can be viewed as a join of two copies of the same table. The table is not actually copied, but SQL performs the command as though it were.
 
@@ -257,28 +271,29 @@ The syntax of the command for joining a table to itself is almost same as that f
 
 ***
 
-CROSS APPLY
-CROSS APPLY is similar to INNER JOIN, but can also be used to join table-evaluated functions with SQL Tables. CROSS APPLY’s final output consists of records matching between the output of a table-evaluated function and an SQL Table.
+`CROSS APPLY`
 
-OUTER APPLY
-OUTER APPLY resembles LEFT JOIN, but has an ability to join table-evaluated functions with SQL Tables. OUTER APPLY’s final output contains all records from the left-side table or table-evaluated function, even if they don’t match with the records in the right-side table or table-valued function.
+`CROSS APPLY` is similar to `INNER JOIN`, but can also *be used to join table-evaluated functions with SQL Tables*. `CROSS APPLY`’s final output consists of records matching between the output of a table-evaluated function and an SQL Table.
 
-Now, let me explain both variations with examples.
+`OUTER APPLY`
 
+`OUTER APPLY` resembles `LEFT JOIN`, but *has an ability to join table-evaluated functions with SQL Tables*. 
+`OUTER APPLY`’s final output contains all records from the left-side table or table-evaluated function, even if they don’t match with the records in the right-side table or table-valued function.
 
-
-***
-
-MINUS for Oracle EXCEPT for others
 
 ***
 
-SELECT TOP statement for SQL Server and MSAccess. For other SQL databases, try the SELECT LIMIT statement.
+`MINUS` for Oracle `EXCEPT` for others
 
 ***
 
-The SQL INTERSECT operator is used to return the results of 2 or more SELECT statements. However, it only returns the rows selected by all queries or data sets. If a record exists in one query and not in the other, it will be omitted from the INTERSECT results.
+`SELECT TOP` statement for SQL Server and MSAccess. For other SQL databases, try the `SELECT LIMIT` statement.
 
+***
+
+The SQL `INTERSECT` operator is *used to return the results of 2 or more `SELECT` statements*. 
+However, it only returns the rows selected by all queries or data sets. If a record exists in one query and not in the other, it will be omitted from the `INTERSECT` results.
+```sql
 SELECT expression1, expression2, ... expression_n
 FROM tables
 [WHERE conditions]
@@ -286,61 +301,67 @@ INTERSECT
 SELECT expression1, expression2, ... expression_n
 FROM tables
 [WHERE conditions];
-
-return like INNER JOIN
-
-***
-
-DELETE FROM table_name can be roll back, TRUNCATE TABLE table_name or DROP - not
-
-DELETE Statement: This command deletes only the rows from the table based on the condition given in the where clause or deletes all the rows from the table if no condition is specified. But it does not free the space containing the table.
-
-TRUNCATE statement: This command is used to delete all the rows from the table and free the space containing the table.
-
-Difference between DROP and TRUNCATE Statement:
-If a table is dropped, all the relationships with other tables will no longer be valid, the integrity constraints will be dropped, grant or access privileges on the table will also be dropped, if you want use the table again it has to be recreated with the integrity constraints, access privileges and the relationships with other tables should be established again. But, if a table is truncated, the table structure remains the same, therefore any of the above problems will not exist.
+```
+return like `INNER JOIN`
 
 ***
 
-LIKE  _ wilcard matches only on a single character.
+`DELETE FROM table_name` *can be roll back*, `TRUNCATE TABLE table_name` or `DROP` - *not*
+
+`DELETE` Statement: 
+This command deletes only the rows from the table based on the condition given in the where clause or deletes all the rows from the table if no condition is specified. But it does not free the space containing the table.
+
+`TRUNCATE` statement: 
+This command is used to delete all the rows from the table and *free the space* containing the table.
+
+Difference between `DROP` and `TRUNCATE` Statement:
+
+If a table is dropped, all the relationships with other tables will no longer be valid, the integrity constraints will be dropped, grant or access privileges on the table will also be dropped, if you want use the table again it has to be recreated with the integrity constraints, access privileges and the relationships with other tables should be established again. 
+But, if a table is truncated, the table structure remains the same, therefore any of the above problems will not exist.
 
 ***
 
-WHERE test_value LIKE '%!%%' escape '!'; - ! is shielding symbol
+`LIKE`  _ wilcard matches only on a single character.
 
 ***
 
-If we wanted to find all records containing the word "test", regardless of whether it was stored as TEST, Test, or test, we could run either of the following SQL SELECT statements:
+`WHERE test_value LIKE '%!%%' escape '!';` - `!` is shielding symbol
 
+***
+
+If we wanted to find all records containing the word "test", regardless of whether it was stored as TEST, Test, or test, we could run either of the following SQL `SELECT` statements:
+```sql
 SELECT *
 FROM suppliers
 WHERE UPPER(supplier_name) LIKE ('TEST%');
+```
 OR
-
+```sql
 SELECT *
 FROM suppliers
 WHERE UPPER(supplier_name) LIKE UPPER('test%')
-These SQL SELECT statements use a combination of the Oracle UPPER function and the SQL LIKE condition to return all of the records where the supplier_name field contains the word "test", regardless of whether it was stored as TEST, Test, or test.
+```
+These SQL `SELECT` statements use a combination of the Oracle `UPPER` function and the SQL `LIKE` condition to return all of the records where the supplier_name field contains the word "test", regardless of whether it was stored as TEST, Test, or test.
 
 ***
 
-The SQL MINUS operator is used to return all rows in the first SELECT statement that are not returned by the second SELECT statement. Each SELECT statement will define a dataset. The MINUS operator will retrieve all records from the first dataset and then remove from the results all records from the second dataset.
+The SQL `MINUS` operator is used to return all rows in the first SELECT statement that are not returned by the second SELECT statement. Each `SELECT` statement will define a dataset. The `MINUS` operator will retrieve all records from the first dataset and then remove from the results all records from the second dataset.
 
 ***
-
+```sql
 UPDATE table1, table2, ...
 SET column1 = expression1,
     column2 = expression2,
     ...
 WHERE table1.column = table2.column
 [AND conditions];
-
+```
 ***
 
-The SQL WHERE clause is used to filter the results and apply conditions in a SELECT, INSERT, UPDATE, or DELETE statement.
+The SQL `WHERE` clause is used to filter the results and apply conditions in a `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statement.
 
 ***
-
+```sql
 SELECT dept_id, SUM(salary) AS total_salaries
 FROM employees
 GROUP BY dept_id;
@@ -350,7 +371,7 @@ FROM products
 WHERE category_id IS NOT NULL
 GROUP BY category_id
 ORDER BY category_id;
-
+```
 return sums
 
 category_id	total_products
@@ -358,26 +379,27 @@ category_id	total_products
 50	4
 75	1
 
-In this example, we've used the COUNT function to calculate the number of products for each category_id and we've aliased the results of the COUNT function as total_products. We've excluded any category_id values that are NULL by filtering them out in the WHERE clause. Because the category_id is not encapsulated in the COUNT function, it must be listed in the GROUP BY clause.
+In this example, we've used the `COUNT` function to calculate the number of products for each category_id and we've aliased the results of the `COUNT` function as `total_products`. We've excluded any `category_id` values that are `NULL` by filtering them out in the `WHERE` clause. Because the `category_id` is not encapsulated in the `COUNT` function, it must be listed in the `GROUP BY` clause.
 
 ***
 
-The SQL ALTER TABLE statement is used to add, modify, or drop/delete columns in a table. The SQL ALTER TABLE statement is also used to rename a table.
+The SQL `ALTER TABLE` statement is used to *add, modify, or drop/delete columns in a table*. The SQL `ALTER TABLE` statement is also used to *rename* a table.
 
 
 For SQL Server:
-
+```sql
 ALTER TABLE supplier
   ALTER COLUMN supplier_name VARCHAR(100) NOT NULL;
+```
 For PostgreSQL:
-
+```sql
 ALTER TABLE supplier
   ALTER COLUMN supplier_name TYPE CHAR(100),
   ALTER COLUMN supplier_name SET NOT NULL;
-
+```
 
 For MySQL and MariaDB:
-
+```sql
 ALTER TABLE table_name
   MODIFY column_1 column_definition
     [ FIRST | AFTER column_name ],
@@ -385,8 +407,9 @@ ALTER TABLE table_name
     [ FIRST | AFTER column_name ],
   ...
 ;
+```
 For PostgreSQL:
-
+```sql
 ALTER TABLE table_name
   ALTER COLUMN column_name TYPE column_definition,
   ALTER COLUMN column_name TYPE column_definition,
@@ -398,33 +421,35 @@ ALTER TABLE table_name
 
 ALTER TABLE table_name
   RENAME COLUMN old_name TO new_name;
-For SQL Server (using the stored procedure called sp_rename):
+```
+For SQL Server (using the stored procedure called `sp_rename`):
 
-sp_rename 'table_name.old_column', 'new_name', 'COLUMN';
+`sp_rename 'table_name.old_column', 'new_name', 'COLUMN';`
 For MySQL and MariaDB:
-
+```sql
 ALTER TABLE table_name
   CHANGE COLUMN old_name TO new_name;
-
+```
 ***
 
-CONSTRAINT can be specified when the table is created with the CREATE TABLE statement, or after the table is created with the ALTER TABLE statement.
+`CONSTRAINT` can be specified when the table is created with the CREATE TABLE statement, or after the table is created with the ALTER TABLE statement.
 
 The following constraints are commonly used in SQL:
 
-NOT NULL - Ensures that a column cannot have a NULL value
-UNIQUE - Ensures that all values in a column are different
-PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
-FOREIGN KEY - Prevents actions that would destroy links between tables
-CHECK - Ensures that the values in a column satisfies a specific condition
-DEFAULT - Sets a default value for a column if no value is specified
-CREATE INDEX - Used to create and retrieve data from the database very quickly
+- `NOT NULL` - Ensures that a column cannot have a NULL value
+- `UNIQUE` - Ensures that all values in a column are different
+- `PRIMARY KEY` - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+- `FOREIGN KEY` - Prevents actions that would destroy links between tables
+- `CHECK` - Ensures that the values in a column satisfies a specific condition
+- `DEFAULT` - Sets a default value for a column if no value is specified
+- `CREATE INDEX` - Used to create and retrieve data from the database very quickly
 
 ***
-
+```sql
 -- comment goes here
 
 /* comment goes here */
+```
 
 ***
 
@@ -438,67 +463,70 @@ Global
 
 ***
 
-The syntax for the CREATE TABLE AS statement when copying all of the columns in SQL is:
-
+The syntax for the `CREATE TABLE AS` statement when copying all of the columns in SQL is:
+```sql
 CREATE TABLE new_table
   AS (SELECT * FROM old_table);
-
+```
 ***
 
 
-SQL GLOBAL TEMPORARY TABLES are tables that are created distinct within SQL sessions.
-
+`SQL GLOBAL TEMPORARY TABLES` are tables that are created distinct within SQL sessions.
+```sql
 CREATE GLOBAL TEMPORARY TABLE table_name
 ( column1 datatype [ NULL | NOT NULL ],
   column2 datatype [ NULL | NOT NULL ],
   ...
 );
+```
+***
+
+SQL `LOCAL TEMPORARY TABLES` are distinct within modules and embedded SQL programs within SQL sessions.
 
 ***
 
-SQL LOCAL TEMPORARY TABLES are distinct within modules and embedded SQL programs within SQL sessions.
-
-***
-
-The SQL VIEW is, in essence, a virtual table that does not physically exist. Rather, it is created by a SQL statement that joins one or more tables.
-
+The SQL `VIEW` is, in essence, a virtual table that does not physically exist. Rather, it is created by a SQL statement that joins one or more tables.
+```sql
 CREATE VIEW view_name AS
   SELECT columns
   FROM tables
   [WHERE conditions];
-
-Once a SQL VIEW has been created, you can drop it with the SQL DROP VIEW Statement.
-
+```
+Once a SQL `VIEW` has been created, you can drop it with the SQL `DROP VIEW` Statement.
+```sql
 DROP VIEW view_name;
+```
 
- A VIEW in SQL is created by joining one or more tables. When you update record(s) in a view, it updates the records in the underlying tables that make up the SQL View.
+A `VIEW` in SQL is created by joining one or more tables. When you update record(s) in a view, it updates the records in the underlying tables that make up the SQL View.
 
-So, yes, you can update the data in a SQL VIEW providing you have the proper privileges to the underlying SQL tables.
+So, yes, you can update the data in a SQL `VIEW` providing you have the proper privileges to the underlying SQL tables.
 
-Yes, in Oracle, the SQL VIEW continues to exist even after one of the tables (that the SQL VIEW is based on) is dropped from the database. However, if you try to query the SQL VIEW after the table has been dropped, you will receive a message indicating that the SQL VIEW has errors.
+Yes, in Oracle, the SQL `VIEW` continues to exist even after one of the tables (that the SQL `VIEW` is based on) is dropped from the database. However, if you try to query the SQL `VIEW` after the table has been dropped, you will receive a message indicating that the SQL `VIEW` has errors.
 
 If you recreate the table (the table that you had dropped), the SQL VIEW will again be fine.
 
 ***
 
 An index is a performance-tuning method of allowing faster retrieval of records. An index creates an entry for each value that appears in the indexed columns. Each index name must be unique in the database.
-
+```sql
 CREATE [UNIQUE] INDEX index_name
   ON table_name (column1, column2, ... column_n);
-
+```
 You can drop an index in SQL using the DROP INDEX index_name statement.
 
 For Oracle and PostgreSQL:
-
+```sql
 DROP INDEX index_name;
+```
 For MySQL and MariaDB:
-
+```sql
 DROP INDEX index_name
   ON table_name;
+```
 For SQL Server:
-
+```sql
 DROP INDEX table_name.index_name;
-
+```
 ***
 
 In SQL, a literal is the same as a constant. We'll cover several types of literals - string, integer, decimal, and datetime literals.
@@ -506,28 +534,29 @@ In SQL, a literal is the same as a constant. We'll cover several types of litera
 
 ***
 
-we can use CASE in WHERE statements
+we can use `CASE` in `WHERE` statements
 
 ***
 
-we can print SELECT 'this string will be just printet'
+we can print `SELECT 'this string will be just printet'`
 
 ***
 
-In SQL, a primary key is a single field or combination of fields that uniquely defines a record. None of the fields that are part of the primary key can contain a NULL value. A table can have only one primary key.
+In SQL, a **primary key** is a **single field** or **combination of fields** that **uniquely** defines a record. 
+None of the fields that are part of the primary key can contain a NULL value. *A table can have only one primary key.*
 
-You use either the CREATE TABLE statement or the ALTER TABLE statement to create a primary key in SQL.
+You use either the `CREATE TABLE` statement or the `ALTER TABLE` statement to create a primary key in SQL.
 
-DROP, CREATE, ALTER the same
-
-***
-
-WITH clause is not supported by all database system.
-WITH clause was introduced by Oracle in the Oracle 9i release 2 database.
-SQL WITH clause allows you to give a sub-query block a name (a process also called sub-query refactoring), which can be referenced in several places within the main SQL query. 
+`DROP`, `CREATE`, `ALTER` the same
 
 ***
-[OBT](README.md) определяется с помощью конструкции WITH, и определить его можно как в обычных запросах, так и в функциях, хранимых процедурах, триггерах и представлениях.
+
+* `WITH` clause is not supported by all database system.
+* `WITH` clause was introduced by Oracle in the Oracle 9i release 2 database.
+* SQL `WITH` clause allows you to give a sub-query block a name (a process also called sub-query refactoring), which can be referenced in several places within the main SQL query. 
+
+***
+[OBT](README.md) определяется с помощью конструкции `WITH`, и определить его можно как в обычных запросах, так и в функциях, хранимых процедурах, триггерах и представлениях.
 
 The `WITH` clause is, simply put, an optional prefix for `SELECT`
 `WITH` is not a stand alone command like `CREATE VIEW`: it must be followed by `SELECT`. This query (and subqueries it contains) can refer to the just defined query name in their from clause.
@@ -562,7 +591,7 @@ If a `WITH` query is referred to multiple times, some databases cache (i.e. “m
 
 A transaction is NOT automatically created when you run an executable SQL statement in SQL Server.
 
-Manually create a new transaction using the BEGIN TRAN or BEGIN TRANSACTION statement (TRAN eq to TRANSACTION)
+Manually create a new transaction using the BEGIN TRAN or BEGIN TRANSACTION statement (`TRAN` eq to `TRANSACTION`)
 
 [Transactions](README.md#Concurrency Control ##Transaction)
 

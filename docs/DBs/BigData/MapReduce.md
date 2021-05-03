@@ -207,7 +207,6 @@ Hive users who are starting to use streaming scripts to extend Hive functionalit
 
 #### Partitioning
 
-
 Apache Hive organizes tables into partitions for grouping same type of data together based on a column or partition key. 
 Each table in the hive can have one or more partition keys to identify a particular partition. Using partition we can make it faster to do queries on slices of the data.
 
@@ -582,7 +581,7 @@ You can enable Skew join optimization using hive configuration. Applicable setti
 
 **Optimizing Skew Join**
 
-Ex
+Ex:
 * Write a function to generate random numbers between 1 to (r) with equal probability.
 * Create a new field (say CODE_ID_RANDOM) in the FACT table. The values can be defined as:
 * If value is not skewed then simply copy the value as is.

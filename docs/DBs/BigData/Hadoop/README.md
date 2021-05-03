@@ -33,6 +33,7 @@ And because data nodes act as a **state machine** for each file block, whenever 
 ## Recovery Process
 
 ### Block and Replica States
+
 To understand the recovery process of HDFS, let’s first introduce two concepts:
 
 1) Replica: A physical data storage on a data node. Usually, there are several replicas with the same content on different data nodes.
@@ -172,6 +173,7 @@ $ hdfs dfs -touchz file.txt
 ```
 
 move it to another location with a different name.
+just change metainformation
 ```
 $ hdfs dfs -mv file.txt another_file.txt
 ```
@@ -307,6 +309,8 @@ https://en.wikipedia.org/wiki/Network_File_System
 
 
 Binary Datatypes
+
+> [more about this dtatipes in Spark](../Spark/spark_sql.md###Use-Serialized-data-format’s)
 
 *[avro](http://avro.apache.org/)
 *[RCFile](http://web.cse.ohio-state.edu/hpcs/WWW/HTML/publications/papers/TR-11-4.pdf)

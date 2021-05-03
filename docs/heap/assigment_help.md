@@ -620,7 +620,6 @@ DictSubclass
 ```
 
 
-
 ### Decorators
 
 * What is decorator and how it's applied ★

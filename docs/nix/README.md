@@ -23,3 +23,24 @@ This helps to prevent users from logging onto a system. Sometimes you need a use
 If you look more closely at the /etc/passwd file, you will find the /bin/false command as a login shell for many system accounts. Actually, false is not a shell, but a command that does nothing and then also ends with a status code that signals an error. The result is simple. The user logs in and immediately sees the login prompt again.
 
 ***
+
+What will happen if
+```bash
+а=$(pwd) 
+```
+
+***
+
+How to set kys in a bsh scripts
+
+***
+
+What is `case`
+
+***
+
+How will you fix if someone went to the server and executed the following command:
+```bash
+sudo chmod -x use/bin/chmod
+```
+
