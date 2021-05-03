@@ -1213,6 +1213,13 @@ log.join(ips, on="ip", how="inner").explain(True)
 
 #### Broadcast nested loop join
 
+Broadcast nested loop join (BNLJ): Supports both equi-joins and non-equi-joins. Supports all the join types, but the implementation is optimized for: 1) broadcasting the left side in a right outer join; 2) broadcasting the right side in a left outer, left semi, left anti or existence join; 3) broadcasting either side in an inner-like join. For other cases, we need to scan the data multiple times, which can be rather slow.
+
+#### Broadcast hash join
+
+Broadcast hash join (BHJ): Only supported for equi-joins, while the join keys do not need to be sortable. Supported for all join types except full outer joins. BHJ usually performs faster than the other join algorithms when the broadcast side is small. However, broadcasting tables is a network-intensive operation and it could cause OOM or perform badly in some cases, especially when the build/broadcast side is big.
+
+
 #### Broadcast join
 
 * does not perform any shuffle at all. 

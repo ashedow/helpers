@@ -2,6 +2,8 @@
 
 ## MapReduce
 
+![](0_R3J6DVBDinxLU3h-.png)
+
 MapReduce task is mainly divided into 2 phases i.e. Map phase and Reduce phase.
 
 1. **Map**: As the name suggests its main use is to map the input data in key-value pairs. 
