@@ -252,6 +252,46 @@ In general, a descriptor is an object attribute with “binding behavior”, one
 Descriptors are Python objects that implement a method of the descriptor protocol, which gives you the ability to create objects that have special behavior when they’re accessed as attributes of other objects.
 
 
+* Global, local, nonlocal variables
+
+**Global Variables**
+In Python, a variable declared outside of the function or in global scope is known as a global variable. This means that a global variable can be accessed inside or outside of the function.
+In Python, `global` keyword allows you to modify the variable outside of the current scope. It is used to create a global variable and make changes to the variable in a local context.
+* When we create a variable inside a function, it is local by default.
+* When we define a variable outside of a function, it is global by default. You don't have to use global keyword.
+* We use global keyword to read and write a global variable inside a function.
+* Use of global keyword outside a function has no effect.
+
+**Local Variables**
+A variable declared inside the function's body or in the local scope is known as a local variable.
+
+**Nonlocal Variables**
+Nonlocal variables are used in nested functions whose local scope is not defined. This means that the variable can be neither in the local nor the global scope.
+use `nonlocal` keywords to create a nonlocal variable.
+
+* CRC-32 
+
+Основной алгоритм CRC состоит в том, чтобы рассматривать входное сообщение как полином в GF(2), делить на фиксированный полином CRC и использовать полиномиальный остаток в качестве результирующего hash.
+
+Usage:
+```python
+import binascii
+binascii.crc32('hello-world')
+# or
+import zlib
+zlib.crc32('hello-world')
+```
+
+* legb rule python
+`LEGB` - Scope Resolution. Rule is used to decide the order in which the namespaces are to be searched for scope resolution.
+
+The scopes are listed below in terms of hierarchy(highest to lowest/narrowest to broadest):
+* **Local(L)**: Defined inside function/class
+* **Enclosed(E)**: Defined inside enclosing functions(Nested function concept)
+* **Global(G)**: Defined at the uppermost level
+* **Built-in(B)**: Reserved names in Python builtin modules
+
+
 ### Datatypes in python
 
 * **Numeric data types**: int, float, complex
@@ -556,9 +596,9 @@ Abstract method - defined, but not declareted method. This methot should be defi
 You should use __builtin__ in your programs (in the rare cases that you need it), because __builtins__ is an implementation detail of CPython. It may either be identical to __builtin__, or to __builtin__.__dict__, depending on the context.
 
 
-* super()
-Главная задача метода super() это давать возможность использовать и исполнять в классе потомке, методы класса-родителя.
-методом super() мы явно вызываем родительский конструктор.
+* `super()`
+Главная задача метода `super()` это давать возможность использовать и исполнять в классе потомке, методы класса-родителя.
+методом `super()` мы явно вызываем родительский конструктор.
 
 ```python
 class C(B, A):
@@ -699,7 +739,7 @@ def decorator_fun(func):
     func()
   return inner
   
-def func_to():  
+def func_to():
     print("Inside actual function")  
 # another way of using decorators 
 decorator_fun(func_to)() 
@@ -743,6 +783,7 @@ Geeks
 ### Multithreading & Multiprocessing
 
 * Basic skills of using multithreading ★
+
 The threading module uses threads, the multiprocessing module uses processes. The difference is that threads run in the same memory space, while processes have separate memory. This makes it a bit harder to share objects between processes with multiprocessing. Since threads use the same memory, precautions have to be taken or two threads will write to the same memory at the same time. This is what the global interpreter lock is for.
 Spawning processes is a bit slower than spawning threads. Once they are running, there is not much difference.
 Processes spawn threads
@@ -752,6 +793,7 @@ By default, the ProcessPoolExecutor creates one subprocess per CPU.
 The async def syntax marks a function as a coroutine. Internally, coroutines are based on Python generators, but aren’t exactly the same thing. Coroutines return a coroutine object similar to how generators return a generator object. Once you have a coroutine, you obtain its results with the await expression. When a coroutine calls await, execution of the coroutine is suspended until the awaitable completes. 
 
 * Async
+
 Потоки — наиболее распространённый инструмент. Думаю, вы слышали о нём и ранее, однако asyncio оперирует несколько другими понятиями:
 * **цикл событий (event loop)** по большей части всего лишь управляет выполнением различных задач: регистрирует поступление и запускает в подходящий момент
 * **корутины** — специальные функции, похожие на генераторы python, от которых ожидают (await), что они будут отдавать управление обратно в цикл событий. Необходимо, чтобы они были запущены именно через цикл событий
@@ -759,9 +801,11 @@ The async def syntax marks a function as a coroutine. Internally, coroutines are
 
 
 * Async gather
+
 `acync.gather` lets you fire off a bunch of coroutines simultaneously, and the current context will resume once all of the coroutines have completed. The return value is a list of responses from each coroutine.
 
 * Basic understanding of GIL ★
+
 https://callhub.io/understanding-python-gil/
 GIL позволяет одновременно выполнять только один поток, даже в многопоточной архитектуре с более чем одним ядром процессора, GIL приобрел репутацию «печально известной» функции Python.
 Python использует подсчет ссылок для управления памятью. Это означает, что объекты, созданные в Python, имеют переменную подсчета ссылок, которая отслеживает количество ссылок, которые указывают на объект. Когда этот счет достигает нуля, память, занятая объектом, освобождается.
@@ -806,24 +850,26 @@ Threading 1 Processors The operating system decides when to switch tasks externa
     - If not following a command queue/message pump model (using the Queue module), then manual use of synchronization primitives become a necessity (decisions are needed for the granularity of locking)
     - Code is usually harder to understand and to get right - the potential for race conditions increases dramatically
 
-* Event loop vs Treading
+* Event-loop vs Treading
 
-
-
+The event loop is the core of every asyncio application. Event loops run asynchronous tasks and callbacks, perform network IO operations, and run subprocesses.
 
 * Create a process in python ★★
 
 * Creating a thread in python ★★
+
 https://pymotw.com/2/threading/
 
 Other ways:
 https://www.parallelpython.com/examples.php
 For example https://stackabuse.com/parallel-processing-in-python/
     * Using the subprocess module
+    
     * Using the os.system() Method
 pp module
 
 * What types of thread may improve execution speed of program (CPU or IO and why) ★★★
+
 https://realpython.com/python-concurrency/
 - I/O-Bound Process
 Your program spends most of its time talking to a slow device, like a network connection, a hard drive, or a printer.
@@ -832,6 +878,18 @@ Speeding it up involves overlapping the times spent waiting for these devices.
 - CPU-Bound Process
 You program spends most of its time doing CPU operations.
 Speeding it up involves finding ways to do more computations in the same amount of time.
+
+
+Python, for example, is a lot better at parallelizing I/O intensive operations than CPU intensive operations.
+
+Asynchronous programming libraries like twisted, tornado, gevent, etc. are really good at handling lots of I/O in parallel. If your workload involves many clients connecting, doing light CPU operations and/or lots of I/O operations (like db reads/writes), or if your clients are making long-lasting connections primarily used for I/O (think WebSockets), then an asynchronous library will work really well for you. Most of the asynchronous libraries for Python have asynchronous drivers for popular DBs, so you'll be able to interact with them without blocking your event loop.
+
+If your server is going to be doing lots of CPU intensive work, you can still use asynchronous libraries, but have to understand that every time you're doing CPU work, the event loop will be blocked. No other clients are going to be able to anything at all. However, there are ways around this. You can use thread/process pools to farm the CPU work out, and just wait on the response asynchronously. But obviously that complicates your implementation a little bit.
+
+With Python, using threads instead actually doesn't buy you all that much with CPU operations, because in most cases only one thread can run a time, so you're not really reaping the benefits of having a multi-core CPU (google "Python GIL" to learn more about this). Ignoring Python-specific issues with threads, threads will let you avoid the "blocked event loop" problem completely, and threaded code is usually easier to understand than asynchronous code, especially if you're not familiar with how asynchronous programming works already. But you also have to deal with the usual thread headaches (synchronizing shared state, etc.), and they don't scale as well as asynchronous I/O does with lots of clients (see http://en.wikipedia.org/wiki/C10k_problem)
+
+Both approaches are used very successfully in production, so its really up to you to decide what fits your needs/preferences better.
+
 
 * Primitives used to sync threads and processes ★★★
 AsyncIO
@@ -849,7 +907,14 @@ threading
  - Rblock: This class implements reentrant lock objects. A reentrant lock must be released by the thread that acquired it. Once a thread has acquired a reentrant lock, the same thread may acquire it again without blocking; the thread must release it once for each time it has acquired it.
  - Semaphore:
 
-iowait - переключение потока
+* переключение потоков
+> https://habr.com/ru/post/84629/
+iowait - переключение потока. по умолчанию это происходит каждые 100 «тиков», параметр можно изменить sys.setcheckinterval(). Интервал проверки — глобальный счетчик, абсолютно независимый от порядка переключения потоков.
+
+GIL — это не обычный мьютекс. Это либо безымянный POSIX-семафор, либо условная переменная pthreads. Блокировка интерпретатора основана на отправке сигналов.
+* Чтобы включить GIL, проверить, свободен ли он. Если нет, ждать следующего сигнала.
+* Чтобы выключить GIL, освободить его и послать сигнал.
+
 
 * When we need to use threads and when processes and why (non based  python) ★★★
 
@@ -929,6 +994,7 @@ If a file named __init__.py is present in a package directory, it is invoked whe
 
 
 * Pytest fixtures ★★★
+
 `@pytest.fixture`
 At a basic level, test functions request fixtures they require by declaring them as arguments.
 When pytest goes to run a test, it looks at the parameters in that test function’s signature, and then searches for fixtures that have the same names as those parameters. Once pytest finds them, it runs those fixtures, captures what they returned (if anything), and passes those objects into the test function as arguments.

@@ -7,6 +7,42 @@ Controller-manager
 Scheduler
 kubelet
 
+## Namespaces
+Kubernetes supports multiple virtual clusters backed by the same physical cluster. These virtual clusters are called namespaces.
+
+Namespaces provide a scope for names. Names of resources need to be unique within a namespace, but not across namespaces. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
+
+list the current namespaces in a cluster using:
+```bash
+kubectl get namespace
+```
+
+Kubernetes starts with four initial namespaces:
+
+* `default` The default namespace for objects with no other namespace
+* `kube-system` The namespace for objects created by the Kubernetes system
+* `kube-public` This namespace is created automatically and is readable by all users (including those not authenticated). This namespace is mostly reserved for cluster usage, in case that some resources should be visible and readable publicly throughout the whole cluster. The public aspect of this namespace is only a convention, not a requirement.
+* `kube-node-lease` This namespace for the lease objects associated with each node which improves the performance of the node heartbeats as the cluster scales.
+
+Create a new YAML file called my-namespace.yaml with the contents:
+> Note: Avoid creating namespace with prefix kube-, since it is reserved for Kubernetes system namespaces.
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: <insert-namespace-name-here>
+```
+Then run:
+```bash
+kubectl create -f ./my-namespace.yaml
+```
+Alternatively, you can create namespace using below command:
+```bash
+kubectl create namespace <insert-namespace-name-here>
+```
+
+
 ## Use or not to use?
 
 Criterias:

@@ -114,6 +114,148 @@ partitions
 **dependencies() -> Array[Dependency]**
 * return an empty array (no dependencies)
 
+### Operation mechanism of spark (General execution framework). stage, executor, driver
+
+General execution framework of spark applications on distributed clusters. It is mainly composed of spark context, cluster manager and resource manager.
+
+![](669466-20201228001829925-799304298.png)
+
+The main operation process of spark is as follows:
+
+* After the application is submitted with spark submit, it initializes spark context in the corresponding position according to the deployment mode at the time of submission, that is, the running environment of spark, and creates DAG scheduler and task scheduler. The driver divides the whole program into multiple jobs according to the action operator according to the execution code of the application, and each job builds DAG diagram and DAG diagram The scheduler divides the DAG graph into multiple stages, and each stage is internally divided into multiple tasks. The DAG scheduler transfers the task set to the task scheduler, which is responsible for scheduling tasks on the cluster. As for the relationship between stage and task and how they are divided, we will talk about it in detail later.
+
+* The driver applies for resources from the resource manager according to the resource requirements in the sparkcontext, including the number of executors and memory resources.
+
+* After receiving the request, the resource manager creates the executor process on the work node that meets the conditions.
+
+* After the executor is created, it will reverse register with the driver, so that the driver can assign tasks to him to execute.
+
+* After the program is executed, the driver logs off the requested resource to the resource manager.
+
+#### 1. Driver program
+
+Driver is the spark application we write to create a spark context or spark session. 
+The **driver will communicate with cluster manager and assign tasks to the executor for execution**
+
+#### 2. Cluster Manager
+It is responsible for the resource scheduling of the whole program
+* YARN
+* Spark Standalone
+* Mesos
+
+#### 3. Execuror
+
+ Executor (execution process of a single node). Cluster manager is responsible for the unified resource management of the whole cluster. **Executor is the main process of application execution, which contains multiple task threads and memory space.**
+
+
+![](execurors_0.png)
+
+**An executor** in Spark is just a JVM holding a **bunch of objects in its memory**. Spark has to do before mini shuffle, is having an object one in executor one, transfer it through the network through the JVM of the second executor.
+
+Spark uses serialization.
+
+> Serialization is the process of translating data structures or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and reconstructed later in the same or another computer environment
+
+Spark serializers:
+* Java – slow, but robust
+* Kryo – fast, but has corner cases
+* ...
+
+![](execurors_1.png)
+
+* PySpark context is a Python interpreter which communicates with the JVM using this socket, and Py4J library. 
+* Py4J provides mechanism of calling Gela methods and wrapping objects. 
+* On Spark workers, Python is just a protest which starts side by side with the JVM and communicates through Unix pipes.
+* python always save serialized object. Scala|Java - not
+
+![](execurors_2.png)
+
+At first Spark has to serialize Python objects and pass them through JVM, where they should be serialized again for Spark's execution model to work.
+
+## Jobs, stages, tasks
+
+* The SparkContext is the core of your application
+* The driver communicates directly with the executors
+* Execution goes as follows: **Action -> Job -> Job Stages -> Tasks**
+* Transformations with narrow dependencies allow pipelining
+
+[Action](####Actions)
+
+
+
+
+Materialization happens when reading, shuffling or passing data to an action
+* narrow dependencies allow pipelining
+* wide dependencies forbid it
+
+Example:
+1. Invoking an action…
+2. …spawns the job…
+3. …that gets divided into the stages by the job scheduler…
+4. …and tasks are created for every job stage.
+
+### SparkContext – other functions
+
+* Tracks liveness of the executors
+    * required to provide fault-tolerance
+
+* Schedules multiple concurrent jobs
+    * to control the resource allocation within the application
+
+* Performs dynamic resource allocation
+    * to control the resource allocation between different applications
+
+How does your application find out the executors to work with?
+The SparkContext object allocates the executors by communicating with the cluster manager.
+
+
+#### 4. Job
+* Job is a complete processing flow of user program, which is a logical term.
+* job is triggered by action, so
+    * job contains one action and N transform operations;
+* job executed *once* 
+* job a *lazy evaluation* 
+* job is a sequence of stages, triggered by an action such as `.count()`, `foreachRdd()`, `sortBy()`, `read()` or `write()`.
+
+#### 5. Stage
+* Job is *divided in smaller sets* of tasks called *stages*, which are serial
+* The trigger of state is generated by some shuffle, reduce and save actions
+* stage is a set of tasks that are divided due to shuffle operations. Stage is divided according to its *wide* and *narrow dependencies*;
+* stage is a *pipelined computation* spanning between materialization boundaries
+* *not immediately* executable
+* Job is *spawned* in response *to a Spark action*
+
+#### 6. Task
+Task: the smallest execution unit, because each task is only responsible for the data of a partition
+A stage can contain multiple tasks, such as sc.textFile (“/ XXXX”). Map (). Filter (), where map and filter are a task respectively. The output of each task is the output of the next task.
+
+* Task is a *job stage* bound to particular partitions
+* immediately executable
+* Task is a *unit of work* to be done
+* Tasks are *created by a job scheduler* for *every job stage*
+
+#### 7. Partition
+Partition is a part of the data source in spark. A complete data source will be divided into multiple partitions by spark so that spark can be sent to multiple executors to execute tasks in parallel.
+
+#### 8. RDD
+[Resilient Distributed Dataset](##RDD:-Resilient-Distributed-Dataset)
+[RDD Operations](###RDD-Operations)
+RDD is a distributed elastic data set. In spark, a data source can be regarded as a large RDD. RDD is composed of multiple partitions. The data loaded by spark will be stored in RDD. Of course, in RDD, it is actually cut into multiple partitions.
+
+**How does a spark job execute?**
+
+1) Our spark program, also known as the driver, will submit a job to the cluster manager
+2) The cluster manager checks the local rows of data and finds the most suitable node to schedule the task
+3) Jobs will be split into different stages, and each stage will be split into multiple tasks
+4) The driver sends the task to the executor to execute the task
+5) The driver will track the execution of each task and update it to the master node, which we can check on the spark master UI
+6) When the job is completed, the data of all nodes will be aggregated to the master node again, including the average time consumption, maximum time consumption, median and other indicators.
+
+#### 9. deployment mode and operation mode
+The deployment mode refers to the cluster manager, which generally includes standalone and yarn, while the running mode refers to the running machine of drvier, the cluster or the task submitting machine, which correspond to the cluster and client modes respectively. The difference lies in the running results, logs, stability, etc.
+
+
+### Prtition, transformation etc
 
 #### Prtitioner
 
@@ -262,32 +404,6 @@ Partition on zipcode may not be a good option as you might end up with too many 
 
 Another good example of partition is on the Date column. Ideally, you should partition on Year/Month but not on a date.
 
-#### Execurors
-
-![](execurors_0.png)
-
-**An executor** in Spark is just a JVM holding a **bunch of objects in its memory**. Spark has to do before mini shuffle, is having an object one in executor one, transfer it through the network through the JVM of the second executor.
-
-Spark uses serialization.
-
-> Serialization is the process of translating data structures or object state into a format that can be stored (for example, in a file or memory buffer, or transmitted across a network connection link) and reconstructed later in the same or another computer environment
-
-Spark serializers:
-* Java – slow, but robust
-* Kryo – fast, but has corner cases
-* ...
-
-![](execurors_1.png)
-
-* PySpark context is a Python interpreter which communicates with the JVM using this socket, and Py4J library. 
-* Py4J provides mechanism of calling Gela methods and wrapping objects. 
-* On Spark workers, Python is just a protest which starts side by side with the JVM and communicates through Unix pipes. 
-
-![](execurors_2.png)
-
-At first Spark has to serialize Python objects and pass them through JVM, where they should be serialized again for Spark's execution model to work.
-
-
 ### RDD Operations
 
 Operations on RDDs are divided into several groups:
@@ -420,52 +536,6 @@ Freq used ations:
 
 * explicitly store RDDs in memory, on disk or off-heap (cache, persist)
 * checkpointing for truncating RDD lineage
-
-## Jobs, stages, tasks
-
-* The SparkContext is the core of your application
-* The driver communicates directly with the executors
-* Execution goes as follows: **Action -> Job -> Job Stages -> Tasks**
-* Transformations with narrow dependencies allow pipelining
-
-[Action](####Actions)
-
-**job**: *once* a *lazy evaluation* happens, there is a job. A job is a sequence of stages, triggered by an action such as `.count()`, `foreachRdd()`, `sortBy()`, `read()` or `write()`.
-
-
-**Job stage** is a *pipelined computation* spanning between materialization boundaries
-* *not immediately* executable
-* Job is *spawned* in response *to a Spark action*
-* Job is *divided in smaller sets* of tasks called *stages*
-
-**Task** is a *job stage* bound to particular partitions
-* immediately executable
-* Task is a *unit of work* to be done
-* Tasks are *created by a job scheduler* for *every job stage*
-
-Materialization happens when reading, shuffling or passing data to an action
-* narrow dependencies allow pipelining
-* wide dependencies forbid it
-
-Example:
-1. Invoking an action…
-2. …spawns the job…
-3. …that gets divided into the stages by the job scheduler…
-4. …and tasks are created for every job stage.
-
-### SparkContext – other functions
-
-* Tracks liveness of the executors
-    * required to provide fault-tolerance
-
-* Schedules multiple concurrent jobs
-    * to control the resource allocation within the application
-
-* Performs dynamic resource allocation
-    * to control the resource allocation between different applications
-
-How does your application find out the executors to work with?
-The SparkContext object allocates the executors by communicating with the cluster manager.
 
 ## Resilience
 

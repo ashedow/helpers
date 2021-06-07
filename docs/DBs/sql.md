@@ -165,12 +165,31 @@ The alias_name is only valid within the scope of the SQL statement.
 
 ***
 
+The `HAVING` clause was added to SQL because the WHERE keyword cannot be used with aggregate functions.
+
 ```sql
 SELECT department, SUM(sales) AS "Total sales"
 FROM order_details
 GROUP BY department
 HAVING SUM(sales) > 1000;
 ```
+
+***
+
+`QUALIFY`
+The QUALIFY statement is used to qualify records using only the Omnidex indexes. The actual data is not touched. The qualified records can be retrieved with a SQL SELECT statement using the WITH 'ODXID' option.
+
+ex:
+```sql
+QUALIFY [(owner-table)] table WHERE [AND | NOT | AND NOT] predicate
+[ON [CURSOR] cursor] [WITH options]
+```
+
+The qualifying counts are stored in the status array. Three counts are stored in the status array for each qualify: qualifying count, parent count, and pre-intersect count.
+
+The qualifying count is the number of rows that would be returned from a select statement with the specified criteria. It is the combined qualified row count for all of the previous Qualify calls, as long as a boolean operator was included with the criteria. If a leading Boolean operator was not included with the criteria, this count pertains only to the last Qualify call.
+The parent count only applies to qualifications made in child tables where the indexes were installed in a domain or pre-joined index. The parent count is the number of rows in the parent table that pertain to the qualified rows in the child table. If the table qualified from is not in the domain or a pre-joined index, this count is the same as the qualifying count.
+The pre-intersect count is the number of rows matching the criteria prior to intersecting this qualification with the previous qualification. If there was not a leading Boolean operator, the pre-intersect count is the same as the qualifying count.
 
 ***
 
@@ -643,6 +662,20 @@ SQL commands can be run after the SAVE TRANSACTION command. The transaction can 
 ROLLBACK TO SAVEPOINT after_bal_transfer;
 ```
 
+***
+
+`common_table_expression`
+
+> https://docs.microsoft.com/en-us/sql/t-sql/queries/with-common-table-expression-transact-sql?view=sql-server-ver15
+
+```sql
+[ WITH <common_table_expression> [ ,...n ] ]  
+  
+<common_table_expression>::=  
+    expression_name [ ( column_name [ ,...n ] ) ]  
+    AS  
+    ( CTE_query_definition )  
+```
 
 ***
 

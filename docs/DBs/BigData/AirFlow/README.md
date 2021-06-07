@@ -1,6 +1,6 @@
 # Airflow
 
-## What is Apache Airflow?
+## Intro. What is Apache Airflow?
 
 Airflow is a *scheduler for workflows* such as data pipelines, similar to Luigi and Oozie. Fundamentally, Airflow is an orchestrator of a sequence of tasks.
 
@@ -235,13 +235,13 @@ dag = DAG(
 )
 ```
 
-### `Operators`, `Sensors`, and Tasks
+### `Operators`, `Sensors`, and `Tasks`
 
 Although the DAG is used to organize tasks and set their execution context, DAGs do not perform any actual computation. 
 Instead, tasks are the element of Airflow that actually “do the work” we want performed. Tasks can have two flavors: 
-    * they can either execute some explicit *operation*, in which case they are an **Operator**, or they can pause the execution of dependent tasks until some criterion has been met, in which case they are a Sensor. 
-    In principle, **Operators** can perform any function that can be executed in Python. 
-    * **Sensors** can check the state of any process or data structure.
+* they can either execute some explicit *operation*, in which case they are an **Operator**, or they can pause the execution of dependent tasks until some criterion has been met, in which case they are a Sensor. 
+* In principle, **Operators** can perform any function that can be executed in Python. 
+* **Sensors** can check the state of any process or data structure.
 
 Operator and Sensor classes to implement our example workflow.
 ```python
@@ -445,9 +445,150 @@ At its core, Airflow is simply a queuing system built on top of a metadata datab
 
 ![](aitflow_generl_arch.png)
 
+
+## Executor 
+
+Executors are the mechanism by which task instances get run. They have a common API and are "pluggable", meaning you can swap executors based on your installation needs.
+
+Airflow can only have one executor configured at a time; this is set by the executor option in the [core] section of the configuration file.
+
+If you want to check which executor is currently set, you can use the airflow config get-value core executor command:
+```bash
+$ airflow config get-value core executor 
+SequentialExecutor
+```
+
+
+### Type of Executors
+
+Airflow comes configured with the SequentialExecutor by default, which is a local executor, and the safest option for execution, but we strongly recommend you change this to LocalExecutor for small, single-machine installations, or one of the remote executors for a multi-machine/cloud installation.
+
+There are two types of executor 
+- those that run tasks locally (inside the scheduler process), 
+- those that run their tasks remotely (usually via a pool of workers). 
+
+Local Executors:
+* Debug Executor
+* Local Executor
+* Sequential Executor
+
+Remote Executors:
+* Celery Executor
+* CeleryKubernetes Executor
+* Dask Executor
+* Kubernetes Executor
+
+> Note:
+> mething that often confuses new users of Airflow is that they don't need to run a separate `executor` process. This is because the executor's logic runs *inside* the `scheduler` process - if you're running a scheduler, you're running the executor.
+
+The difference between executors comes down to the resources they have at hand and how they choose to utilize those resources to distribute work (or not distribute it at all).
+
+#### Local Executors
+
+The LocalExecutor completes tasks in parallel that run on a single machine - the same machine that houses the Scheduler and all code necessary to execute. A single LocalWorker picks up and runs jobs as they’re scheduled and is fully responsible for all task execution.
+
+Pros
+* It's straightforward and easy to set up
+* It's cheap and resource light
+* It still offers parallelism
+* The LocalExecutor is ideal for testing.
+
+Cons
+* It's not (as) scalable
+* It's dependent on a single point of failure
+
+#### Remote Executors
+
+**CeleryExecutor**
+
+At its core, Airflow's CeleryExecutor is built for horizontal scaling.
+CeleryExecutor works with a "pool" of independent workers across which it can delegate tasks, via messages. On Celery, your deployment's scheduler adds a message to the queue and the Celery broker delivers it to a Celery worker (perhaps one of many) to execute.
+
+Pros
+* High availability
+* Built for horizontal scaling
+* Worker Termination Grace Period (on Astronomer)
+* DAGs in production, especially if you're running anything that's time sensitive.
+
+Cons
+* It's pricier
+* It takes some work to set up
+* Worker maintenance
+
+**KubernetesExecutor**
+
+KubernetesExecutor leverages the power of Kubernetes for resource optimization.
+
+KubernetesExecutor relies on a fixed single Pod that dynamically delegates work and resources. For each and every task that needs to run, the Executor talks to the Kubernetes API to dynamically launch Pods which terminate when that task is completed.
+
+This means a few things:
+* In times of high traffic, you can scale up
+* In times of low traffic, you can scale to zero
+* For each individual task, you can for the first time configure the following:
+    * Memory allocation
+    * Service accounts
+    * Airflow image
+
+Pros
+* Cost and resource efficient
+* Fault tolerant
+* Task-level configurations
+* No interruption to running tasks if a deploy is pushed
+* forefront of the modern Apache Airflow configuration.
+
+Cons
+* Kubernetes familiarity as a potential barrier to entry
+* An overhead of a few extra seconds per task for a pod to spin up
+* When you should use it
+
+
+### Queues:
+
+> https://airflow.apache.org/concepts.html#queues 
+
+If you have used CeleryExecutor in code practice tasks and have several worker instances, you can make use of queues to define the worker that will always execute the Sensor task which checks for file in the local filesystem. Knowing this worker for sure will allow you to create the ‘run’ file in the container that checks for its existence.
+
+The easiest way to configure a Celery-based worker to listen to specific queue is to pass queue name in command line. Below is the example docker-compose configuration for worker with custom queue:
+```
+  airflow-worker-1:
+        image: "apache/airflow"
+        container_name: "airflow-worker-1"
+        command:
+          - worker
+          - "-cn"
+          - airflow-worker-1
+          - "--queues"
+          - default,filesensor
+        entrypoint: airflow
+
+        volumes:
+          - ./compose_data/airflow/dags:/usr/local/airflow/dags
+          - ./compose_data/airflow/plugins:/usr/local/airflow/plugins
+          - ./compose_data/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg:ro
+
+        depends_on:
+          - postgres
+          - redis
+```
+
+Here queue `filesensor` is only listened by this worker and task with this queue set will be executed on this worker only.
+
+### Pools:
+
+> https://airflow.apache.org/concepts.html#pools 
+
+The pool parameter can be used in conjunction with priority_weight to define priorities in the queue, and which tasks get executed first as slots open up in the pool. The default priority_weight is 1, and can be bumped to any number. When sorting the queue to evaluate which task should be executed next, we use the priority_weight, summed up with all of the priority_weight values from tasks downstream from this task. You can use this to bump a specific important task and the whole path to that task gets prioritized accordingly.
+
+
 ## Scheduler Operation
 
 At first, the operation of Airflow’s scheduler can seem more like black magic than a logical computer program. That said, understanding the workings of the scheduler can save you a ton of time if you ever find yourself debugging its execution. To save the reader from having to dig through Airflow’s source code (though we DO highly recommend it!), we outline the basic operation of the scheduler in pseudo-code:
+
+Status
+No status
+scheduled
+Executor - queued
+Worker - running
 
 ```
 Step 0. Load available DAG definitions from disk (fill DagBag)
@@ -483,6 +624,7 @@ While the scheduler is running:
 	
 	Step 6. Repeat Steps 1-5
 ```
+
 
 ## Web UI
 
@@ -679,6 +821,9 @@ A common use case for this is when pulling data from multiple APIs or database t
 #### Create_DAG method
 
 To create new dags, we're going to create a dag template within the create_dag function. The code here is almost identical to the previous code above when only one dag was being created but now it is wrapped in a method that allows for custom parameters to be passed in.
+
+`execution_date` and `id` - uniq param for DAG
+
 ```python
 from datetime import datetime
 from airflow import DAG
@@ -902,19 +1047,19 @@ Different Operators generate certain types of tasks that become nodes in the DAG
 > Refer to the `BaseOperator` documentation for more details.
 
 There are 3 main types of operators:
-- **Operators** that performs an action, or tell another system to perform an action
-- **Transfer** operators move data from one system to another
-- **Sensors** are a special type of operator that keep running until a certain criterion is met.
+* **Operators** that performs an action, or tell another system to perform an action
+* **Transfer** operators move data from one system to another
+* **Sensors** are a special type of operator that keep running until a certain criterion is met.
 
 Operators describe a single task in a workflow (DAG). The DAG will make sure that operators run in the correct order; except ones with dependencies operators generally run independently. In fact, they may run on two completely different machines.
 
 Examples of operators are:
-    - **BashOperator** - executes a bash command
-    - **PythonOperator** - calls an arbitrary Python function
-    - **EmailOperator** - sends an email using SMTP server configured
-    - **SqlOperator** - executes a SQL command. **MySqlOperator**, **SqliteOperator**, **PostgresOperator**, **MsSqlOperator**, **OracleOperator**, **JdbcOperator**
-    - **SimpleHttpOperator** – makes an HTTP request that can be used to trigger actions on a remote system.
-    - **Qubole Operator**: allows users to run and get results from Presto, Hive, Hadoop, Spark Commands, Zeppelin Notebooks, Jupyter Notebooks, Data Import / Export Jobs on the configured Qubole account.
+* **BashOperator** - executes a bash command
+* **PythonOperator** - calls an arbitrary Python function
+* **EmailOperator** - sends an email using SMTP server configured
+* **SqlOperator** - executes a SQL command. **MySqlOperator**, **SqliteOperator**, **PostgresOperator**, **MsSqlOperator**, **OracleOperator**, **JdbcOperator**
+* **SimpleHttpOperator** – makes an HTTP request that can be used to trigger actions on a remote system.
+* **Qubole Operator**: allows users to run and get results from Presto, Hive, Hadoop, Spark Commands, Zeppelin Notebooks, Jupyter Notebooks, Data Import / Export Jobs on the configured Qubole account.
 
 The actions are not actually executed by Airflow but rather passed to the relevant execution engine like RDBMS or a Python program.
 
@@ -943,6 +1088,74 @@ Sensors, examples:
 - **HttpSensor** - `airflow.providers.http.sensors.http` Executes a HTTP get statement and returns False on failure: 404 not found or response_check function returned False
 
 You can find more in `airflow.sensors` and `airflow.providers`
+
+### Sensors mode
+Because they are primarily idle, Sensors have three different modes of running so you can be a bit more efficient about using them:
+• **poke** (default): The Sensor takes up a worker slot for its entire runtime (1 slot per 1 DAG)
+• **reschedule**: The Sensor takes up a worker slot only when it is checking, and sleeps for a set duration between checks
+• **smart sensor**: There is a single centralized version of this Sensor that batches all executions of it
+The poke and reschedule modes can be configured directly when you instantiate the sensor; generally, the trade-off between them is latency. Something that is checking every second should be in poke mode, while something that is checking every minute should be in reschedule mode.
+Smart Sensors take a bit more setup; for more information on them, see Smart Sensors.
+Much like Operators, Airflow has a large set of pre-built Sensors you can use, both in core Airflow as well as via our providers system.
+
+
+
+## Smart Sensors
+
+In Airflow 2.0 was introduced another interesting feature named *Smart Sensor*.
+
+The Smart Sensor is a service (run by a builtin DAG) which greatly reduces airflow’s infrastructure cost by consolidating some of the airflow long running light weight tasks.
+
+![](smart_sensor_1.png)
+
+Instead of using one process for each task, the main idea of the Smart Sensor service is to improve the efficiency of these long running tasks by using centralized processes to execute those tasks in batches.
+
+To do that, we need to run a task in two steps, the first step is to serialize the task information into the database; and the second step is to use a few centralized processes to execute the serialized tasks in batches.
+
+In this way, we only need a handful of running processes.
+
+![](smart_sensor_2.png)
+
+he Smart Sensor service is supported in a new mode called “Smart Sensor mode”. In Smart Sensor mode, instead of holding a long running process for each sensor and poking periodically, a sensor will only store poke context at `sensor_instance` table and then exits with a ‘sensing’ state.
+
+When the Smart Sensor mode is enabled, a special set of builtin Smart Sensor DAGs (named `smart_sensor_group_shard_xxx`) is created by the system. 
+- These DAGs contain SmartSensorOperator task and manage the Smart Sensor jobs for the airflow cluster. 
+- The SmartSensorOperator task can fetch hundreds of ‘sensing’ instances from sensor_instance table and poke on behalf of them in batches. 
+- Users don’t need to change their existing DAGs.
+
+> To get more detailed information, watch the following video: https://www.youtube.com/watch?v=gSdy3Jxk75k
+
+
+### enable/disable Smart Sensor
+
+In order to enable/disable Smart Sensor you need to add the following settings in airflow.cfg:
+```
+[smart_sensor]
+use_smart_sensor = true
+shard_code_upper_limit = 10000
+# Users can change the following config based on their requirements
+shards = 5
+sensors_enabled = NamedHivePartitionSensor, MetastorePartitionSensor
+```
+
+* `use_smart_sensor`: This config indicates if the Smart Sensor is enabled.
+* `shards`: This config indicates the number of concurrently running Smart Sensor jobs for the airflow cluster.
+* `sensors_enabled`: This config is a list of sensor class names that will use the Smart Sensor. The users use the same class names (e.g. HivePartitionSensor) in their DAGs and they don’t have the control to use Smart Sensors or not, unless they exclude their tasks explicitly.
+
+Enabling/disabling the Smart Sensor service is a system level configuration change. It is transparent to the individual users. *Existing DAGs don't need to be changed for enabling/disabling the Smart Sensor*. Rotating centralized Smart Sensor tasks will not cause any user’s sensor task failure.
+
+Currently, only a few sensors might be used by the Smart Sensor without any changes. If a specific sensor has an attribute poke_context_fields, that include all key names used for initializing a sensor object, it can be used by Smart Sensor.
+
+FileSensor does not have a `poke_context_fields` attribute but we can create a custom sensor that will have it.
+
+* Define new sensor and inherit it from `FileSensor`
+* Add `poke_context_fields` class attribute that contains all key names. In our case it would be filepath and `fs_connection_id`
+* Add your custom sensor to `sensors_enabled` parameter
+* Replace `FileSensor` in `trigger_dag` with your own.
+* Make sure that `smart_sensor_group_shard` DAG appeared in WebServer and trigger trigger_dag
+* As a result, a custom file sensor should appear’ in state and then run using `smart_sensor_group_shard` DAG
+
+
 
 #### Main arguments (Sensor settings):
 
@@ -1071,6 +1284,28 @@ Execution context is passed to python callable as a kwargs dict.
 
 SubDAGs are literally DAGs which are parts of other DAGs. They can be very useful to group several tasks into one (SubDAG task).
 
+### TaskGroups
+
+A TaskGroup can be used to organize tasks into hierarchical groups in Graph View. It is useful for creating repeating patterns and cutting down visual clutter.
+
+Unlike SubDAGs, TaskGroups are purely a *UI grouping* concept. Tasks in TaskGroups live on the same original DAG, and honor all the DAG settings and pool configurations.
+
+
+### Edge Labels
+
+As well as grouping tasks into groups, you can also label the dependency edges between different tasks in the Graph View - this can be especially useful for branching areas of your DAG, so you can label the conditions under which certain branches might run.
+To add labels, you can use them directly inline with the >> and << operators:
+
+```python
+from airflow.utils.edgemodifier import Label
+my_task >> Label("When empty") >> other_task
+```
+
+Or, you can pass a Label object to set_upstream/set_downstream:
+```python
+from airflow.utils.edgemodifier import Label
+my_task.set_downstream(other_task, Label("When empty"))
+```
 
 
 ### Xcoms
@@ -1113,7 +1348,7 @@ It just call method `set` of `Xcom` object with params. You can take a look on t
 - `execution_date` always exist as a field of you xcom-record and this is import. 
 - you can pass different from execution date manually, so, yes, you can provide `execution_date` as an argument to `xcom_push`
 ```python
-context['ti'].xcom_push(key='some_key',  value='some_value'     execution_date=) # xcom_push with sending different execution date
+context['ti'].xcom_push(key='some_key', value='some_value', execution_date=) # xcom_push with sending different execution date
 ```
 
 **xcom_pull**
@@ -1129,6 +1364,8 @@ Xcom pull always by default search for records with 1-to-1 `execution` date and 
 
 * Get Xcoms for previous runs
 Now take a look on xcom_pull arguments: https://github.com/apache/airflow/blob/v1-10-stable/airflow/models/taskinstance.py#L1524
+
+`include_prior_dates=True` for getting data from XCom from the ended DAG.
 
 We can pass to Xcom Pull several arguments:
 ```python
@@ -1165,6 +1402,29 @@ Pay attention to this description in docstring of Xcom pull method.
 Airflow allows you to create new Operators, Hooks, Sensors and other entities to suit the requirements of you or your team. The extensibility is one of the many reasons which makes Apache Airflow powerful.
 
 Also, you can use this functionality for modifying Airflow Web UI: add new pages (views) and menu links.
+
+## SLAs
+
+An SLA, or a *Service Level Agreement*, is an expectation for the **maximum time** a Task should take. If a task takes longer than this to run, then it visible in the "SLA Misses" part of the user interface, as well going out in an email of all tasks that missed their SLA.
+
+Tasks over their SLA are not cancelled, though - they are allowed to run to completion. If you want to cancel a task after a certain runtime is reached, you want Timeouts instead.
+To set an SLA for a task, pass a datetime.timedelta object to the Task/Operator's sla parameter. You can also supply an sla_miss_callback that will be called when the SLA is missed if you want to run your own logic.
+If you want to disable SLA checking entirely, you can set `check_slas = False` in Airflow's `[core] configuration`.
+
+
+## Special Exceptions
+
+If you want to control your task's state from within custom Task/Operator code, Airflow provides two special exceptions you can raise:
+• AirflowSkipException will mark the current task as skipped
+• AirflowFailException will mark the current task as failed ignoring any remaining retry attempts
+
+These can be useful if your code has extra knowledge about its environment and wants to fail/skip faster - e.g., skipping when it knows there's no data available, or fast-failing when it detects its API key is invalid (as that will not be fixed by a retry).
+
+## Zombie/Undead Tasks
+
+No system runs perfectly, and task instances are expected to die once in a while. Airflow detects two kinds of task/process mismatch:
+• Zombie tasks are tasks that are supposed to be running but suddenly died (e.g. their process was killed, or the machine died). Airflow will find these periodically, clean them up, and either fail or retry the task depending on its settings.
+• Undead tasks are tasks that are not supposed to be running but are, often caused when you manually edit Task Instances via the UI. Airflow will find them periodically and terminate them.
 
 ## Debug and test Apache Airflow
 
@@ -1227,58 +1487,6 @@ It’s useful when you need to communicate with Apache Airflow from external sys
 
 > Docs - http://apache-airflow-docs.s3-website.eu-central-1.amazonaws.com/docs/apache-airflow/latest/stable-rest-api-ref.html#section/Overview
 > List of Endpoints - https://github.com/apache/airflow/blob/2.0.0rc1/docs/apache-airflow/upgrading-to-2.rst#migration-guide-from-experimental-api-to-stable-api-v1
-
-
-### Queues:
-
-> https://airflow.apache.org/concepts.html#queues 
-
-If you have used CeleryExecutor in code practice tasks and have several worker instances, you can make use of queues to define the worker that will always execute the Sensor task which checks for file in the local filesystem. Knowing this worker for sure will allow you to create the ‘run’ file in the container that checks for its existence.
-
-The easiest way to configure a Celery-based worker to listen to specific queue is to pass queue name in command line. Below is the example docker-compose configuration for worker with custom queue:
-```
-  airflow-worker-1:
-
-        image: "apache/airflow"
-
-        container_name: "airflow-worker-1"
-
-        command:
-
-          - worker
-
-          - "-cn"
-
-          - airflow-worker-1
-
-          - "--queues"
-
-          - default,filesensor
-
-        entrypoint: airflow
-
-        volumes:
-
-          - ./compose_data/airflow/dags:/usr/local/airflow/dags
-
-          - ./compose_data/airflow/plugins:/usr/local/airflow/plugins
-
-          - ./compose_data/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg:ro
-
-        depends_on:
-
-          - postgres
-
-          - redis
-```
-
-Here queue `filesensor` is only listened by this worker and task with this queue set will be executed on this worker only.
-
-### Pools:
-
-> https://airflow.apache.org/concepts.html#pools 
-
-The pool parameter can be used in conjunction with priority_weight to define priorities in the queue, and which tasks get executed first as slots open up in the pool. The default priority_weight is 1, and can be bumped to any number. When sorting the queue to evaluate which task should be executed next, we use the priority_weight, summed up with all of the priority_weight values from tasks downstream from this task. You can use this to bump a specific important task and the whole path to that task gets prioritized accordingly.
 
 ## Packaged DAGs
 
@@ -1535,6 +1743,8 @@ The `task_id` of `BaseOperator` is changed to a property. It is prefixed with it
 Dependency relationships can be defined between a TaskGroup and a BaseOperator as well as between a TaskGroup and another TaskGroup. 
 TaskGroup acts as a collection of BaseOperator. The `>>` and `<<` operators apply the operation over all tasks within the TaskGroup.
 
+If we pass some of step, reset `TriggerRule` for the next tasks
+
 ### How Webserver handle TaskGroup.
 
 The root TaskGroup of the dag is converted to a dict called "nodes" and passed to the UI. The dict represents the tree structure of the nested TaskGroup. It also has some meta data such as `tooltip` and `ui_color` of the TaskGroup.
@@ -1577,62 +1787,6 @@ To train your knowledge, you can follow the link and copy code example for SubDa
 
 ![](subdgtaskgroup.png)
 
-
-## Smart Sensors
-
-In Airflow 2.0 was introduced another interesting feature named *Smart Sensor*.
-
-The Smart Sensor is a service (run by a builtin DAG) which greatly reduces airflow’s infrastructure cost by consolidating some of the airflow long running light weight tasks.
-
-![](smart_sensor_1.png)
-
-Instead of using one process for each task, the main idea of the Smart Sensor service is to improve the efficiency of these long running tasks by using centralized processes to execute those tasks in batches.
-
-To do that, we need to run a task in two steps, the first step is to serialize the task information into the database; and the second step is to use a few centralized processes to execute the serialized tasks in batches.
-
-In this way, we only need a handful of running processes.
-
-![](smart_sensor_2.png)
-
-he Smart Sensor service is supported in a new mode called “Smart Sensor mode”. In Smart Sensor mode, instead of holding a long running process for each sensor and poking periodically, a sensor will only store poke context at `sensor_instance` table and then exits with a ‘sensing’ state.
-
-When the Smart Sensor mode is enabled, a special set of builtin Smart Sensor DAGs (named `smart_sensor_group_shard_xxx`) is created by the system. 
-- These DAGs contain SmartSensorOperator task and manage the Smart Sensor jobs for the airflow cluster. 
-- The SmartSensorOperator task can fetch hundreds of ‘sensing’ instances from sensor_instance table and poke on behalf of them in batches. 
-- Users don’t need to change their existing DAGs.
-
-> To get more detailed information, watch the following video: https://www.youtube.com/watch?v=gSdy3Jxk75k
-
-
-### enable/disable Smart Sensor
-
-In order to enable/disable Smart Sensor you need to add the following settings in airflow.cfg:
-```
-[smart_sensor]
-use_smart_sensor = true
-shard_code_upper_limit = 10000
-# Users can change the following config based on their requirements
-shards = 5
-sensors_enabled = NamedHivePartitionSensor, MetastorePartitionSensor
-```
-
-* `use_smart_sensor`: This config indicates if the Smart Sensor is enabled.
-* `shards`: This config indicates the number of concurrently running Smart Sensor jobs for the airflow cluster.
-* `sensors_enabled`: This config is a list of sensor class names that will use the Smart Sensor. The users use the same class names (e.g. HivePartitionSensor) in their DAGs and they don’t have the control to use Smart Sensors or not, unless they exclude their tasks explicitly.
-
-Enabling/disabling the Smart Sensor service is a system level configuration change. It is transparent to the individual users. *Existing DAGs don't need to be changed for enabling/disabling the Smart Sensor*. Rotating centralized Smart Sensor tasks will not cause any user’s sensor task failure.
-
-Currently, only a few sensors might be used by the Smart Sensor without any changes. If a specific sensor has an attribute poke_context_fields, that include all key names used for initializing a sensor object, it can be used by Smart Sensor.
-
-FileSensor does not have a `poke_context_fields` attribute but we can create a custom sensor that will have it.
-
-* Define new sensor and inherit it from `FileSensor`
-* Add `poke_context_fields` class attribute that contains all key names. In our case it would be filepath and `fs_connection_id`
-* Add your custom sensor to `sensors_enabled` parameter
-* Replace `FileSensor` in `trigger_dag` with your own.
-* Make sure that `smart_sensor_group_shard` DAG appeared in WebServer and trigger trigger_dag
-* As a result, a custom file sensor should appear’ in state and then run using `smart_sensor_group_shard` DAG
-
 ## Airflow Core Components
 
 We have made a long way throughout our course, and have got hands-on experience with Apache Airflow. Now’s the time to sum up and refine our knowledge. Let’s take a look at the whole Airflow and its components.
@@ -1640,29 +1794,6 @@ We have made a long way throughout our course, and have got hands-on experience 
 > A little article about Apache Airflow core components https://www.astronomer.io/guides/airflow-components/ 
 
 ![](airflow_component_relationship_fixed.png)
-
-### Airflow Scheduler
-In one of the articles we’ve read in this course there was a detailed description of Scheduler work.
-
-Read it one more time:
-    Step 0. Load available DAG definitions from disk (fill DagBag)
-
-While the scheduler is running:
-    Step 1. The scheduler uses the DAG definitions to identify and/or initialize any DagRuns in the metadata db.
-
-    Step 2. The scheduler checks the states of the TaskInstances associated with active DagRuns, resolves any dependencies amongst TaskInstances, identifies TaskInstances that need to be executed, and adds them to a worker queue, updating the status of newly-queued TaskInstances to "queued" in the database.
-        
-    Step 3. Each available worker pulls a TaskInstance from the queue and starts executing it, updating the database record for the TaskInstance from "queued"  to "running".
-        
-    Step 4. Once a TaskInstance is finished running, the  associated worker reports back to the queue and updates the status for the TaskInstance in the database (e.g. "finished", "failed", etc.)
-        
-    Step 5. The scheduler updates the states of all active DagRuns ("running", "failed", "finished") according to the states of all completed associated TaskInstances.
-        
-    Step 6. Repeat Steps 1-5
-
-If you have difficulties with some of the terms described in the text above, please check the previous modules in course.
-
-Now’s the time to finish our course, and we’ll do it with a beautiful article about Apache Airflow Paradigm, and conference talk about Airflow weaknesses and features from its creator Maxime Beauchemin. You will find the link in the next module.
 
 ## Functional Data Engineering: a modern paradigm for batch data processing
 

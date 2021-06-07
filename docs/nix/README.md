@@ -26,12 +26,12 @@ If you look more closely at the /etc/passwd file, you will find the /bin/false c
 
 What will happen if
 ```bash
-а=$(pwd) 
+а=$(pwd)
 ```
 
 ***
 
-How to set kys in a bsh scripts
+How to set keys in a bash scripts
 
 ***
 

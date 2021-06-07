@@ -55,6 +55,58 @@ Not as common as other non-relational databases, an object or object-oriented da
 
 # Databases 
 
+## CAP theorem
+
+Consistency, Availability, Partition tolerance - Pick Two
+
+**Consistency**
+> When you read data it will give same data how many times read and server send response each and every request but systems always consistent when read data.(all node having same data)
+Consistency means that all clients see the same data at the same time, no matter which node they connect to. For this to happen, whenever data is written to one node, it must be instantly forwarded or replicated to all the other nodes in the system before the write is deemed ‘successful.’
+
+**Availability**
+> It means all requests give response and no error accured in this systems.
+Availability means that that any client making a request for data gets a response, even if one or more nodes are down. Another way to state this—all working nodes in the distributed system return a valid response for any request, without exception.
+
+**Partition tolerance**
+> All functions run all time when more nodes not responsive and commnication break between two nodes
+A partition is a communications break within a distributed system—a lost or temporarily delayed connection between two nodes. Partition tolerance means that the cluster must continue to work despite any number of communication breakdowns between nodes in the system.
+
+## NoSQL
+NoSQL databases are classified based on the two CAP characteristics they support:
+
+**CP database**
+> It wait for response form partioned nodes and that data are timeout error. system give data and it distributed across the hadoop cluster.System return error that based on you desire.It is good for marketing because which system does not work partition data will tagged to user.
+
+A CP database delivers consistency and partition tolerance at the expense of availability. When a partition occurs between any two nodes, the system has to shut down the non-consistent node (i.e., make it unavailable) until the partition is resolved.
+
+**AP database**
+> It returns the recent data from the systems and it allows write options that processed when partion resolved. Availability compeling the data when come external error come from system functions. Final decision is software trade off in that systems.In this process any network problem occurs control options are there in your hand only because network problem is only temporary.
+
+An AP database delivers availability and partition tolerance at the expense of consistency. When a partition occurs, all nodes remain available but those at the wrong end of a partition might return an older version of data than others. (When the partition is resolved, the AP databases typically resync the nodes to repair all inconsistencies in the system.)
+
+**CA database**
+> All realational database are CA. In CA all nodes are always in contact. Partion occurs in system that system will be blocked.
+
+A CA database delivers consistency and availability across all nodes. It can’t do this if there is a partition between any two nodes in the system, however, and therefore can’t deliver fault tolerance.
+
+### Spaces Defined by CAP:
+
+**NoSpace:**
+
+It is called empty set because there is no any database engines. It not satisty any theorem properties
+
+**CD Space:**
+
+Space between consistency and availability. In CD Space distribution does not exist and find NoSql database.Relational database are postioned in this space
+
+**CT Space:**
+
+It don’t have any consistency and it will favor of availability. This is a relative database and cannot guarntee between nodes
+
+**DT Space:**
+
+It offers some consistency and leaving certain levels of availability. In this space database not response the client enquires.
+
 ## Normalization vs Denormalization
 
 | BASIS FOR COMPARISON | NORMALIZATION                                                                                                              | DENORMALIZATION                                                                          |
@@ -358,6 +410,37 @@ Zookeeper it self is *allowing multiple clients to perform simultaneous reads an
 
 ## Shard
 
+
+# myisam vs innodb
+
+in myisam vs innodb, The frequently & default used storage engine in MySQL are MyISAM (default storage engine) and InnoDB (storage engine for MySQL).
+
+The main differences between myisam vs innodb are allow for “referential integrity” as well as “transactions”.
+
+convert myisam to innodb
+```sql
+ALTER TABLE wp_posts ENGINE=InnoDB;
+```
+
+**MYISAM: (default storage engine)**
+* It’s Help to Table-level Locking
+* It’s designed for need of speed
+* It’s does not allow foreign keys hence we call MySQL with MYISAM is DBMS
+* It’s stores its tables, data as well as indexes in diskspace using separate three different files. (Database tablename.FRM, tablename.MYD, tablename.MYI)
+* MYISAM not Help to transaction. You cannot commit statement as well as rollback statement with
+* MYISAM. Once you issue a command it’s done.
+* MYISAM Help to fulltext search
+* You can use MyISAM storage engine, if the table is additional static with lots of select and less update as well as delete.
+
+**MYISAM: (default storage engine)**
+* It’s Help to Table-level Locking
+* It’s designed for need of speed
+* It’s does not allow foreign keys hence we call MySQL with MYISAM is DBMS
+* It’s stores its tables, data as well as indexes in diskspace using separate three different files. (Database tablename.FRM, tablename.MYD, tablename.MYI)
+* MYISAM not Help to transaction. You cannot commit statement as well as rollback statement with
+* MYISAM. Once you issue a command it’s done.
+* MYISAM Help to fulltext search
+* You can use MyISAM storage engine, if the table is additional static with lots of select and less update as well as delete.
 
 
 # Links

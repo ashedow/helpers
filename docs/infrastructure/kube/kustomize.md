@@ -1,5 +1,6 @@
 # Kustomize
 
+Kustomize is an open-source configuration management tool developed to help address these concerns.
 **Kustomize** is a *standalone tool* to *customize Kubernetes objects* through a kustomization *file*.
 
 Since 1.14, Kubectl also supports the management of Kubernetes objects using a kustomization file. To view Resources found in a directory containing a kustomization file, run the following command:
@@ -59,3 +60,5 @@ Not all Resources or fields support strategic merge patches. To support modifyin
 ## Links
 
 > https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/
+
+> https://www.digitalocean.com/community/tutorials/how-to-manage-your-kubernetes-configurations-with-kustomize
